@@ -1,0 +1,26 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Secrets
+.env
+
+# MLflow (local experiment store)
+mlflow.db
+mlruns/
+mlartifacts/
+
+# Data - versioned by DVC, not Git (Person 2)
+data/raw/nhanes/
+data/interim/*
+data/processed/*
+!data/interim/.gitkeep
+!data/processed/.gitkeep
+*.zip
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
