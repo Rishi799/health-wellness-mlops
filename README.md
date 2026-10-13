@@ -8,7 +8,7 @@ An end-to-end MLOps project that estimates a person's lifestyle-related health r
 | --- | --- |
 | Course | AI252TA Machine Learning Operations — Topic 27 |
 | SDGs | 3 Good Health and Well-being · 4 Quality Education |
-| Team | Person 1 · Person 2 · Person 3 · Person 4 |
+| Team | Rishi · Rishabh · Rhea · John |
 | Phase | 1 — Development and reproducibility |
 
 ## Dataset
