@@ -1,0 +1,6 @@
+outs:
+- md5: 3a491b8c39a09e7ad9ecb278a7c5a2e9.dir
+  size: 39670720
+  nfiles: 30
+  hash: md5
+  path: nhanes

@@ -1,0 +1,23 @@
+stages:
+  people_2017:
+    cmd: python -m src.data.people 2017-2018
+    deps:
+      - src/data/people.py
+      - data/raw/nhanes/2017-2018/DEMO_J.xpt
+      - data/raw/nhanes/2017-2018/MCQ_J.xpt
+      - data/raw/nhanes/2017-2018/DIQ_J.xpt
+    outs:
+      - data/interim/people_2017-2018.csv
+
+  body_2017:
+    cmd: python -m src.data.body 2017-2018
+    deps:
+      - src/data/body.py
+      - data/raw/nhanes/2017-2018/BMX_J.xpt
+      - data/raw/nhanes/2017-2018/BPX_J.xpt
+      - data/raw/nhanes/2017-2018/BPQ_J.xpt
+      - data/raw/nhanes/2017-2018/TCHOL_J.xpt
+      - data/raw/nhanes/2017-2018/HDL_J.xpt
+      - data/raw/nhanes/2017-2018/GHB_J.xpt
+    outs:
+      - data/interim/body_2017-2018.csv
