@@ -1,0 +1,62 @@
+schema: '2.0'
+stages:
+  people_2017:
+    cmd: python -m src.data.people 2017-2018
+    deps:
+    - path: data/raw/nhanes/2017-2018/DEMO_J.xpt
+      hash: md5
+      md5: 3d5e48e4255b2ec80578a0eb45480d4c
+      size: 3412720
+    - path: data/raw/nhanes/2017-2018/DIQ_J.xpt
+      hash: md5
+      md5: 582c75421372266d1591162511ea73cb
+      size: 3851840
+    - path: data/raw/nhanes/2017-2018/MCQ_J.xpt
+      hash: md5
+      md5: 15eb9d220ee181b319b633064ebff760
+      size: 5420800
+    - path: src/data/people.py
+      hash: md5
+      md5: 99ecf24e830c1a1a706198e9928fdd5f
+      size: 5224
+    outs:
+    - path: data/interim/people_2017-2018.csv
+      hash: md5
+      md5: 4c54512621f97331324bde3931594a1c
+      size: 180147
+  body_2017:
+    cmd: python -m src.data.body 2017-2018
+    deps:
+    - path: data/raw/nhanes/2017-2018/BMX_J.xpt
+      hash: md5
+      md5: 4c51e08c3b105005a326da3a4fc6b223
+      size: 1466000
+    - path: data/raw/nhanes/2017-2018/BPQ_J.xpt
+      hash: md5
+      md5: 73389571d1c6c3042b233b0277e4bcb3
+      size: 544560
+    - path: data/raw/nhanes/2017-2018/BPX_J.xpt
+      hash: md5
+      md5: 6785e6261dffcb7c060c87e520fd8df8
+      size: 1466000
+    - path: data/raw/nhanes/2017-2018/GHB_J.xpt
+      hash: md5
+      md5: 3ed004ca802328e9de20bbc1b9091ae6
+      size: 103520
+    - path: data/raw/nhanes/2017-2018/HDL_J.xpt
+      hash: md5
+      md5: 7ceebc13b2db63ee7955b11b661cab13
+      size: 179680
+    - path: data/raw/nhanes/2017-2018/TCHOL_J.xpt
+      hash: md5
+      md5: 8a66907b0f4d0173872a69de2b71a45d
+      size: 179680
+    - path: src/data/body.py
+      hash: md5
+      md5: 8b603018e8933885662ad28edde0770a
+      size: 8858
+    outs:
+    - path: data/interim/body_2017-2018.csv
+      hash: md5
+      md5: eecdbd4ca0f600126383d8ae74c4a63b
+      size: 477218
