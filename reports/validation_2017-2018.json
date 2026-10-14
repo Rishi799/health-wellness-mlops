@@ -13,7 +13,7 @@
     {
       "schema": "people",
       "cycle": "2017-2018",
-      "source": "./data/interim/people_2017-2018.csv",
+      "source": "C:\\Users\\Rishab Nayak\\Desktop\\Om\\Codes\\AI-assistedHealthAndAwarenessPlatform\\health-wellness-mlops\\data\\interim\\people_2017-2018.csv",
       "rows": 5536,
       "columns": 12,
       "passed": true,
@@ -459,7 +459,7 @@
     {
       "schema": "body",
       "cycle": "2017-2018",
-      "source": "./data/interim/body_2017-2018.csv",
+      "source": "C:\\Users\\Rishab Nayak\\Desktop\\Om\\Codes\\AI-assistedHealthAndAwarenessPlatform\\health-wellness-mlops\\data\\interim\\body_2017-2018.csv",
       "rows": 9037,
       "columns": 12,
       "passed": true,
@@ -989,7 +989,7 @@
     {
       "schema": "lifestyle",
       "cycle": "2017-2018",
-      "source": "./data/interim/lifestyle_2017-2018.csv",
+      "source": "C:\\Users\\Rishab Nayak\\Desktop\\Om\\Codes\\AI-assistedHealthAndAwarenessPlatform\\health-wellness-mlops\\data\\interim\\lifestyle_2017-2018.csv",
       "rows": 9254,
       "columns": 7,
       "passed": true,
@@ -1297,7 +1297,7 @@
     {
       "schema": "mental",
       "cycle": "2017-2018",
-      "source": "./data/interim/mental_2017-2018.csv",
+      "source": "C:\\Users\\Rishab Nayak\\Desktop\\Om\\Codes\\AI-assistedHealthAndAwarenessPlatform\\health-wellness-mlops\\data\\interim\\mental_2017-2018.csv",
       "rows": 5533,
       "columns": 3,
       "passed": true,
@@ -1426,7 +1426,7 @@
     {
       "schema": "merged",
       "cycle": "2017-2018",
-      "source": "./data/interim/merged_2017-2018.csv",
+      "source": "C:\\Users\\Rishab Nayak\\Desktop\\Om\\Codes\\AI-assistedHealthAndAwarenessPlatform\\health-wellness-mlops\\data\\interim\\merged_2017-2018.csv",
       "rows": 5536,
       "columns": 31,
       "passed": true,
