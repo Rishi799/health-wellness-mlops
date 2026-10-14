@@ -1,0 +1,6 @@
+# Pipeline settings. DVC watches these values: changing one reruns only the stages that use it.
+
+split:
+  cycle: "2017-2018"   # training data; 2021-2023 is kept aside for Phase 3 drift
+  test_size: 0.2       # 20% of adults held out for testing
+  seed: 42             # fixed random_state -> identical split on every laptop
