@@ -69,7 +69,7 @@ TOPIC_COLUMNS: dict[str, dict[str, Spec]] = {
     # Person 2.  TO CONFIRM with Person 2.
     "body": {
         "height_cm": NUM(50, 230),
-        "weight_kg": NUM(10, 300),
+        "weight_kg": NUM(2, 300),
         "bmi": NUM(12, 80),
         "waist_cm": NUM(30, 200),
         "sbp": NUM(60, 260),

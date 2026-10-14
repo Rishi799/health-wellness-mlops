@@ -1,0 +1,79 @@
+stages:
+  people_2017:
+    cmd: python -m src.data.people 2017-2018
+    deps:
+      - src/data/people.py
+      - data/raw/nhanes/2017-2018/DEMO_J.xpt
+      - data/raw/nhanes/2017-2018/MCQ_J.xpt
+      - data/raw/nhanes/2017-2018/DIQ_J.xpt
+    outs:
+      - data/interim/people_2017-2018.csv
+
+  body_2017:
+    cmd: python -m src.data.body 2017-2018
+    deps:
+      - src/data/body.py
+      - data/raw/nhanes/2017-2018/BMX_J.xpt
+      - data/raw/nhanes/2017-2018/BPX_J.xpt
+      - data/raw/nhanes/2017-2018/BPQ_J.xpt
+      - data/raw/nhanes/2017-2018/TCHOL_J.xpt
+      - data/raw/nhanes/2017-2018/HDL_J.xpt
+      - data/raw/nhanes/2017-2018/GHB_J.xpt
+    outs:
+      - data/interim/body_2017-2018.csv
+
+  lifestyle_2017:
+    cmd: python -m src.data.lifestyle --cycle 2017-2018
+    deps:
+      - src/data/lifestyle.py
+      - data/raw/nhanes/2017-2018/SMQ_J.xpt
+      - data/raw/nhanes/2017-2018/ALQ_J.xpt
+      - data/raw/nhanes/2017-2018/PAQ_J.xpt
+      - data/raw/nhanes/2017-2018/SLQ_J.xpt
+      - data/raw/nhanes/2017-2018/DBQ_J.xpt
+    outs:
+      - data/interim/lifestyle_2017-2018.csv
+
+  mental_2017:
+    cmd: python -m src.data.mental
+    deps:
+      - src/data/mental.py
+      - data/raw/nhanes/2017-2018/DPQ_J.xpt
+    outs:
+      - data/interim/mental_2017-2018.csv
+
+  merge_2017:
+    cmd: python -m src.data.merge 2017-2018
+    deps:
+      - src/data/merge.py
+      - data/interim/people_2017-2018.csv
+      - data/interim/body_2017-2018.csv
+      - data/interim/lifestyle_2017-2018.csv
+      - data/interim/mental_2017-2018.csv
+    outs:
+      - data/interim/merged_2017-2018.csv
+
+  validate_2017:
+    cmd: python -m src.data.validate --cycle 2017-2018
+    deps:
+      - src/data/validate.py
+      - data/interim/people_2017-2018.csv
+      - data/interim/body_2017-2018.csv
+      - data/interim/lifestyle_2017-2018.csv
+      - data/interim/mental_2017-2018.csv
+      - data/interim/merged_2017-2018.csv
+    metrics:
+      - reports/validation_2017-2018.json:
+          cache: false
+
+  split:
+    cmd: python -m src.data.split
+    deps:
+      - src/data/split.py
+      - data/interim/merged_2017-2018.csv
+      - reports/validation_2017-2018.json
+    params:
+      - split
+    outs:
+      - data/processed/train.csv
+      - data/processed/test.csv
