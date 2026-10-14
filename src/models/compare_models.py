@@ -193,6 +193,7 @@ def main():
             mlflow.sklearn.log_model(
                 pipeline,
                 name="model",
+                skops_trusted_types=["numpy.dtype", "sklearn.tree._tree.Tree"],
             )
 
             rows.append({
