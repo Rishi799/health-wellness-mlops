@@ -53,10 +53,148 @@ stages:
       size: 179680
     - path: src/data/body.py
       hash: md5
-      md5: 5605e40ec913322300cee8547f7fb5c4
-      size: 9350
+      md5: b0066142140d52991301c0707912dfe5
+      size: 9587
     outs:
     - path: data/interim/body_2017-2018.csv
       hash: md5
       md5: 4f1c55124a49c158f57cbf2e54a745d0
       size: 477195
+  lifestyle_2017:
+    cmd: python -m src.data.lifestyle --cycle 2017-2018
+    deps:
+    - path: data/raw/nhanes/2017-2018/ALQ_J.xpt
+      hash: md5
+      md5: 042926fb111908aaf08e0a0afd496fda
+      size: 444800
+    - path: data/raw/nhanes/2017-2018/DBQ_J.xpt
+      hash: md5
+      md5: e8f0eaa2dc5b4083e65f5602ff78e90d
+      size: 3412720
+    - path: data/raw/nhanes/2017-2018/PAQ_J.xpt
+      hash: md5
+      md5: 455a742232c2c483c81efd3293f92062
+      size: 799600
+    - path: data/raw/nhanes/2017-2018/SLQ_J.xpt
+      hash: md5
+      md5: 10724d21310b4352c01b23121074c927
+      size: 470560
+    - path: data/raw/nhanes/2017-2018/SMQ_J.xpt
+      hash: md5
+      md5: 2a4fb99269a678cfc9ea7b0bd77a6eae
+      size: 2305600
+    - path: src/data/lifestyle.py
+      hash: md5
+      md5: de5ef08d25b1d7af87886c5856ac267a
+      size: 13863
+    outs:
+    - path: data/interim/lifestyle_2017-2018.csv
+      hash: md5
+      md5: 60d7825e3a07181ce97cce1d5848c505
+      size: 266671
+  mental_2017:
+    cmd: python -m src.data.mental
+    deps:
+    - path: data/raw/nhanes/2017-2018/DPQ_J.xpt
+      hash: md5
+      md5: 1bdf702f2cb14c5e54f2046f4c42bfae
+      size: 489280
+    - path: src/data/mental.py
+      hash: md5
+      md5: 4df0cff1db5985577f73542816789432
+      size: 2196
+    outs:
+    - path: data/interim/mental_2017-2018.csv
+      hash: md5
+      md5: be02739936b9448987db82956ecfe51e
+      size: 112738
+  merge_2017:
+    cmd: python -m src.data.merge 2017-2018
+    deps:
+    - path: data/interim/body_2017-2018.csv
+      hash: md5
+      md5: 4f1c55124a49c158f57cbf2e54a745d0
+      size: 477195
+    - path: data/interim/lifestyle_2017-2018.csv
+      hash: md5
+      md5: 60d7825e3a07181ce97cce1d5848c505
+      size: 266671
+    - path: data/interim/mental_2017-2018.csv
+      hash: md5
+      md5: be02739936b9448987db82956ecfe51e
+      size: 112738
+    - path: data/interim/people_2017-2018.csv
+      hash: md5
+      md5: 4c54512621f97331324bde3931594a1c
+      size: 180147
+    - path: src/data/merge.py
+      hash: md5
+      md5: 4f38f8d217e0f8a9bb69f98a3165fe89
+      size: 3637
+    outs:
+    - path: data/interim/merged_2017-2018.csv
+      hash: md5
+      md5: ba134ab3e44fe2074d5a757e518deccb
+      size: 763075
+  validate_2017:
+    cmd: python -m src.data.validate --cycle 2017-2018
+    deps:
+    - path: data/interim/body_2017-2018.csv
+      hash: md5
+      md5: 4f1c55124a49c158f57cbf2e54a745d0
+      size: 477195
+    - path: data/interim/lifestyle_2017-2018.csv
+      hash: md5
+      md5: 60d7825e3a07181ce97cce1d5848c505
+      size: 266671
+    - path: data/interim/mental_2017-2018.csv
+      hash: md5
+      md5: be02739936b9448987db82956ecfe51e
+      size: 112738
+    - path: data/interim/merged_2017-2018.csv
+      hash: md5
+      md5: ba134ab3e44fe2074d5a757e518deccb
+      size: 763075
+    - path: data/interim/people_2017-2018.csv
+      hash: md5
+      md5: 4c54512621f97331324bde3931594a1c
+      size: 180147
+    - path: src/data/validate.py
+      hash: md5
+      md5: b491135142bf32714a1fdab41970d546
+      size: 17006
+    outs:
+    - path: reports/validation_2017-2018.json
+      hash: md5
+      md5: 9194d30c5893173a62e95d02c83fd078
+      size: 69164
+  split:
+    cmd: python -m src.data.split
+    deps:
+    - path: data/interim/merged_2017-2018.csv
+      hash: md5
+      md5: ba134ab3e44fe2074d5a757e518deccb
+      size: 763075
+    - path: reports/validation_2017-2018.json
+      hash: md5
+      md5: 9194d30c5893173a62e95d02c83fd078
+      size: 69164
+    - path: src/data/split.py
+      hash: md5
+      md5: 6aed435699adc84b10c587b812f57328
+      size: 2437
+    params:
+      params.yaml:
+        split:
+          cycle: 2017-2018
+          test_size: 0.2
+          seed: 42
+    outs:
+    - path: data/processed/test.csv
+      hash: md5
+      md5: e2fc8df5dd240c0d4655ba60256d9a8b
+      size: 152276
+    - path: data/processed/train.csv
+      hash: md5
+      md5: 28d0bf46467c9190d4651cc04b723cbf
+      size: 611127

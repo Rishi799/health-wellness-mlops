@@ -29,3 +29,18 @@ A running engineering log of progress, challenges encountered, root-cause analys
 - **Clinical BP & BMI Boundaries:** Upgraded diastolic filter to drop any reading `< 20.0` mmHg as an auscultation/cuff artifact, and bounded BMI to `[12.0, 80.0]` kg/m² setting extreme outliers to `NaN`.
 - **Target Leakage Protocol:** Documented that $\text{HbA}_{1\text{c}} \ge 6.5\%$ defines diabetes. Since diabetes is part of the prediction target, `hba1c` must be excluded from feature training.
 - **DagsHub Cloud Storage:** Configured DagsHub HTTPS remote with basic authentication isolated in `.dvc/config.local` (git-ignored), successfully uploading all 30 raw XPT files (37.8 MB) and pipeline interim outputs.
+
+---
+
+## Week 2: End-to-End DVC Pipeline, Multi-Topic Integration & Reproducibility (Person 2 — Rishabh)
+
+### 1. What was done
+- Integrated all 7 data stages into `dvc.yaml` (`people_2017`, `body_2017`, `lifestyle_2017`, `mental_2017`, `merge_2017`, `validate_2017`, and `split`).
+- Established pipeline gatekeeper: `split` depends on `reports/validation_2017-2018.json`, guaranteeing that train/test sets are only created if Pandera contract validation passes with 0 errors.
+- Verified deterministic execution with `dvc repro`:
+  - `merged_2017-2018.csv`: 5,536 adults × 31 columns (26.1% at risk).
+  - `validation_2017-2018.json`: all 5 tables PASSED (358 total checks, 0 failed).
+  - `train.csv`: 4,428 rows (26.1% at risk); `test.csv`: 1,108 rows (26.1% at risk).
+- Verified cache idempotency: second `dvc repro` run reported `Data and pipelines are up to date`.
+- Pushed all interim datasets and processed splits (`train.csv`, `test.csv`) to DagsHub remote storage (`dvc push` -> cache and remote in sync).
+- Generated full DAG graph (`dvc dag`) for Phase 1 review slides.
