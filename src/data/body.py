@@ -96,9 +96,9 @@ def process_bp(folder: Path, cycle: str) -> pd.DataFrame:
         # Invalidate non-physiological / error values
         for i in range(1, 5):
             s_col, d_col = f"BPXSY{i}", f"BPXDI{i}"
-            # DBP <= 0 is an artifact
-            df[d_col] = df[d_col].where(df[d_col] > 0)
-            df[s_col] = df[s_col].where(df[s_col] > 0)
+            # DBP < 20 mmHg is non-physiological / artifact (Korotkoff phase 5 failure or ambient noise)
+            df[d_col] = df[d_col].where(df[d_col] >= 20.0)
+            df[s_col] = df[s_col].where(df[s_col] >= 50.0)
             # SBP must be strictly greater than DBP when both exist
             invalid_pair = (df[s_col].notna()) & (df[d_col].notna()) & (df[s_col] <= df[d_col])
             df.loc[invalid_pair, [s_col, d_col]] = np.nan
@@ -106,7 +106,7 @@ def process_bp(folder: Path, cycle: str) -> pd.DataFrame:
         df["sbp"] = df[sbp_cols].mean(axis=1).round(1)
         df["dbp"] = df[dbp_cols].mean(axis=1).round(1)
         # Pulse is measured directly via BPXPLS
-        df["pulse"] = df["BPXPLS"].where(df["BPXPLS"] > 0).round(1)
+        df["pulse"] = df["BPXPLS"].where(df["BPXPLS"] >= 30.0).round(1)
 
     else:  # 2021-2023
         sbp_cols = [f"BPXOSY{i}" for i in range(1, 4)]
@@ -117,9 +117,9 @@ def process_bp(folder: Path, cycle: str) -> pd.DataFrame:
 
         for i in range(1, 4):
             s_col, d_col, p_col = f"BPXOSY{i}", f"BPXODI{i}", f"BPXOPLS{i}"
-            df[d_col] = df[d_col].where(df[d_col] > 0)
-            df[s_col] = df[s_col].where(df[s_col] > 0)
-            df[p_col] = df[p_col].where(df[p_col] > 0)
+            df[d_col] = df[d_col].where(df[d_col] >= 20.0)
+            df[s_col] = df[s_col].where(df[s_col] >= 50.0)
+            df[p_col] = df[p_col].where(df[p_col] >= 30.0)
             invalid_pair = (df[s_col].notna()) & (df[d_col].notna()) & (df[s_col] <= df[d_col])
             df.loc[invalid_pair, [s_col, d_col]] = np.nan
 
@@ -136,9 +136,15 @@ def process_bmx(folder: Path, cycle: str) -> pd.DataFrame:
     path = folder / f"BMX_{suffix}.xpt"
     df = read_xpt(path, list(BMX_COLUMNS.keys()))
 
-    # Physiological plausibility: height, weight, BMI, waist must be positive
-    for col in ["BMXHT", "BMXWT", "BMXBMI", "BMXWAIST"]:
-        df[col] = df[col].where(df[col] > 0)
+    # Physiological plausibility checks:
+    # Height: positive, min 50 cm
+    df["BMXHT"] = df["BMXHT"].where(df["BMXHT"] >= 50.0)
+    # Weight: strictly positive (supports infants/toddlers in unmerged cycle, min 2 kg)
+    df["BMXWT"] = df["BMXWT"].where(df["BMXWT"] >= 2.0)
+    # BMI: realistic bounds [12.0, 80.0] kg/m^2 (values > 80 are extreme outliers/measurement artifacts)
+    df["BMXBMI"] = df["BMXBMI"].where((df["BMXBMI"] >= 12.0) & (df["BMXBMI"] <= 80.0))
+    # Waist circumference: positive, min 30 cm
+    df["BMXWAIST"] = df["BMXWAIST"].where(df["BMXWAIST"] >= 30.0)
 
     return df.rename(columns=BMX_COLUMNS)
 

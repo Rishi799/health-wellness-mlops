@@ -41,11 +41,11 @@ class TestBodyPipeline(unittest.TestCase):
         self.assertFalse(df["seqn"].isna().any(), "seqn must not contain null values")
 
     def test_bp_cleaning_drops_zero_diastolic(self):
-        """Verify that diastolic = 0 mmHg (SAS quirk / artifact) is ignored when averaging."""
+        """Verify that diastolic < 20 mmHg (artifacts / zeros) is ignored when averaging."""
         # Synthetic test with:
         # Person 1: DBP = [0, 80, 82, NaN] -> valid readings are 80, 82 -> mean = 81.0
         # Person 2: SBP = [120, 122, 124, NaN] -> mean = 122.0
-        # Person 3: DBP = [0, 0, 0, 0] -> all invalid -> NaN
+        # Person 3: DBP = [0, 8.0, 12.0, 14.7] -> all < 20 -> all invalid -> NaN
         synthetic_bpx = pd.DataFrame({
             "SEQN": [101, 102, 103],
             "BPXPLS": [72.0, 68.0, 75.0],
@@ -54,9 +54,9 @@ class TestBodyPipeline(unittest.TestCase):
             "BPXSY3": [np.nan, 114.0, np.nan],
             "BPXSY4": [np.nan, np.nan, np.nan],
             "BPXDI1": [0.0, 70.0, 0.0],
-            "BPXDI2": [80.0, 72.0, 0.0],
-            "BPXDI3": [82.0, np.nan, np.nan],
-            "BPXDI4": [np.nan, np.nan, np.nan],
+            "BPXDI2": [80.0, 72.0, 8.0],
+            "BPXDI3": [82.0, np.nan, 12.0],
+            "BPXDI4": [np.nan, np.nan, 14.7],
         })
 
         # Test systolic average
@@ -64,14 +64,14 @@ class TestBodyPipeline(unittest.TestCase):
         dbp_cols = ["BPXDI1", "BPXDI2", "BPXDI3", "BPXDI4"]
 
         for col in dbp_cols:
-            synthetic_bpx[col] = synthetic_bpx[col].where(synthetic_bpx[col] > 0)
+            synthetic_bpx[col] = synthetic_bpx[col].where(synthetic_bpx[col] >= 20.0)
 
         mean_dbp = synthetic_bpx[dbp_cols].mean(axis=1).round(1)
         # Person 1: (80 + 82) / 2 = 81.0 (0 dropped)
         self.assertEqual(mean_dbp.iloc[0], 81.0)
         # Person 2: (70 + 72) / 2 = 71.0
         self.assertEqual(mean_dbp.iloc[1], 71.0)
-        # Person 3: all 0 -> NaN
+        # Person 3: all < 20 -> NaN
         self.assertTrue(pd.isna(mean_dbp.iloc[2]))
 
     def test_questionnaire_code_conversion(self):

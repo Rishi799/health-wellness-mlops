@@ -20,10 +20,12 @@ A running engineering log of progress, challenges encountered, root-cause analys
 ### 2. What broke & challenges encountered
 - **Python Version Conflict:** `soupsieve==3.0.3` pinned in `requirements.txt` failed to install on Python 3.11.0 with `No matching distribution found`. Investigation revealed that SoupSieve 3.0+ yanked/restricted support on Python `< 3.11.5` due to a CPython regex engine bug in possessive quantifiers.
 - **SAS Float Encoding Quirk:** True zero values in raw SAS transport files are stored as near-zero floats (e.g., `5.397605e-79`). Simple equality checks (`x == 0`) failed to detect these values.
-- **Diastolic Auscultation Artifacts:** 134 readings in `BPXDI1` had 0 mmHg diastolic pressure. Treating 0 mmHg as a valid physiological reading would severely bias blood pressure averages downward.
+- **Diastolic Auscultation Artifacts & Outliers:** 134 readings in `BPXDI1` had 0 mmHg diastolic pressure, and 5 ambulatory readings had non-physiological DBP < 20 mmHg (e.g. 8, 12, 14.7 mmHg). Treating these as valid physiological readings severely biased blood pressure downward.
+- **Validation Schema Failures (validate.py):** Automated Pandera schema checks caught 3 boundary issues: DBP < 20 mmHg, 2 extreme outlier BMI readings > 80 kg/m² (84.4, 86.2), and toddler weights < 10 kg in the unmerged survey cohort.
 
 ### 3. How it was fixed
 - **Dependency Pin:** Replaced `soupsieve==3.0.3` with `soupsieve==2.10`, which fully supports Python 3.11.0, is compatible with `beautifulsoup4==4.15.0`, and allowed all 254 pinned requirements to resolve cleanly.
 - **Near-Zero Snapping:** Implemented `read_xpt` with `df.mask(df.abs() < 1e-10, 0.0)` to normalize SAS float artifacts to true `0.0`.
-- **Clinical BP Cleaning:** Any diastolic reading `<= 0` mmHg is converted to `NaN` prior to computing the arithmetic mean across valid seated readings.
+- **Clinical BP & BMI Boundaries:** Upgraded diastolic filter to drop any reading `< 20.0` mmHg as an auscultation/cuff artifact, and bounded BMI to `[12.0, 80.0]` kg/m² setting extreme outliers to `NaN`.
 - **Target Leakage Protocol:** Documented that $\text{HbA}_{1\text{c}} \ge 6.5\%$ defines diabetes. Since diabetes is part of the prediction target, `hba1c` must be excluded from feature training.
+- **DagsHub Cloud Storage:** Configured DagsHub HTTPS remote with basic authentication isolated in `.dvc/config.local` (git-ignored), successfully uploading all 30 raw XPT files (37.8 MB) and pipeline interim outputs.

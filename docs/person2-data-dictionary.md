@@ -16,10 +16,10 @@ Every row represents exactly one survey participant. All column names strictly f
 | **`seqn`** | `int64` | ID | DEMO, BMX, BPX, BPQ, TCHOL, HDL, GHB | `SEQN` | Respondent Sequence Number | Positive Integer | 0.0% | 0.0% |
 | **`height_cm`** | `float64` | cm | BMX | `BMXHT` | Standing height measured at clinic | $50.0 - 250.0$ | 11.3% | 20.9% |
 | **`weight_kg`** | `float64` | kg | BMX | `BMXWT` | Weight measured at clinic | $2.0 - 300.0$ | 5.1% | 18.5% |
-| **`bmi`** | `float64` | $\text{kg/m}^2$ | BMX | `BMXBMI` | Body Mass Index | $10.0 - 100.0$ | 11.4% | 21.2% |
+| **`bmi`** | `float64` | $\text{kg/m}^2$ | BMX | `BMXBMI` | Body Mass Index (bounded to realistic limits) | $12.0 - 80.0$ | 11.4% | 21.2% |
 | **`waist_cm`** | `float64` | cm | BMX | `BMXWAIST` | Waist circumference | $30.0 - 200.0$ | 15.9% | 23.8% |
-| **`sbp`** | `float64` | mmHg | BPX / BPXO | `BPXSY1..4` / `BPXOSY1..3` | Systolic Blood Pressure (mean of valid readings) | $50.0 - 300.0$ | 25.7% | 30.0% |
-| **`dbp`** | `float64` | mmHg | BPX / BPXO | `BPXDI1..4` / `BPXODI1..3` | Diastolic Blood Pressure (mean of valid non-zero readings) | $30.0 - 200.0$ | 26.6% | 30.0% |
+| **`sbp`** | `float64` | mmHg | BPX / BPXO | `BPXSY1..4` / `BPXOSY1..3` | Systolic Blood Pressure (mean of valid readings) | $50.0 - 260.0$ | 25.7% | 30.0% |
+| **`dbp`** | `float64` | mmHg | BPX / BPXO | `BPXDI1..4` / `BPXODI1..3` | Diastolic Blood Pressure (mean of valid readings >= 20 mmHg) | $20.0 - 150.0$ | 26.6% | 30.0% |
 | **`pulse`** | `float64` | bpm | BPX / BPXO | `BPXPLS` / `BPXOPLS1..3` | Resting pulse (beats per minute) | $30.0 - 220.0$ | 25.4% | 30.0% |
 | **`told_high_bp`** | `Int64` | binary flag | BPQ | `BPQ020` | Ever told by doctor had high blood pressure | `1` = Yes, `0` = No | 31.9% | 21.0% |
 | **`total_chol`** | `float64` | mg/dL | TCHOL | `LBXTC` | Total serum cholesterol | $50.0 - 600.0$ | 25.4% | 35.9% |

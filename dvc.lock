@@ -53,10 +53,10 @@ stages:
       size: 179680
     - path: src/data/body.py
       hash: md5
-      md5: 8b603018e8933885662ad28edde0770a
-      size: 8858
+      md5: 5605e40ec913322300cee8547f7fb5c4
+      size: 9350
     outs:
     - path: data/interim/body_2017-2018.csv
       hash: md5
-      md5: eecdbd4ca0f600126383d8ae74c4a63b
-      size: 477218
+      md5: 4f1c55124a49c158f57cbf2e54a745d0
+      size: 477195
