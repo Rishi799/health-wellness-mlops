@@ -1,22 +1,5 @@
 {
   "cycle": "2017-2018",
-<<<<<<< HEAD
-  "passed": false,
-  "schemas_validated": [
-    "lifestyle",
-    "merged"
-  ],
-  "schemas_skipped_not_found": [
-    "people",
-    "body",
-    "mental"
-  ],
-  "reports": [
-    {
-      "schema": "lifestyle",
-      "cycle": "2017-2018",
-      "source": "C:\\Users\\rhea\\Downloads\\MLOPs-3\\health-wellness-mlops\\data\\interim\\lifestyle_2017-2018.csv",
-=======
   "passed": true,
   "schemas_validated": [
     "people",
@@ -1007,7 +990,6 @@
       "schema": "lifestyle",
       "cycle": "2017-2018",
       "source": "C:\\Users\\Rishab Nayak\\Desktop\\Om\\Codes\\AI-assistedHealthAndAwarenessPlatform\\health-wellness-mlops\\data\\interim\\lifestyle_2017-2018.csv",
->>>>>>> origin/main
       "rows": 9254,
       "columns": 7,
       "passed": true,
@@ -1313,26 +1295,6 @@
       ]
     },
     {
-<<<<<<< HEAD
-      "schema": "merged",
-      "cycle": "2017-2018",
-      "source": "C:\\Users\\rhea\\Downloads\\MLOPs-3\\health-wellness-mlops\\data\\interim\\merged_2017-2018.csv",
-      "rows": 0,
-      "columns": 0,
-      "passed": false,
-      "n_checks": 1,
-      "n_failed": 1,
-      "pct_missing": {},
-      "checks": [
-        {
-          "column": "(file)",
-          "check": "file_exists",
-          "status": "failed",
-          "failed_count": 1,
-          "bad_values": [
-            "C:\\Users\\rhea\\Downloads\\MLOPs-3\\health-wellness-mlops\\data\\interim\\merged_2017-2018.csv not found"
-          ]
-=======
       "schema": "mental",
       "cycle": "2017-2018",
       "source": "C:\\Users\\Rishab Nayak\\Desktop\\Om\\Codes\\AI-assistedHealthAndAwarenessPlatform\\health-wellness-mlops\\data\\interim\\mental_2017-2018.csv",
@@ -2686,7 +2648,6 @@
           "status": "passed",
           "failed_count": 0,
           "bad_values": []
->>>>>>> origin/main
         }
       ]
     }

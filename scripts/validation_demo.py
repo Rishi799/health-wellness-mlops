@@ -24,7 +24,8 @@ import pandas as pd  # noqa: E402
 
 from src.data import validate  # noqa: E402
 
-DEMO_DIR = REPO_ROOT / "reports" / "demo"
+DEMO_DATA_DIR = REPO_ROOT / "data" / "interim" / "demo"
+DEMO_REPORT_DIR = REPO_ROOT / "reports" / "demo"
 
 
 def load_merged(cycle: str) -> tuple[pd.DataFrame, str]:
@@ -43,11 +44,12 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--cycle", default="2017-2018")
     args = parser.parse_args()
-    DEMO_DIR.mkdir(parents=True, exist_ok=True)
+    DEMO_DATA_DIR.mkdir(parents=True, exist_ok=True)
+    DEMO_REPORT_DIR.mkdir(parents=True, exist_ok=True)
 
     merged, source = load_merged(args.cycle)
-    good_path = DEMO_DIR / f"merged_good_{args.cycle}.csv"
-    bad_path = DEMO_DIR / f"merged_broken_{args.cycle}.csv"
+    good_path = DEMO_DATA_DIR / f"merged_good_{args.cycle}.csv"
+    bad_path = DEMO_DATA_DIR / f"merged_broken_{args.cycle}.csv"
     merged.to_csv(good_path, index=False)
 
     broken = merged.copy()
@@ -57,10 +59,10 @@ def main() -> int:
 
     common = ["--cycle", args.cycle, "--schema", "merged"]
     print(f"\n=== 1. GOOD DATA ({source}) ===")
-    validate.main([*common, "--path", str(good_path), "--report", str(DEMO_DIR / "report_good.json")])
+    validate.main([*common, "--path", str(good_path), "--report", str(DEMO_REPORT_DIR / "report_good.json")])
 
     print("\n=== 2. SAME DATA with one 9999 and one duplicate seqn inserted ===")
-    code = validate.main([*common, "--path", str(bad_path), "--report", str(DEMO_DIR / "report_broken.json")])
+    code = validate.main([*common, "--path", str(bad_path), "--report", str(DEMO_REPORT_DIR / "report_broken.json")])
     print(f"\nexit code = {code}  (non-zero = dvc repro would stop here)")
     return 0
 
