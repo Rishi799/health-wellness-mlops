@@ -1,0 +1,2655 @@
+{
+  "cycle": "2017-2018",
+  "passed": true,
+  "schemas_validated": [
+    "people",
+    "body",
+    "lifestyle",
+    "mental",
+    "merged"
+  ],
+  "schemas_skipped_not_found": [],
+  "reports": [
+    {
+      "schema": "people",
+      "cycle": "2017-2018",
+      "source": "C:\\Users\\Rishab Nayak\\Desktop\\Om\\Codes\\AI-assistedHealthAndAwarenessPlatform\\health-wellness-mlops\\data\\interim\\people_2017-2018.csv",
+      "rows": 5536,
+      "columns": 12,
+      "passed": true,
+      "n_checks": 60,
+      "n_failed": 0,
+      "pct_missing": {
+        "seqn": 0.0,
+        "age": 0.0,
+        "sex": 0.0,
+        "education": 0.2,
+        "income_ratio": 14.09,
+        "diabetes": 0.0,
+        "heart_failure": 0.22,
+        "coronary_heart_disease": 0.14,
+        "angina": 0.31,
+        "heart_attack": 0.11,
+        "stroke": 0.13,
+        "cardiometabolic": 0.0
+      },
+      "checks": [
+        {
+          "column": "seqn",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "seqn",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "seqn",
+          "check": "not_null",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "seqn",
+          "check": "unique",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "seqn",
+          "check": "positive_id",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "age",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "age",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "age",
+          "check": "range[0,80]",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "age",
+          "check": "no_tiny_values",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "age",
+          "check": "no_leftover_codes",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "sex",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "sex",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "education",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "education",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "income_ratio",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "income_ratio",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "income_ratio",
+          "check": "range[0,5]",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "income_ratio",
+          "check": "no_tiny_values",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "income_ratio",
+          "check": "no_leftover_codes",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "diabetes",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "diabetes",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "diabetes",
+          "check": "binary_0_1",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "diabetes",
+          "check": "no_leftover_codes",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "heart_failure",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "heart_failure",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "heart_failure",
+          "check": "binary_0_1",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "heart_failure",
+          "check": "no_leftover_codes",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "coronary_heart_disease",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "coronary_heart_disease",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "coronary_heart_disease",
+          "check": "binary_0_1",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "coronary_heart_disease",
+          "check": "no_leftover_codes",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "angina",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "angina",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "angina",
+          "check": "binary_0_1",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "angina",
+          "check": "no_leftover_codes",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "heart_attack",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "heart_attack",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "heart_attack",
+          "check": "binary_0_1",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "heart_attack",
+          "check": "no_leftover_codes",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "stroke",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "stroke",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "stroke",
+          "check": "binary_0_1",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "stroke",
+          "check": "no_leftover_codes",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "cardiometabolic",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "cardiometabolic",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "cardiometabolic",
+          "check": "binary_0_1",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "cardiometabolic",
+          "check": "no_leftover_codes",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "seqn",
+          "check": "missing<=40%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "age",
+          "check": "missing<=40%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "sex",
+          "check": "missing<=40%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "education",
+          "check": "missing<=40%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "income_ratio",
+          "check": "missing<=40%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "diabetes",
+          "check": "missing<=40%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "heart_failure",
+          "check": "missing<=40%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "coronary_heart_disease",
+          "check": "missing<=40%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "angina",
+          "check": "missing<=40%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "heart_attack",
+          "check": "missing<=40%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "stroke",
+          "check": "missing<=40%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "cardiometabolic",
+          "check": "missing<=40%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "(dataframe)",
+          "check": "not_empty",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        }
+      ]
+    },
+    {
+      "schema": "body",
+      "cycle": "2017-2018",
+      "source": "C:\\Users\\Rishab Nayak\\Desktop\\Om\\Codes\\AI-assistedHealthAndAwarenessPlatform\\health-wellness-mlops\\data\\interim\\body_2017-2018.csv",
+      "rows": 9037,
+      "columns": 12,
+      "passed": true,
+      "n_checks": 72,
+      "n_failed": 0,
+      "pct_missing": {
+        "seqn": 0.0,
+        "height_cm": 11.3,
+        "weight_kg": 5.06,
+        "bmi": 11.44,
+        "waist_cm": 15.89,
+        "sbp": 25.67,
+        "dbp": 26.61,
+        "pulse": 25.4,
+        "told_high_bp": 31.94,
+        "total_chol": 25.44,
+        "hdl": 25.44,
+        "hba1c": 33.11
+      },
+      "checks": [
+        {
+          "column": "seqn",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "seqn",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "seqn",
+          "check": "not_null",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "seqn",
+          "check": "unique",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "seqn",
+          "check": "positive_id",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "height_cm",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "height_cm",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "height_cm",
+          "check": "range[50,230]",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "height_cm",
+          "check": "no_tiny_values",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "height_cm",
+          "check": "no_leftover_codes",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "weight_kg",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "weight_kg",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "weight_kg",
+          "check": "range[2,300]",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "weight_kg",
+          "check": "no_tiny_values",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "weight_kg",
+          "check": "no_leftover_codes",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "bmi",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "bmi",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "bmi",
+          "check": "range[12,80]",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "bmi",
+          "check": "no_tiny_values",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "bmi",
+          "check": "no_leftover_codes",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "waist_cm",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "waist_cm",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "waist_cm",
+          "check": "range[30,200]",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "waist_cm",
+          "check": "no_tiny_values",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "waist_cm",
+          "check": "no_leftover_codes",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "sbp",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "sbp",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "sbp",
+          "check": "range[60,260]",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "sbp",
+          "check": "no_tiny_values",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "sbp",
+          "check": "no_leftover_codes",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "dbp",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "dbp",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "dbp",
+          "check": "range[20,150]",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "dbp",
+          "check": "no_tiny_values",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "dbp",
+          "check": "no_leftover_codes",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "pulse",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "pulse",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "pulse",
+          "check": "range[30,200]",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "pulse",
+          "check": "no_tiny_values",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "pulse",
+          "check": "no_leftover_codes",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "told_high_bp",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "told_high_bp",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "told_high_bp",
+          "check": "binary_0_1",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "told_high_bp",
+          "check": "no_leftover_codes",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "total_chol",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "total_chol",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "total_chol",
+          "check": "range[50,600]",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "total_chol",
+          "check": "no_tiny_values",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "total_chol",
+          "check": "no_leftover_codes",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "hdl",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "hdl",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "hdl",
+          "check": "range[10,200]",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "hdl",
+          "check": "no_tiny_values",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "hdl",
+          "check": "no_leftover_codes",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "hba1c",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "hba1c",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "hba1c",
+          "check": "range[3,20]",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "hba1c",
+          "check": "no_tiny_values",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "hba1c",
+          "check": "no_leftover_codes",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "seqn",
+          "check": "missing<=40%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "height_cm",
+          "check": "missing<=40%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "weight_kg",
+          "check": "missing<=40%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "bmi",
+          "check": "missing<=40%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "waist_cm",
+          "check": "missing<=40%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "sbp",
+          "check": "missing<=40%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "dbp",
+          "check": "missing<=40%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "pulse",
+          "check": "missing<=40%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "told_high_bp",
+          "check": "missing<=40%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "total_chol",
+          "check": "missing<=70%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "hdl",
+          "check": "missing<=70%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "hba1c",
+          "check": "missing<=70%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "(dataframe)",
+          "check": "not_empty",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        }
+      ]
+    },
+    {
+      "schema": "lifestyle",
+      "cycle": "2017-2018",
+      "source": "C:\\Users\\Rishab Nayak\\Desktop\\Om\\Codes\\AI-assistedHealthAndAwarenessPlatform\\health-wellness-mlops\\data\\interim\\lifestyle_2017-2018.csv",
+      "rows": 9254,
+      "columns": 7,
+      "passed": true,
+      "n_checks": 41,
+      "n_failed": 0,
+      "pct_missing": {
+        "seqn": 0.0,
+        "smoking_status": 36.72,
+        "alcohol_drinks_week": 44.67,
+        "exercise_min_week": 36.83,
+        "sedentary_min_day": 37.21,
+        "sleep_hours": 33.79,
+        "diet_quality": 33.44
+      },
+      "checks": [
+        {
+          "column": "seqn",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "seqn",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "seqn",
+          "check": "not_null",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "seqn",
+          "check": "unique",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "seqn",
+          "check": "positive_id",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "smoking_status",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "smoking_status",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "smoking_status",
+          "check": "allowed_categories",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "alcohol_drinks_week",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "alcohol_drinks_week",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "alcohol_drinks_week",
+          "check": "range[0,110]",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "alcohol_drinks_week",
+          "check": "no_tiny_values",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "alcohol_drinks_week",
+          "check": "no_leftover_codes",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "exercise_min_week",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "exercise_min_week",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "exercise_min_week",
+          "check": "range[0,3000]",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "exercise_min_week",
+          "check": "no_tiny_values",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "exercise_min_week",
+          "check": "no_leftover_codes",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "sedentary_min_day",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "sedentary_min_day",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "sedentary_min_day",
+          "check": "range[0,1440]",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "sedentary_min_day",
+          "check": "no_tiny_values",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "sedentary_min_day",
+          "check": "no_leftover_codes",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "sleep_hours",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "sleep_hours",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "sleep_hours",
+          "check": "range[2,14]",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "sleep_hours",
+          "check": "no_tiny_values",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "sleep_hours",
+          "check": "no_leftover_codes",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "diet_quality",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "diet_quality",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "diet_quality",
+          "check": "range[1,5]",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "diet_quality",
+          "check": "no_tiny_values",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "diet_quality",
+          "check": "no_leftover_codes",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "seqn",
+          "check": "missing<=40%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "smoking_status",
+          "check": "missing<=40%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "alcohol_drinks_week",
+          "check": "missing<=60%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "exercise_min_week",
+          "check": "missing<=40%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "sedentary_min_day",
+          "check": "missing<=40%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "sleep_hours",
+          "check": "missing<=40%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "diet_quality",
+          "check": "missing<=40%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "(dataframe)",
+          "check": "not_empty",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        }
+      ]
+    },
+    {
+      "schema": "mental",
+      "cycle": "2017-2018",
+      "source": "C:\\Users\\Rishab Nayak\\Desktop\\Om\\Codes\\AI-assistedHealthAndAwarenessPlatform\\health-wellness-mlops\\data\\interim\\mental_2017-2018.csv",
+      "rows": 5533,
+      "columns": 3,
+      "passed": true,
+      "n_checks": 16,
+      "n_failed": 0,
+      "pct_missing": {
+        "seqn": 0.0,
+        "phq9_score": 8.4,
+        "phq9_category": 8.4
+      },
+      "checks": [
+        {
+          "column": "seqn",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "seqn",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "seqn",
+          "check": "not_null",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "seqn",
+          "check": "unique",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "seqn",
+          "check": "positive_id",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "phq9_score",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "phq9_score",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "phq9_score",
+          "check": "range[0,27]",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "phq9_score",
+          "check": "no_tiny_values",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "phq9_score",
+          "check": "no_leftover_codes",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "phq9_category",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "phq9_category",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "seqn",
+          "check": "missing<=40%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "phq9_score",
+          "check": "missing<=40%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "phq9_category",
+          "check": "missing<=40%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "(dataframe)",
+          "check": "not_empty",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        }
+      ]
+    },
+    {
+      "schema": "merged",
+      "cycle": "2017-2018",
+      "source": "C:\\Users\\Rishab Nayak\\Desktop\\Om\\Codes\\AI-assistedHealthAndAwarenessPlatform\\health-wellness-mlops\\data\\interim\\merged_2017-2018.csv",
+      "rows": 5536,
+      "columns": 31,
+      "passed": true,
+      "n_checks": 169,
+      "n_failed": 0,
+      "pct_missing": {
+        "seqn": 0.0,
+        "age": 0.0,
+        "sex": 0.0,
+        "education": 0.2,
+        "income_ratio": 14.09,
+        "diabetes": 0.0,
+        "heart_failure": 0.22,
+        "coronary_heart_disease": 0.14,
+        "angina": 0.31,
+        "heart_attack": 0.11,
+        "stroke": 0.13,
+        "cardiometabolic": 0.0,
+        "height_cm": 6.9,
+        "weight_kg": 6.9,
+        "bmi": 7.12,
+        "waist_cm": 11.31,
+        "sbp": 10.21,
+        "dbp": 10.48,
+        "pulse": 9.9,
+        "told_high_bp": 0.18,
+        "total_chol": 11.38,
+        "hdl": 11.38,
+        "hba1c": 9.92,
+        "smoking_status": 0.0,
+        "alcohol_drinks_week": 12.46,
+        "exercise_min_week": 0.16,
+        "sedentary_min_day": 0.78,
+        "sleep_hours": 0.54,
+        "diet_quality": 0.04,
+        "phq9_score": 13.35,
+        "phq9_category": 13.35
+      },
+      "checks": [
+        {
+          "column": "seqn",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "seqn",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "seqn",
+          "check": "not_null",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "seqn",
+          "check": "unique",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "seqn",
+          "check": "positive_id",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "age",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "age",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "age",
+          "check": "range[20,80]",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "age",
+          "check": "no_tiny_values",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "age",
+          "check": "no_leftover_codes",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "sex",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "sex",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "education",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "education",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "income_ratio",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "income_ratio",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "income_ratio",
+          "check": "range[0,5]",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "income_ratio",
+          "check": "no_tiny_values",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "income_ratio",
+          "check": "no_leftover_codes",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "diabetes",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "diabetes",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "diabetes",
+          "check": "binary_0_1",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "diabetes",
+          "check": "no_leftover_codes",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "heart_failure",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "heart_failure",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "heart_failure",
+          "check": "binary_0_1",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "heart_failure",
+          "check": "no_leftover_codes",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "coronary_heart_disease",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "coronary_heart_disease",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "coronary_heart_disease",
+          "check": "binary_0_1",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "coronary_heart_disease",
+          "check": "no_leftover_codes",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "angina",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "angina",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "angina",
+          "check": "binary_0_1",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "angina",
+          "check": "no_leftover_codes",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "heart_attack",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "heart_attack",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "heart_attack",
+          "check": "binary_0_1",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "heart_attack",
+          "check": "no_leftover_codes",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "stroke",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "stroke",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "stroke",
+          "check": "binary_0_1",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "stroke",
+          "check": "no_leftover_codes",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "cardiometabolic",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "cardiometabolic",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "cardiometabolic",
+          "check": "not_null",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "cardiometabolic",
+          "check": "binary_0_1",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "cardiometabolic",
+          "check": "no_leftover_codes",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "height_cm",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "height_cm",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "height_cm",
+          "check": "range[50,230]",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "height_cm",
+          "check": "no_tiny_values",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "height_cm",
+          "check": "no_leftover_codes",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "weight_kg",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "weight_kg",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "weight_kg",
+          "check": "range[2,300]",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "weight_kg",
+          "check": "no_tiny_values",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "weight_kg",
+          "check": "no_leftover_codes",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "bmi",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "bmi",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "bmi",
+          "check": "range[12,80]",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "bmi",
+          "check": "no_tiny_values",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "bmi",
+          "check": "no_leftover_codes",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "waist_cm",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "waist_cm",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "waist_cm",
+          "check": "range[30,200]",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "waist_cm",
+          "check": "no_tiny_values",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "waist_cm",
+          "check": "no_leftover_codes",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "sbp",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "sbp",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "sbp",
+          "check": "range[60,260]",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "sbp",
+          "check": "no_tiny_values",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "sbp",
+          "check": "no_leftover_codes",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "dbp",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "dbp",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "dbp",
+          "check": "range[20,150]",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "dbp",
+          "check": "no_tiny_values",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "dbp",
+          "check": "no_leftover_codes",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "pulse",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "pulse",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "pulse",
+          "check": "range[30,200]",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "pulse",
+          "check": "no_tiny_values",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "pulse",
+          "check": "no_leftover_codes",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "told_high_bp",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "told_high_bp",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "told_high_bp",
+          "check": "binary_0_1",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "told_high_bp",
+          "check": "no_leftover_codes",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "total_chol",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "total_chol",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "total_chol",
+          "check": "range[50,600]",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "total_chol",
+          "check": "no_tiny_values",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "total_chol",
+          "check": "no_leftover_codes",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "hdl",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "hdl",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "hdl",
+          "check": "range[10,200]",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "hdl",
+          "check": "no_tiny_values",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "hdl",
+          "check": "no_leftover_codes",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "hba1c",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "hba1c",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "hba1c",
+          "check": "range[3,20]",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "hba1c",
+          "check": "no_tiny_values",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "hba1c",
+          "check": "no_leftover_codes",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "smoking_status",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "smoking_status",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "smoking_status",
+          "check": "allowed_categories",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "alcohol_drinks_week",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "alcohol_drinks_week",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "alcohol_drinks_week",
+          "check": "range[0,110]",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "alcohol_drinks_week",
+          "check": "no_tiny_values",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "alcohol_drinks_week",
+          "check": "no_leftover_codes",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "exercise_min_week",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "exercise_min_week",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "exercise_min_week",
+          "check": "range[0,3000]",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "exercise_min_week",
+          "check": "no_tiny_values",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "exercise_min_week",
+          "check": "no_leftover_codes",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "sedentary_min_day",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "sedentary_min_day",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "sedentary_min_day",
+          "check": "range[0,1440]",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "sedentary_min_day",
+          "check": "no_tiny_values",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "sedentary_min_day",
+          "check": "no_leftover_codes",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "sleep_hours",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "sleep_hours",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "sleep_hours",
+          "check": "range[2,14]",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "sleep_hours",
+          "check": "no_tiny_values",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "sleep_hours",
+          "check": "no_leftover_codes",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "diet_quality",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "diet_quality",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "diet_quality",
+          "check": "range[1,5]",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "diet_quality",
+          "check": "no_tiny_values",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "diet_quality",
+          "check": "no_leftover_codes",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "phq9_score",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "phq9_score",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "phq9_score",
+          "check": "range[0,27]",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "phq9_score",
+          "check": "no_tiny_values",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "phq9_score",
+          "check": "no_leftover_codes",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "phq9_category",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "phq9_category",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "seqn",
+          "check": "missing<=40%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "age",
+          "check": "missing<=40%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "sex",
+          "check": "missing<=40%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "education",
+          "check": "missing<=40%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "income_ratio",
+          "check": "missing<=40%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "diabetes",
+          "check": "missing<=40%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "heart_failure",
+          "check": "missing<=40%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "coronary_heart_disease",
+          "check": "missing<=40%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "angina",
+          "check": "missing<=40%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "heart_attack",
+          "check": "missing<=40%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "stroke",
+          "check": "missing<=40%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "cardiometabolic",
+          "check": "missing<=40%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "height_cm",
+          "check": "missing<=40%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "weight_kg",
+          "check": "missing<=40%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "bmi",
+          "check": "missing<=40%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "waist_cm",
+          "check": "missing<=40%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "sbp",
+          "check": "missing<=40%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "dbp",
+          "check": "missing<=40%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "pulse",
+          "check": "missing<=40%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "told_high_bp",
+          "check": "missing<=40%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "total_chol",
+          "check": "missing<=70%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "hdl",
+          "check": "missing<=70%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "hba1c",
+          "check": "missing<=70%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "smoking_status",
+          "check": "missing<=40%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "alcohol_drinks_week",
+          "check": "missing<=60%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "exercise_min_week",
+          "check": "missing<=40%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "sedentary_min_day",
+          "check": "missing<=40%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "sleep_hours",
+          "check": "missing<=40%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "diet_quality",
+          "check": "missing<=40%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "phq9_score",
+          "check": "missing<=40%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "phq9_category",
+          "check": "missing<=40%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "(dataframe)",
+          "check": "not_empty",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        }
+      ]
+    }
+  ]
+}

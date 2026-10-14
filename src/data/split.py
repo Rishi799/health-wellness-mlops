@@ -1,46 +1,58 @@
-"""Create reproducible, stratified train/test CSV files."""
+"""Split the merged training table into train and test sets.
 
+Stratified on the target so both sets have the same share of at-risk adults, with a
+fixed seed so every laptop gets exactly the same split. Settings come from params.yaml.
+All columns are kept; choosing features (and dropping leakage columns) happens in the
+model code.
+
+Usage (from the project root):
+    python -m src.data.split
+
+Input:  data/interim/merged_<cycle>.csv   (cycle from params.yaml, default 2017-2018)
+Output: data/processed/train.csv, data/processed/test.csv
+"""
 from pathlib import Path
 
 import pandas as pd
+import yaml
 from sklearn.model_selection import train_test_split
 
 ROOT = Path(__file__).resolve().parents[2]
-INPUT_PATH = ROOT / "data/interim/merged_2017-2018.csv"
-OUTPUT_DIR = ROOT / "data/processed"
+INTERIM = ROOT / "data" / "interim"
+PROCESSED = ROOT / "data" / "processed"
+PARAMS_FILE = ROOT / "params.yaml"
 TARGET = "cardiometabolic"
 
 
-def main():
-    if not INPUT_PATH.exists():
-        raise FileNotFoundError(f"Merged dataset not found: {INPUT_PATH}")
+def load_params() -> dict:
+    params = yaml.safe_load(PARAMS_FILE.read_text())["split"]
+    return {"cycle": params["cycle"], "test_size": float(params["test_size"]), "seed": int(params["seed"])}
 
-    data = pd.read_csv(INPUT_PATH)
 
-    if TARGET not in data.columns:
-        raise ValueError(f"Missing target column: {TARGET}")
-    if data[TARGET].isna().any():
-        raise ValueError("Target contains missing values")
-    if data[TARGET].nunique() != 2:
-        raise ValueError("Expected a binary classification target")
+def split(merged: pd.DataFrame, test_size: float, seed: int) -> tuple[pd.DataFrame, pd.DataFrame]:
+    train, test = train_test_split(merged, test_size=test_size, random_state=seed,
+                                   stratify=merged[TARGET])
+    # Same order every run, so the CSV files are byte-identical (DVC hashes stay stable)
+    return train.sort_values("seqn"), test.sort_values("seqn")
 
-    train, test = train_test_split(
-        data,
-        test_size=0.2,
-        random_state=42,
-        stratify=data[TARGET],
-    )
 
-    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    train.to_csv(OUTPUT_DIR / "train.csv", index=False)
-    test.to_csv(OUTPUT_DIR / "test.csv", index=False)
+def main() -> None:
+    p = load_params()
+    source = INTERIM / f"merged_{p['cycle']}.csv"
+    if not source.exists():
+        raise FileNotFoundError(f"{source.name} not found - run: python -m src.data.merge {p['cycle']}")
+    merged = pd.read_csv(source)
 
-    print(f"Training rows: {len(train)}")
-    print(f"Test rows: {len(test)}")
-    print("\nTarget proportions:")
-    print("Train:", train[TARGET].value_counts(normalize=True).round(4).to_dict())
-    print("Test: ", test[TARGET].value_counts(normalize=True).round(4).to_dict())
-    print(f"\nSaved files in: {OUTPUT_DIR}")
+    train, test = split(merged, p["test_size"], p["seed"])
+    assert set(train["seqn"]).isdisjoint(test["seqn"]), "a person is in both train and test"
+    assert len(train) + len(test) == len(merged), "rows were lost in the split"
+
+    PROCESSED.mkdir(parents=True, exist_ok=True)
+    for name, part in (("train", train), ("test", test)):
+        part.to_csv(PROCESSED / f"{name}.csv", index=False)
+        print(f"[split] {name:<5}: {len(part):,} rows, {part[TARGET].mean():.1%} at risk "
+              f"-> {(PROCESSED / f'{name}.csv').relative_to(ROOT)}")
+    print(f"[split] cycle {p['cycle']}, test_size {p['test_size']}, seed {p['seed']}")
 
 
 if __name__ == "__main__":
