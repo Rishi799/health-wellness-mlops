@@ -1,0 +1,17 @@
+
+=== 1. GOOD DATA (SYNTHETIC merge built on lifestyle_2017-2018.csv) ===
+[validate] merged    PASSED  (9,254 rows, 169 checks, 0 failed)
+[validate] report written to C:\Users\rhea\Downloads\MLOPs-3\health-wellness-mlops\reports\demo\report_good.json
+[validate] all checks passed
+
+=== 2. SAME DATA with one 9999 and one duplicate seqn inserted ===
+[validate] merged    FAILED  (9,255 rows, 169 checks, 3 failed)
+  [FAIL] merged: column 'seqn' rule 'unique' - 2 row(s); bad values: 93703
+  [FAIL] merged: column 'sedentary_min_day' rule 'range[0,1440]' (value outside 0..1440) - 1 row(s); bad values: 9999
+  [FAIL] merged: column 'sedentary_min_day' rule 'no_leftover_codes' (leftover NHANES code (7777, 9999, 77777, 99999)) - 1 row(s); bad values: 9999
+[validate] report written to C:\Users\rhea\Downloads\MLOPs-3\health-wellness-mlops\reports\demo\report_broken.json
+
+exit code = 1  (non-zero = dvc repro would stop here)
+
+--- stderr ---
+[validate] VALIDATION FAILED - stopping the pipeline

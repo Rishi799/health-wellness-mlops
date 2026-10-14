@@ -1,0 +1,318 @@
+{
+  "cycle": "2021-2023",
+  "passed": true,
+  "schemas_validated": [
+    "lifestyle"
+  ],
+  "schemas_skipped_not_found": [],
+  "reports": [
+    {
+      "schema": "lifestyle",
+      "cycle": "2021-2023",
+      "source": "C:\\Users\\rhea\\Downloads\\MLOPs-3\\health-wellness-mlops\\data\\interim\\lifestyle_2021-2023.csv",
+      "rows": 11933,
+      "columns": 7,
+      "passed": true,
+      "n_checks": 41,
+      "n_failed": 0,
+      "pct_missing": {
+        "seqn": 0.0,
+        "smoking_status": 31.95,
+        "alcohol_drinks_week": 54.37,
+        "exercise_min_week": 32.7,
+        "sedentary_min_day": 32.41,
+        "sleep_hours": 29.47,
+        "diet_quality": 100.0
+      },
+      "checks": [
+        {
+          "column": "seqn",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "seqn",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "seqn",
+          "check": "not_null",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "seqn",
+          "check": "unique",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "seqn",
+          "check": "positive_id",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "smoking_status",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "smoking_status",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "smoking_status",
+          "check": "allowed_categories",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "alcohol_drinks_week",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "alcohol_drinks_week",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "alcohol_drinks_week",
+          "check": "range[0,110]",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "alcohol_drinks_week",
+          "check": "no_tiny_values",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "alcohol_drinks_week",
+          "check": "no_leftover_codes",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "exercise_min_week",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "exercise_min_week",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "exercise_min_week",
+          "check": "range[0,3000]",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "exercise_min_week",
+          "check": "no_tiny_values",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "exercise_min_week",
+          "check": "no_leftover_codes",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "sedentary_min_day",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "sedentary_min_day",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "sedentary_min_day",
+          "check": "range[0,1440]",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "sedentary_min_day",
+          "check": "no_tiny_values",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "sedentary_min_day",
+          "check": "no_leftover_codes",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "sleep_hours",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "sleep_hours",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "sleep_hours",
+          "check": "range[2,14]",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "sleep_hours",
+          "check": "no_tiny_values",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "sleep_hours",
+          "check": "no_leftover_codes",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "diet_quality",
+          "check": "column_present",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "diet_quality",
+          "check": "type",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "diet_quality",
+          "check": "range[1,5]",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "diet_quality",
+          "check": "no_tiny_values",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "diet_quality",
+          "check": "no_leftover_codes",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "seqn",
+          "check": "missing<=40%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "smoking_status",
+          "check": "missing<=40%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "alcohol_drinks_week",
+          "check": "missing<=60%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "exercise_min_week",
+          "check": "missing<=40%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "sedentary_min_day",
+          "check": "missing<=40%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "sleep_hours",
+          "check": "missing<=40%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "diet_quality",
+          "check": "missing<=100%",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        },
+        {
+          "column": "(dataframe)",
+          "check": "not_empty",
+          "status": "passed",
+          "failed_count": 0,
+          "bad_values": []
+        }
+      ]
+    }
+  ]
+}
