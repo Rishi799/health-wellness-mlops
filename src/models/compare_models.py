@@ -1,4 +1,4 @@
-"""Compare four classifiers using the shared train/test split and log to DagsHub MLflow."""
+"""Compare machine learning classifiers using the shared train/test split and log to DagsHub MLflow."""
 
 import os
 from pathlib import Path
@@ -11,7 +11,11 @@ import numpy as np
 import pandas as pd
 from sklearn.compose import ColumnTransformer
 from sklearn.dummy import DummyClassifier
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import (
+    ExtraTreesClassifier,
+    GradientBoostingClassifier,
+    RandomForestClassifier,
+)
 from sklearn.impute import SimpleImputer
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import (
@@ -20,6 +24,7 @@ from sklearn.metrics import (
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.tree import DecisionTreeClassifier
+from xgboost import XGBClassifier
 
 ROOT = Path(__file__).resolve().parents[2]
 TRAIN_PATH = ROOT / "data/processed/train.csv"
@@ -43,6 +48,115 @@ def get_git_commit() -> str:
         ).strip()
     except Exception:
         return "unknown"
+
+
+def build_preprocessing(numeric: list[str], categorical: list[str]) -> ColumnTransformer:
+    """Build the standard preprocessing ColumnTransformer."""
+    numeric_pipeline = Pipeline([
+        ("imputer", SimpleImputer(strategy="median")),
+        ("scaler", StandardScaler()),
+    ])
+    categorical_pipeline = Pipeline([
+        ("imputer", SimpleImputer(strategy="most_frequent")),
+        ("onehot", OneHotEncoder(handle_unknown="ignore")),
+    ])
+    return ColumnTransformer([
+        ("numeric", numeric_pipeline, numeric),
+        ("categorical", categorical_pipeline, categorical),
+    ])
+
+
+def get_models(scale_pos_weight: float = 2.83) -> dict:
+    """Return dictionary of the 7 evaluated classifiers."""
+    return {
+        "Dummy Classifier": DummyClassifier(strategy="most_frequent"),
+        "Logistic Regression": LogisticRegression(
+            max_iter=1000, class_weight="balanced"
+        ),
+        "Decision Tree": DecisionTreeClassifier(
+            max_depth=8, class_weight="balanced", random_state=42
+        ),
+        "Random Forest": RandomForestClassifier(
+            n_estimators=200, class_weight="balanced",
+            random_state=42, n_jobs=-1
+        ),
+        "Gradient Boosting": GradientBoostingClassifier(
+            n_estimators=100, learning_rate=0.1,
+            max_depth=3, random_state=42
+        ),
+        "Extra Trees": ExtraTreesClassifier(
+            n_estimators=200, class_weight="balanced",
+            random_state=42, n_jobs=-1
+        ),
+        "XGBoost": XGBClassifier(
+            n_estimators=100, learning_rate=0.1,
+            max_depth=5, scale_pos_weight=scale_pos_weight,
+            random_state=42, eval_metric="logloss"
+        ),
+    }
+
+
+def get_model_params(scale_pos_weight: float = 2.83) -> dict:
+    """Explicit hyperparameters to log for each model."""
+    return {
+        "Dummy Classifier": {
+            "model_type": "DummyClassifier",
+            "strategy": "most_frequent",
+        },
+        "Logistic Regression": {
+            "model_type": "LogisticRegression",
+            "max_iter": 1000,
+            "class_weight": "balanced",
+            "solver": "lbfgs",
+        },
+        "Decision Tree": {
+            "model_type": "DecisionTreeClassifier",
+            "max_depth": 8,
+            "class_weight": "balanced",
+            "random_state": 42,
+        },
+        "Random Forest": {
+            "model_type": "RandomForestClassifier",
+            "n_estimators": 200,
+            "max_depth": "None",
+            "class_weight": "balanced",
+            "random_state": 42,
+        },
+        "Gradient Boosting": {
+            "model_type": "GradientBoostingClassifier",
+            "n_estimators": 100,
+            "learning_rate": 0.1,
+            "max_depth": 3,
+            "random_state": 42,
+        },
+        "Extra Trees": {
+            "model_type": "ExtraTreesClassifier",
+            "n_estimators": 200,
+            "max_depth": "None",
+            "class_weight": "balanced",
+            "random_state": 42,
+        },
+        "XGBoost": {
+            "model_type": "XGBClassifier",
+            "n_estimators": 100,
+            "learning_rate": 0.1,
+            "max_depth": 5,
+            "scale_pos_weight": scale_pos_weight,
+            "eval_metric": "logloss",
+            "random_state": 42,
+        },
+    }
+
+
+def evaluate_predictions(y_true, predictions, probabilities) -> dict[str, float]:
+    """Calculate standard classification performance metrics."""
+    return {
+        "accuracy": float(accuracy_score(y_true, predictions)),
+        "precision": float(precision_score(y_true, predictions, zero_division=0)),
+        "recall": float(recall_score(y_true, predictions, zero_division=0)),
+        "f1": float(f1_score(y_true, predictions, zero_division=0)),
+        "roc_auc": float(roc_auc_score(y_true, probabilities)),
+    }
 
 
 def main():
@@ -95,59 +209,11 @@ def main():
             X_test[col].notna(), np.nan
         )
 
-    numeric_pipeline = Pipeline([
-        ("imputer", SimpleImputer(strategy="median")),
-        ("scaler", StandardScaler()),
-    ])
-    categorical_pipeline = Pipeline([
-        ("imputer", SimpleImputer(strategy="most_frequent")),
-        ("onehot", OneHotEncoder(handle_unknown="ignore")),
-    ])
-    preprocessing = ColumnTransformer([
-        ("numeric", numeric_pipeline, numeric),
-        ("categorical", categorical_pipeline, categorical),
-    ])
+    preprocessing = build_preprocessing(numeric, categorical)
 
-    models = {
-        "Dummy Classifier": DummyClassifier(strategy="most_frequent"),
-        "Logistic Regression": LogisticRegression(
-            max_iter=1000, class_weight="balanced"
-        ),
-        "Decision Tree": DecisionTreeClassifier(
-            max_depth=8, class_weight="balanced", random_state=42
-        ),
-        "Random Forest": RandomForestClassifier(
-            n_estimators=200, class_weight="balanced",
-            random_state=42, n_jobs=-1
-        ),
-    }
-
-    # Explicit hyperparameters to log for each model
-    model_params = {
-        "Dummy Classifier": {
-            "model_type": "DummyClassifier",
-            "strategy": "most_frequent",
-        },
-        "Logistic Regression": {
-            "model_type": "LogisticRegression",
-            "max_iter": 1000,
-            "class_weight": "balanced",
-            "solver": "lbfgs",
-        },
-        "Decision Tree": {
-            "model_type": "DecisionTreeClassifier",
-            "max_depth": 8,
-            "class_weight": "balanced",
-            "random_state": 42,
-        },
-        "Random Forest": {
-            "model_type": "RandomForestClassifier",
-            "n_estimators": 200,
-            "max_depth": "None",
-            "class_weight": "balanced",
-            "random_state": 42,
-        },
-    }
+    scale_pos_weight = round(float((len(y_train) - y_train.sum()) / y_train.sum()), 2)
+    models = get_models(scale_pos_weight=scale_pos_weight)
+    model_params = get_model_params(scale_pos_weight=scale_pos_weight)
 
     rows = []
     for name, classifier in models.items():
@@ -169,13 +235,7 @@ def main():
             predictions = pipeline.predict(X_test)
             probabilities = pipeline.predict_proba(X_test)[:, 1]
 
-            metrics = {
-                "accuracy": float(accuracy_score(y_test, predictions)),
-                "precision": float(precision_score(y_test, predictions, zero_division=0)),
-                "recall": float(recall_score(y_test, predictions, zero_division=0)),
-                "f1": float(f1_score(y_test, predictions, zero_division=0)),
-                "roc_auc": float(roc_auc_score(y_test, probabilities)),
-            }
+            metrics = evaluate_predictions(y_test, predictions, probabilities)
 
             # Log parameters
             params = dict(model_params[name])
@@ -193,7 +253,12 @@ def main():
             mlflow.sklearn.log_model(
                 pipeline,
                 name="model",
-                skops_trusted_types=["numpy.dtype", "sklearn.tree._tree.Tree"],
+                skops_trusted_types=[
+                    "numpy.dtype",
+                    "sklearn.tree._tree.Tree",
+                    "xgboost.core.Booster",
+                    "xgboost.sklearn.XGBClassifier",
+                ],
             )
 
             rows.append({
