@@ -49,7 +49,7 @@ def main() -> None:
 
     PROCESSED.mkdir(parents=True, exist_ok=True)
     for name, part in (("train", train), ("test", test)):
-        part.to_csv(PROCESSED / f"{name}.csv", index=False)
+        part.to_csv(PROCESSED / f"{name}.csv", index=False, lineterminator="\n")
         print(f"[split] {name:<5}: {len(part):,} rows, {part[TARGET].mean():.1%} at risk "
               f"-> {(PROCESSED / f'{name}.csv').relative_to(ROOT)}")
     print(f"[split] cycle {p['cycle']}, test_size {p['test_size']}, seed {p['seed']}")

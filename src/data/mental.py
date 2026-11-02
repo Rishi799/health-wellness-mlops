@@ -51,7 +51,7 @@ def process_mental_health(input_path: str, output_path: str) -> pd.DataFrame:
 
     output = Path(output_path)
     output.parent.mkdir(parents=True, exist_ok=True)
-    result.to_csv(output, index=False)
+    result.to_csv(output, index=False, lineterminator="\n")
 
     return result
 

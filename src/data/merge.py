@@ -78,7 +78,7 @@ def merge(cycle: str) -> pd.DataFrame:
 def main(cycle: str) -> None:
     merged = merge(cycle)
     out = INTERIM / f"merged_{cycle}.csv"
-    merged.to_csv(out, index=False)
+    merged.to_csv(out, index=False, lineterminator="\n")
     print(f"[{cycle}] saved {out.relative_to(ROOT)}")
 
 

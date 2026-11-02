@@ -1,0 +1,17 @@
+# Force LF for all text files so DVC hashes are identical on Windows and macOS
+* text=auto eol=lf
+
+# Binary files — do not normalise
+*.xpt binary
+*.png binary
+*.skops binary
+*.xlsx binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+
+# Windows scripts can keep CRLF
+*.bat text eol=crlf
+*.cmd text eol=crlf
