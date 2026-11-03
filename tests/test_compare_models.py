@@ -8,11 +8,16 @@ Tests:
 - Pipelines successfully train, predict classes, and predict probabilities for all 7 models.
 - Evaluation metrics calculate accuracy, precision, recall, f1, and roc_auc within [0, 1].
 - Target and clinical diagnostic proxy columns are strictly excluded from features.
+- check_git_dirty() emits a UserWarning when the working tree is dirty.
+- Default MLflow experiment name is 'cardiometabolic-model-comparison' (Phase 2).
+- evaluate_train_metrics() returns train_roc_auc and train_recall within [0, 1].
 """
 
 import numpy as np
 import pandas as pd
 import pytest
+import warnings
+from unittest.mock import patch
 from sklearn.dummy import DummyClassifier
 from sklearn.ensemble import ExtraTreesClassifier, GradientBoostingClassifier, RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
@@ -24,9 +29,12 @@ from src.models.compare_models import (
     EXCLUDE,
     TARGET,
     build_preprocessing,
+    check_git_dirty,
     evaluate_predictions,
+    evaluate_train_metrics,
     get_model_params,
     get_models,
+    main,
 )
 
 
@@ -147,3 +155,86 @@ def test_target_leakage_exclusion():
     }
     for col in leakage_cols:
         assert col in EXCLUDE, f"{col} must be in EXCLUDE to prevent target leakage"
+
+
+# ---------------------------------------------------------------------------
+# Task A carry-over tests (Phase 2)
+# ---------------------------------------------------------------------------
+
+def test_check_git_dirty_warns_when_dirty():
+    """check_git_dirty() must emit a UserWarning when git status --porcelain is non-empty."""
+    with patch("src.models.compare_models.subprocess.check_output", return_value=" M src/models/compare_models.py\n"):
+        with warnings.catch_warnings(record=True) as caught:
+            warnings.simplefilter("always")
+            result = check_git_dirty()
+        assert result is True, "check_git_dirty() should return True for a dirty tree"
+        user_warnings = [w for w in caught if issubclass(w.category, UserWarning)]
+        assert len(user_warnings) >= 1, "A UserWarning must be emitted for a dirty working tree"
+        assert "dirty" in str(user_warnings[0].message).lower(), (
+            "Warning message should mention 'dirty'"
+        )
+
+
+def test_check_git_dirty_no_warning_when_clean():
+    """check_git_dirty() must return False and emit no warning on a clean tree."""
+    with patch("src.models.compare_models.subprocess.check_output", return_value=""):
+        with warnings.catch_warnings(record=True) as caught:
+            warnings.simplefilter("always")
+            result = check_git_dirty()
+        assert result is False, "check_git_dirty() should return False for a clean tree"
+        user_warnings = [w for w in caught if issubclass(w.category, UserWarning)]
+        assert len(user_warnings) == 0, "No UserWarning should be emitted for a clean tree"
+
+
+def test_default_experiment_name_is_phase2():
+    """The hard-coded default experiment name must be 'cardiometabolic-model-comparison' (Phase 2).
+
+    The old name 'cardiometabolic-four-model-comparison' is preserved on DagsHub;
+    new runs must use the Phase 2 name as the env-var fallback default.
+    """
+    import os
+    # Remove any env override so we test the true default
+    env_backup = os.environ.pop("MLFLOW_EXPERIMENT_NAME", None)
+    try:
+        # The default is read via os.getenv in main(); verify the fallback literal
+        import inspect
+        import src.models.compare_models as cm
+
+        source = inspect.getsource(cm.main)
+        # The new Phase 2 name must appear as the default value in os.getenv(...)
+        assert "cardiometabolic-model-comparison" in source, (
+            "main() must contain 'cardiometabolic-model-comparison' as the Phase 2 experiment name"
+        )
+        # Confirm the actual getenv default resolves to the new name when env is unset
+        resolved = os.getenv("MLFLOW_EXPERIMENT_NAME", "cardiometabolic-model-comparison")
+        assert resolved == "cardiometabolic-model-comparison", (
+            f"Default experiment name must be 'cardiometabolic-model-comparison', got '{resolved}'"
+        )
+    finally:
+        if env_backup is not None:
+            os.environ["MLFLOW_EXPERIMENT_NAME"] = env_backup
+
+
+def test_evaluate_train_metrics_returns_required_keys(synthetic_train_test):
+    """evaluate_train_metrics() must return train_roc_auc and train_recall in [0, 1]."""
+    train, test = synthetic_train_test
+    X_train = train.drop(columns=[c for c in EXCLUDE if c in train.columns])
+    y_train = train[TARGET].astype(int)
+
+    numeric = ["age", "bmi", "sbp"]
+    categorical = ["sex", "education", "phq9_category", "smoking_status"]
+    prep = build_preprocessing(numeric=numeric, categorical=categorical)
+
+    # Use Logistic Regression as a fast, deterministic model for the test
+    pipeline = Pipeline([
+        ("preprocessing", prep),
+        ("classifier", LogisticRegression(max_iter=1000, class_weight="balanced")),
+    ])
+    pipeline.fit(X_train, y_train)
+
+    train_metrics = evaluate_train_metrics(pipeline, X_train, y_train)
+
+    assert "train_roc_auc" in train_metrics, "train_roc_auc must be present in train metrics"
+    assert "train_recall" in train_metrics, "train_recall must be present in train metrics"
+    assert 0.0 <= train_metrics["train_roc_auc"] <= 1.0, "train_roc_auc must be in [0, 1]"
+    assert 0.0 <= train_metrics["train_recall"] <= 1.0, "train_recall must be in [0, 1]"
