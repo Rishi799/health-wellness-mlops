@@ -3,6 +3,7 @@
 import os
 from pathlib import Path
 import subprocess
+import warnings
 
 from dotenv import load_dotenv
 import mlflow
@@ -41,13 +42,37 @@ EXCLUDE = {
 
 
 def get_git_commit() -> str:
-    """Retrieve current git commit hash."""
+    """Retrieve current git commit hash (HEAD SHA)."""
     try:
         return subprocess.check_output(
             ["git", "rev-parse", "HEAD"], cwd=ROOT, text=True
         ).strip()
     except Exception:
         return "unknown"
+
+
+def check_git_dirty() -> bool:
+    """Return True if the working tree has uncommitted changes.
+
+    Emits a UserWarning when the tree is dirty so that MLflow run tags
+    reflect a reproducible state.  Credentials are never read here.
+    """
+    try:
+        output = subprocess.check_output(
+            ["git", "status", "--porcelain"], cwd=ROOT, text=True
+        ).strip()
+        if output:
+            warnings.warn(
+                "Working tree is dirty — uncommitted changes detected. "
+                "The logged git_commit tag may not exactly reproduce this run.\n"
+                f"Dirty files:\n{output}",
+                UserWarning,
+                stacklevel=2,
+            )
+            return True
+    except Exception:
+        pass
+    return False
 
 
 def build_preprocessing(numeric: list[str], categorical: list[str]) -> ColumnTransformer:
@@ -159,6 +184,20 @@ def evaluate_predictions(y_true, predictions, probabilities) -> dict[str, float]
     }
 
 
+def evaluate_train_metrics(pipeline, X_train, y_train) -> dict[str, float]:
+    """Calculate training-set metrics to detect overfitting.
+
+    Returns a dict with ``train_roc_auc`` and ``train_recall`` so that
+    MLflow runs expose both test *and* training performance.
+    """
+    train_preds = pipeline.predict(X_train)
+    train_probs = pipeline.predict_proba(X_train)[:, 1]
+    return {
+        "train_roc_auc": float(roc_auc_score(y_train, train_probs)),
+        "train_recall": float(recall_score(y_train, train_preds, zero_division=0)),
+    }
+
+
 def main():
     # Load credentials securely from local .env
     load_dotenv(ROOT / ".env")
@@ -167,13 +206,19 @@ def main():
         "MLFLOW_TRACKING_URI",
         "https://dagshub.com/Rishi799/health-wellness-mlops.mlflow",
     )
+    # Phase 2 experiment — new name.  The old experiment
+    # "cardiometabolic-four-model-comparison" is preserved in DagsHub for
+    # historical records; we do NOT rename or delete it.
     experiment_name = os.getenv(
         "MLFLOW_EXPERIMENT_NAME",
-        "cardiometabolic-four-model-comparison",
+        "cardiometabolic-model-comparison",
     )
     mlflow.set_tracking_uri(tracking_uri)
     mlflow.set_experiment(experiment_name)
+
     git_commit = get_git_commit()
+    # Warn (but do not abort) when the working tree has uncommitted changes.
+    check_git_dirty()
 
     train = pd.read_csv(TRAIN_PATH)
     test = pd.read_csv(TEST_PATH)
@@ -236,6 +281,7 @@ def main():
             probabilities = pipeline.predict_proba(X_test)[:, 1]
 
             metrics = evaluate_predictions(y_test, predictions, probabilities)
+            train_metrics = evaluate_train_metrics(pipeline, X_train, y_train)
 
             # Log parameters
             params = dict(model_params[name])
@@ -246,8 +292,9 @@ def main():
             })
             mlflow.log_params(params)
 
-            # Log metrics
+            # Log test metrics then training metrics (train_roc_auc, train_recall)
             mlflow.log_metrics(metrics)
+            mlflow.log_metrics(train_metrics)
 
             # Log trained model artifact
             mlflow.sklearn.log_model(
