@@ -44,3 +44,29 @@ A running engineering log of progress, challenges encountered, root-cause analys
 - Verified cache idempotency: second `dvc repro` run reported `Data and pipelines are up to date`.
 - Pushed all interim datasets and processed splits (`train.csv`, `test.csv`) to DagsHub remote storage (`dvc push` -> cache and remote in sync).
 - Generated full DAG graph (`dvc dag`) for Phase 1 review slides.
+
+
+---
+
+## Week 3: Phase 2 Docker Containerisation, Environment Management & Cross-Platform Reproducibility (Person 2 — Rishabh)
+
+### 1. What was done
+- **Production Containerisation:** Created `Dockerfile` based on `python:3.11-slim` with a non-root user (`appuser`), Docker layer caching (copying dependencies before application code), automatic `HEALTHCHECK` probing `/health`, and execution on port 8000.
+- **Slim API Runtime Requirements:** Created `requirements-api.txt` pinned to only the 7 minimal dependencies required for inference (`fastapi`, `uvicorn`, `pydantic`, `pandas`, `numpy`, `scikit-learn`, `skops`), keeping container size under target (< 600 MB) rather than bundling the 254-package dev environment.
+- **Local Composition & Operations Runbook:** Added `docker-compose.yml` for single-command developer onboarding (`docker compose up --build`) and documented container lifecycle, troubleshooting, and security in `docs/docker.md`.
+- **Cross-Platform Hash Parity:** Solved Windows/Linux DVC hash divergence by authoring `.gitattributes` (`* text=auto eol=lf` plus binary exceptions for `.xpt`, `.png`, `.skops`, `.xlsx`, `.pptx`, `.pdf`) and enforcing `lineterminator="\n"` on all data pipeline writers in `src/data/*.py`.
+- **Pipeline Re-synchronization:** Ran `dvc repro` to regenerate all 7 stages with deterministic LF line endings, validated data integrity with Pandera (358 checks passed, 0 errors), and pushed updated cache to DagsHub remote via `dvc push`.
+- **Lockfile Integrity:** Recorded clean LF md5 hashes into `dvc.lock` so that GitHub Actions CI (`dvc status`) passes with `Data and pipelines are up to date`.
+- **Main Branch Integration:** Merged `origin/main` containing Niranjan's model registry and FastAPI service (PR #15) and Rishi's CI workflow (PR #17), resolving placeholder API conflicts in favor of the production service. Verified 100% pass rate across the full 124-test suite (`pytest`).
+
+### 2. What broke & challenges encountered
+- **CRLF vs. LF Line-Ending Divergence:** Because Windows writes CRLF (`\r\n`) by default and Linux CI checks out LF (`\n`), code files (e.g. `src/data/people.py`) had different md5 hashes on developer machines versus GitHub Actions runners. This caused `dvc status` on Linux CI to falsely report that every pipeline stage was out of date.
+- **API Placeholder Merge Conflict:** To allow Dockerfile authoring and smoke testing in parallel before the API was merged, a placeholder `src/api/main.py` was created. Merging `origin/main` caused an `add/add` conflict against Niranjan's production FastAPI application.
+- **Root vs. Subfolder `.gitignore` Conflicts:** A root `.gitignore` entry `models/*` inadvertently shadowed Niranjan's tracking of `models/model.skops.dvc` and `models/model_info.json`.
+- **Starlette TestClient Socket Restrictions:** When running integration tests under restricted Windows command sandboxes without loopback networking, Starlette's `TestClient` ASGI lifespan initialization blocked on socket setup.
+
+### 3. How it was fixed
+- **Git Line Normalization:** Configured `.gitattributes`, ran `git add --renormalize .`, and updated all `to_csv()` and `json.dump()` calls across `src/data/*.py` with explicit newline parameters (`lineterminator="\n"`).
+- **Conflict Resolution Protocol:** Resolved API conflicts using `git checkout --theirs src/api/main.py src/api/__init__.py` to adopt the production application, removing obsolete placeholders and `.gitkeep` markers.
+- **Scoped Artifact Tracking:** Cleaned root `.gitignore` to allow `models/` metadata tracking, relying on `models/.gitignore` specifically for the untracked binary `model.skops`.
+- **Verified Local & Remote Pipeline:** Executed `dvc pull models/model.skops.dvc`, verified `dvc status` clean, and confirmed complete test suite passing (124 passed in ~14s).

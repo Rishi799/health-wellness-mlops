@@ -9,7 +9,7 @@ An end-to-end MLOps project that estimates a person's lifestyle-related health r
 | Course | AI252TA Machine Learning Operations — Topic 27 |
 | SDGs | 3 Good Health and Well-being · 4 Quality Education |
 | Team | Rishi · Rishabh · Rhea · John |
-| Phase | 1 — Development and reproducibility |
+| Phase | 2 — Model Deployment & Productionization |
 
 ## Dataset
 NHANES (CDC, public domain, no personal identifiers). 2017–2018 (9,254 people) for training; 2021–2023 (11,933 people) kept for Phase 3 drift. 15 files per cycle, joined on `SEQN`. See `DATA_README.md` and `DATA_DICTIONARY.xlsx`.
@@ -45,9 +45,11 @@ raw NHANES ─► people · body · lifestyle · mental ─► merge ─► vali
 Columns that must **not** be used as model features (data leakage): `seqn`, the six target parts (`diabetes`, `heart_failure`, `coronary_heart_disease`, `angina`, `heart_attack`, `stroke`), `hba1c` (HbA1c ≥ 6.5% is the diagnosis of diabetes) and `diet_quality` (not available in 2021–2023).
 
 ## Tech stack
-Python 3.11 · pandas · scikit-learn · pandera · Jupyter · Git/GitHub · DVC (remote on DagsHub) · MLflow (on DagsHub) — later FastAPI, Docker, GitHub Actions, Prometheus/Grafana, Evidently.
+Python 3.11 · pandas · scikit-learn · pandera · FastAPI · Docker · GitHub Actions · Jupyter · Git/GitHub · DVC (remote on DagsHub) · MLflow (on DagsHub) — later Prometheus/Grafana, Evidently.
 
-## Setup
+## Setup & Quickstart
+
+### 1. Local Development Setup
 ```bash
 git clone https://github.com/Rishi799/health-wellness-mlops.git
 cd health-wellness-mlops
@@ -61,7 +63,18 @@ Get the data and rebuild the pipeline (DagsHub credentials are set once with `dv
 dvc pull          # or: python download_nhanes.py
 dvc repro         # runs all stages; "Data and pipelines are up to date" when nothing changed
 dvc dag           # shows the pipeline graph
-pytest            # unit tests
+pytest            # automated tests
+```
+
+### 2. Docker Inference Service (Phase 2)
+Run the containerized FastAPI service with one command:
+```bash
+dvc pull models/model.skops.dvc
+docker compose up --build
+```
+Once running, explore interactive docs at: `http://localhost:8000/docs` or probe health:
+```bash
+curl http://localhost:8000/health
 ```
 
 ## Project structure
@@ -69,12 +82,16 @@ pytest            # unit tests
 data/raw/nhanes/   original CDC files (never edited, tracked by DVC)
 data/interim/      topic tables + merged table
 data/processed/    train.csv, test.csv
+models/            champion model artifact (.skops via DVC) & metadata
 notebooks/         exploration notebooks
 src/data/          data scripts
-src/models/        training scripts
+src/models/        training, comparison, registration & export scripts
+src/api/           FastAPI inference service & validation schemas
 reports/figures/   charts
-docs/              decision logs, data dictionaries
+docs/              decision logs, data dictionaries, docker runbook
 dvc.yaml           pipeline stages · params.yaml  pipeline settings
+Dockerfile         slim production container image (python:3.11-slim)
+docker-compose.yml local container execution on port 8000
 ```
 
 ## Key findings so far
