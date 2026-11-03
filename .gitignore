@@ -25,7 +25,3 @@ data/processed/*
 Thumbs.db
 .vscode/
 
-
-# Exported model files - versioned by DVC, not Git (Person 2)
-models/*
-!models/.gitkeep
