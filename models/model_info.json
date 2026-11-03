@@ -1,0 +1,37 @@
+{
+  "model_name": "cardiometabolic-risk-model",
+  "model_version": "2",
+  "source_run_id": "077b778198d448628bf29fbf8c4fd9e6",
+  "git_commit": "003e6893762a84d72f6b66d4874a705ab3584560",
+  "features": [
+    "age",
+    "sex",
+    "education",
+    "income_ratio",
+    "height_cm",
+    "weight_kg",
+    "bmi",
+    "waist_cm",
+    "sbp",
+    "dbp",
+    "pulse",
+    "told_high_bp",
+    "total_chol",
+    "hdl",
+    "smoking_status",
+    "alcohol_drinks_week",
+    "exercise_min_week",
+    "sedentary_min_day",
+    "sleep_hours",
+    "phq9_score",
+    "phq9_category"
+  ],
+  "decision_threshold": 0.5,
+  "metrics": {
+    "test_roc_auc": 0.8502,
+    "test_recall": 0.827
+  },
+  "test_roc_auc": 0.8502,
+  "test_recall": 0.827,
+  "export_date": "2026-11-03T14:05:15.820079+00:00"
+}
