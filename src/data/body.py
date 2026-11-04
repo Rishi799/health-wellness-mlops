@@ -227,7 +227,7 @@ def main(cycle: str) -> None:
     body = build(cycle)
     INTERIM.mkdir(parents=True, exist_ok=True)
     out = INTERIM / f"body_{cycle}.csv"
-    body.to_csv(out, index=False)
+    body.to_csv(out, index=False, lineterminator="\n")
     print(f"[{cycle}] Saved clean body table to {out.relative_to(ROOT)} ({len(body):,} rows)")
 
 

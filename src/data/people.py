@@ -116,7 +116,7 @@ def main(cycle: str) -> None:
     people = build(cycle)
     INTERIM.mkdir(parents=True, exist_ok=True)
     out = INTERIM / f"people_{cycle}.csv"
-    people.to_csv(out, index=False)
+    people.to_csv(out, index=False, lineterminator="\n")
     print(f"[{cycle}] saved {out.relative_to(ROOT)}")
 
 

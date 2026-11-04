@@ -336,7 +336,7 @@ def run(cycle: str, raw_dir: Path = RAW_DIR, out_dir: Path = INTERIM_DIR) -> Pat
     df = build_lifestyle(cycle, raw_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     path = out_dir / f"lifestyle_{cycle}.csv"
-    df.to_csv(path, index=False)
+    df.to_csv(path, index=False, lineterminator="\n")
     _say(f"  saved {path}")
     return path
 

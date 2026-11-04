@@ -1,0 +1,10 @@
+# Runtime requirements for the FastAPI inference container.
+# Versions match the dev requirements.txt (pinned in Phase 1).
+# Keep this list minimal — no Jupyter, profiling, or training tools.
+fastapi==0.143.0
+uvicorn==0.54.0
+pydantic==2.14.1
+pandas==2.3.3
+numpy==2.3.5
+scikit-learn==1.9.1
+skops==0.16.0

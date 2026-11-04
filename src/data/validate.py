@@ -423,7 +423,7 @@ def main(argv: list[str] | None = None) -> int:
     }
     report_path = args.report or REPORTS_DIR / f"validation_{args.cycle}.json"
     report_path.parent.mkdir(parents=True, exist_ok=True)
-    report_path.write_text(json.dumps(result, indent=2, default=str))
+    report_path.write_text(json.dumps(result, indent=2, default=str), newline="\n")
 
     for r in reports:
         status = "PASSED" if r["passed"] else "FAILED"
