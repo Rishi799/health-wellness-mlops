@@ -153,7 +153,10 @@ def evaluate_quality(predictor: Predictor, train: pd.DataFrame, test: pd.DataFra
                                  detail=f"n={metrics['n']}, positives={metrics['positives']}"))
         try:
             _save_calibration(y, probability, plot_path)
-            report["calibration_plot"] = str(plot_path)
+            try:
+                report["calibration_plot"] = plot_path.resolve().relative_to(REPO_ROOT).as_posix()
+            except ValueError:
+                report["calibration_plot"] = plot_path.name
         except (OSError, ValueError) as exc:
             checks.append({"check": "calibration_plot", "status": "FAIL", "hard": True,
                            "value": None, "detail": f"{type(exc).__name__}: {exc}"})

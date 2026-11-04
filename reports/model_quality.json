@@ -1,5 +1,5 @@
 {
-  "date": "2026-11-04T14:58:25.480890+00:00",
+  "date": "2026-11-04T16:20:43.398211+00:00",
   "model_name": "cardiometabolic-risk-model",
   "model_version": "2",
   "thresholds": {
@@ -240,6 +240,6 @@
       "roc_auc": 0.6857760951865873
     }
   ],
-  "calibration_plot": "C:\\Users\\rhea\\Documents\\ChatGPT\\MLOPS\\reports\\figures\\calibration.png",
+  "calibration_plot": "reports/figures/calibration.png",
   "passed": true
 }

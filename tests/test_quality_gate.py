@@ -64,6 +64,17 @@ def test_real_champion_passes_and_writes_report(champion, model_train, model_tes
     assert report["values"]["recall"] >= 0.75
     assert len(report["subgroups"]) == 6
     assert (tmp_path / "calibration.png").is_file()
+    assert report["calibration_plot"] == "calibration.png"
+
+
+def test_default_paths_store_relative_calibration_plot():
+    assert gate.main([]) == 0
+    report_text = gate.REPORT_PATH.read_text(encoding="utf-8")
+    report = json.loads(report_text)
+    assert report["calibration_plot"] == "reports/figures/calibration.png"
+    assert ":" not in report["calibration_plot"]
+    assert "\\" not in report_text
+    assert "C:" not in report_text
 
 
 def test_main_writes_json_and_calibration(monkeypatch, tmp_path, synthetic_case):
