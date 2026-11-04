@@ -335,6 +335,8 @@ def test_predict_explicit_nulls(client):
         # Age validation: adult cohort 20–80 per validate.py
         ({"age": 19}, "age"),
         ({"age": 81}, "age"),
+        ({"age": 10}, "age"),
+        ({"age": 150}, "age"),
         ({"age": -5}, "age"),
         # Sex: 1=Male, 2=Female
         ({"sex": 0}, "sex"),
