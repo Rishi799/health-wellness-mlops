@@ -58,12 +58,7 @@ jobs:
       - name: Pull data and models with DVC
         run: dvc pull
 
-      # TEMPORARY: dvc.lock was written on Windows, so its code hashes are for CRLF
-      # files and differ from this Linux (LF) checkout. Until the line-ending fix
-      # (.gitattributes + regenerated dvc.lock, Person 2) is merged, this step only
-      # reports. Remove `continue-on-error` after that fix.
       - name: Check the pipeline is up to date
-        continue-on-error: true
         run: |
           dvc status
           dvc status | grep -q "Data and pipelines are up to date"
@@ -73,3 +68,50 @@ jobs:
 
       - name: Run tests
         run: pytest -q
+
+  # Builds the real Docker image, starts it and makes one prediction (smoke test),
+  # so a broken image is caught before merge. Runs only after the tests pass.
+  docker:
+    name: Docker image builds and starts
+    runs-on: ubuntu-latest
+    needs: test
+    timeout-minutes: 20
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v5
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+
+      - name: Pull the model with DVC
+        env:
+          DAGSHUB_USER: ${{ secrets.DAGSHUB_USER }}
+          DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
+        run: |
+          pip install dvc==3.67.1
+          dvc remote modify origin --local auth basic
+          dvc remote modify origin --local user "$DAGSHUB_USER"
+          dvc remote modify origin --local password "$DAGSHUB_TOKEN"
+          dvc pull models/model.skops.dvc
+
+      - name: Build image
+        run: docker build -t health-api .
+
+      - name: Start container and check /health and /predict
+        run: |
+          docker run -d --name api -p 8000:8000 health-api
+          for i in $(seq 1 30); do
+            curl -sf http://localhost:8000/health && break
+            sleep 2
+          done
+          curl -sf http://localhost:8000/health
+          curl -sf -X POST http://localhost:8000/predict \
+            -H "Content-Type: application/json" \
+            -d '{"age": 55, "sex": 1, "bmi": 30, "sbp": 140, "told_high_bp": 1}'
+          docker images health-api --format "Image size: {{.Size}}"
+
+      - name: Show container logs on failure
+        if: failure()
+        run: docker logs api
