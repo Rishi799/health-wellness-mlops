@@ -69,6 +69,22 @@ jobs:
       - name: Run tests
         run: pytest -q
 
+      # Blocks the merge if the champion model breaks the team's quality rules
+      # (ROC-AUC >= 0.80, recall >= 0.75, beats Dummy by >= 0.20, no leakage,
+      # input contract). Brier score and subgroup recall are warnings only.
+      - name: Model quality gate
+        run: python -m src.models.quality_gate
+
+      - name: Upload quality report
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: model-quality-report
+          path: |
+            reports/model_quality.json
+            reports/figures/calibration.png
+          if-no-files-found: warn
+
   # Builds the real Docker image, starts it and makes one prediction (smoke test),
   # so a broken image is caught before merge. Runs only after the tests pass.
   docker:
