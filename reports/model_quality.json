@@ -1,0 +1,245 @@
+{
+  "date": "2026-11-04T14:58:25.480890+00:00",
+  "model_name": "cardiometabolic-risk-model",
+  "model_version": "2",
+  "thresholds": {
+    "roc_auc": {
+      "limit": 0.8,
+      "direction": "min",
+      "hard": true
+    },
+    "recall": {
+      "limit": 0.75,
+      "direction": "min",
+      "hard": true
+    },
+    "auc_improvement": {
+      "limit": 0.2,
+      "direction": "min",
+      "hard": true
+    },
+    "no_leakage": {
+      "limit": true,
+      "direction": "equal",
+      "hard": true
+    },
+    "input_contract": {
+      "limit": true,
+      "direction": "equal",
+      "hard": true
+    },
+    "artifact_features": {
+      "limit": true,
+      "direction": "equal",
+      "hard": true
+    },
+    "brier_score": {
+      "limit": 0.2,
+      "direction": "max",
+      "hard": false
+    },
+    "subgroup_recall": {
+      "limit": 0.6,
+      "direction": "min",
+      "hard": false
+    }
+  },
+  "decision_threshold": 0.5,
+  "features": [
+    "age",
+    "sex",
+    "education",
+    "income_ratio",
+    "height_cm",
+    "weight_kg",
+    "bmi",
+    "waist_cm",
+    "sbp",
+    "dbp",
+    "pulse",
+    "told_high_bp",
+    "total_chol",
+    "hdl",
+    "smoking_status",
+    "alcohol_drinks_week",
+    "exercise_min_week",
+    "sedentary_min_day",
+    "sleep_hours",
+    "phq9_score",
+    "phq9_category"
+  ],
+  "checks": [
+    {
+      "check": "no_leakage",
+      "value": true,
+      "limit": true,
+      "hard": true,
+      "status": "PASS",
+      "detail": "Excluded columns found: []"
+    },
+    {
+      "check": "input_contract",
+      "value": true,
+      "limit": true,
+      "hard": true,
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "artifact_features",
+      "value": true,
+      "limit": true,
+      "hard": true,
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "roc_auc",
+      "value": 0.8501632930698674,
+      "limit": 0.8,
+      "hard": true,
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "recall",
+      "value": 0.8269896193771626,
+      "limit": 0.75,
+      "hard": true,
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "auc_improvement",
+      "value": 0.3501632930698674,
+      "limit": 0.2,
+      "hard": true,
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "brier_score",
+      "value": 0.16167717090628705,
+      "limit": 0.2,
+      "hard": false,
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "sex=1 recall",
+      "value": 0.8873239436619719,
+      "limit": 0.6,
+      "hard": false,
+      "status": "PASS",
+      "detail": "n=542, positives=142"
+    },
+    {
+      "check": "sex=2 recall",
+      "value": 0.7687074829931972,
+      "limit": 0.6,
+      "hard": false,
+      "status": "PASS",
+      "detail": "n=566, positives=147"
+    },
+    {
+      "check": "age=20-39 recall",
+      "value": 0.11764705882352941,
+      "limit": 0.6,
+      "hard": false,
+      "status": "WARN",
+      "detail": "n=358, positives=17"
+    },
+    {
+      "check": "age=40-59 recall",
+      "value": 0.7272727272727273,
+      "limit": 0.6,
+      "hard": false,
+      "status": "PASS",
+      "detail": "n=319, positives=55"
+    },
+    {
+      "check": "age=60-79 recall",
+      "value": 0.8850574712643678,
+      "limit": 0.6,
+      "hard": false,
+      "status": "PASS",
+      "detail": "n=345, positives=174"
+    },
+    {
+      "check": "age=80 recall",
+      "value": 1.0,
+      "limit": 0.6,
+      "hard": false,
+      "status": "PASS",
+      "detail": "n=86, positives=43"
+    }
+  ],
+  "values": {
+    "n": 1108,
+    "positives": 289,
+    "recall": 0.8269896193771626,
+    "precision": 0.5494252873563218,
+    "roc_auc": 0.8501632930698674,
+    "dummy_auc": 0.5,
+    "auc_improvement": 0.3501632930698674,
+    "brier_score": 0.16167717090628705
+  },
+  "subgroups": [
+    {
+      "field": "sex",
+      "group": "1",
+      "n": 542,
+      "positives": 142,
+      "recall": 0.8873239436619719,
+      "precision": 0.5431034482758621,
+      "roc_auc": 0.8760387323943661
+    },
+    {
+      "field": "sex",
+      "group": "2",
+      "n": 566,
+      "positives": 147,
+      "recall": 0.7687074829931972,
+      "precision": 0.5566502463054187,
+      "roc_auc": 0.8292663127303428
+    },
+    {
+      "field": "age",
+      "group": "20-39",
+      "n": 358,
+      "positives": 17,
+      "recall": 0.11764705882352941,
+      "precision": 0.6666666666666666,
+      "roc_auc": 0.7253751940658961
+    },
+    {
+      "field": "age",
+      "group": "40-59",
+      "n": 319,
+      "positives": 55,
+      "recall": 0.7272727272727273,
+      "precision": 0.5063291139240507,
+      "roc_auc": 0.7955922865013774
+    },
+    {
+      "field": "age",
+      "group": "60-79",
+      "n": 345,
+      "positives": 174,
+      "recall": 0.8850574712643678,
+      "precision": 0.5724907063197026,
+      "roc_auc": 0.7265913826712375
+    },
+    {
+      "field": "age",
+      "group": "80",
+      "n": 86,
+      "positives": 43,
+      "recall": 1.0,
+      "precision": 0.5119047619047619,
+      "roc_auc": 0.6857760951865873
+    }
+  ],
+  "calibration_plot": "C:\\Users\\rhea\\Documents\\ChatGPT\\MLOPS\\reports\\figures\\calibration.png",
+  "passed": true
+}

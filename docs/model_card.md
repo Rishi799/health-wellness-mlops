@@ -39,33 +39,39 @@ are imputed inside the fitted pipeline; the champion is not refitted by the gate
 
 ## Metrics and quality gate
 
-**Current verification status: pending DVC artifacts.** On 2026-11-04 the clean
-checkout could not retrieve the champion or processed data from the configured
-DagsHub remote. No new measured results are claimed here. Run
-`python -m src.models.quality_gate` after restoring the artifacts, then populate
-the following results from `reports/model_quality.json` and inspect
-`reports/figures/calibration.png` before merging this work.
-
-Phase 1 reference values recorded in `models/model_info.json` are ROC-AUC
-0.8502 and recall 0.827 at threshold 0.5. They are historical reference values,
-not a substitute for rerunning the gate on the retrieved champion.
+**Gate result: PASS with one subgroup warning**, evaluated on 2026-11-04.
+Results below come from `reports/model_quality.json`, using the registered
+champion and all 1,108 held-out test rows (289 positives), at threshold 0.5.
+The downloaded artifact matches its DVC MD5
+`2b3f51261f58027084ae18a3144576bc`; train/test content matches the DVC lock
+hashes after normalizing Windows line endings. The champion was not refitted.
+Reproduce with `python -m src.models.quality_gate`; see the 10-bin calibration
+curve in `reports/figures/calibration.png`. Values are rounded to four decimals
+here; the JSON report retains full precision.
 
 | Overall metric | Current gate value | Agreement |
 | --- | --- | --- |
-| ROC-AUC | Pending | >= 0.80; hard check |
-| Recall | Pending | >= 0.75; hard check |
-| Most-frequent dummy ROC-AUC | Pending | Fit baseline on training labels only |
-| ROC-AUC improvement over dummy | Pending | >= 0.20; hard check |
-| Brier score | Pending | Warning when > 0.20 |
+| ROC-AUC | 0.8502 | >= 0.80; hard check |
+| Recall | 0.8270 | >= 0.75; hard check |
+| Precision | 0.5494 | Descriptive; no gate threshold |
+| Most-frequent dummy ROC-AUC | 0.5000 | Fit baseline on training labels only |
+| ROC-AUC improvement over dummy | 0.3502 | >= 0.20; hard check |
+| Brier score | 0.1617 | Warning when > 0.20 |
 
 | Subgroup | n | Positives | Recall | Precision | ROC-AUC |
 | --- | --- | --- | --- | --- | --- |
-| Sex 1 (male) | Pending | Pending | Pending | Pending | Pending |
-| Sex 2 (female) | Pending | Pending | Pending | Pending | Pending |
-| Age 20-39 | Pending | Pending | Pending | Pending | Pending |
-| Age 40-59 | Pending | Pending | Pending | Pending | Pending |
-| Age 60-79 | Pending | Pending | Pending | Pending | Pending |
-| Age 80 (capped) | Pending | Pending | Pending | Pending | Pending |
+| Sex 1 (male) | 542 | 142 | 0.8873 | 0.5431 | 0.8760 |
+| Sex 2 (female) | 566 | 147 | 0.7687 | 0.5567 | 0.8293 |
+| Age 20-39 | 358 | 17 | 0.1176 | 0.6667 | 0.7254 |
+| Age 40-59 | 319 | 55 | 0.7273 | 0.5063 | 0.7956 |
+| Age 60-79 | 345 | 174 | 0.8851 | 0.5725 | 0.7266 |
+| Age 80 (capped) | 86 | 43 | 1.0000 | 0.5119 | 0.6858 |
+
+**Subgroup finding:** ages 20-39 trigger the recall warning: only 2 of 17
+positives were detected (15 missed) among 358 participants. This low recall
+requires team review despite the overall gate passing. The other five groups
+meet the 0.60 recall warning threshold. Female recall (0.7687) is lower than
+male recall (0.8873); the descriptive comparison does not establish a cause.
 
 Subgroup recall below 0.60 triggers a warning, not a hard failure. Always
 interpret rates with n and positive counts. Recall is unavailable when there
@@ -74,7 +80,10 @@ Empty groups retain n=0 in the JSON report, with unavailable metrics stored as
 null. Precision is 0 when a nonempty group has no predicted positives.
 These descriptive checks do not establish fairness or statistical certainty.
 Brier score and a 10-bin calibration curve assess probability quality; meeting
-the Brier threshold does not establish clinical calibration.
+the Brier threshold does not establish clinical calibration. In this run, all
+ten occupied bins have mean predicted probability above the observed positive
+fraction, indicating overestimation on this test set despite the passing Brier
+check.
 
 The gate also blocks feature leakage, mismatches with `PredictionInput` fields,
 and a mismatch between artifact feature ordering and the metadata. All hard
@@ -95,6 +104,8 @@ These are educational display bands, not clinically validated cutoffs.
 ## Limitations and risks
 
 - **False negatives:** Phase 1 missed 50 of 289 positive test participants.
+  The current gate reproduces that overall recall, and misses 15 of 17
+  positives in the 20-39 age group.
   A low score must not reassure someone to dismiss symptoms or delay care.
 - **Potential shortcut:** `told_high_bp` may reflect previous healthcare contact
   or existing illness and act as a shortcut for reported diagnosis. Strong
