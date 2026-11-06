@@ -77,6 +77,8 @@ Once running, explore interactive docs at: `http://localhost:8000/docs` or probe
 curl http://localhost:8000/health
 ```
 
+For the public Phase 2 demo, follow [the Render deployment and rollback runbook](docs/render-deployment.md). It covers the Free Singapore service, private deploy-hook setup, application SHA verification, and rollback. `/model-info` exposes `service_git_commit` separately from the model's training commit. CI now has an offline tier (`pytest --offline`) that requires no DVC credentials or downloaded data.
+
 ## Project structure
 ```
 data/raw/nhanes/   original CDC files (never edited, tracked by DVC)

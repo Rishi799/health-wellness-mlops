@@ -236,7 +236,7 @@ def export_model_info_json(
     """Write model_info.json with 2-space indentation."""
     output_path = Path(output_path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    with open(output_path, "w", encoding="utf-8") as f:
+    with open(output_path, "w", encoding="utf-8", newline="\n") as f:
         json.dump(info_dict, f, indent=2)
     return output_path
 

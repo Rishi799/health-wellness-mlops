@@ -1,10 +1,5 @@
-# Continuous delivery: after CI passes on main, build the Docker image with the
-# registered model, publish it to GitHub Container Registry and trigger a redeploy.
-#
-# Image:   ghcr.io/rishi799/health-wellness-api:latest  and  :<commit SHA>
-# Secrets: DAGSHUB_USER, DAGSHUB_TOKEN  (to pull the model with DVC)
-#          RENDER_DEPLOY_HOOK           (optional; the redeploy step is skipped until it is set)
-
+# Publish only a trusted main commit whose full CI completed successfully.
+# Rerun CI on main to republish; there is no unchecked manual CD shortcut.
 name: CD
 
 on:
@@ -12,7 +7,6 @@ on:
     workflows: [CI]
     types: [completed]
     branches: [main]
-  workflow_dispatch:
 
 concurrency:
   group: cd-main
@@ -24,22 +18,32 @@ permissions:
 
 env:
   IMAGE: ghcr.io/rishi799/health-wellness-api
+  RELEASE_SHA: ${{ github.event.workflow_run.head_sha }}
 
 jobs:
   publish:
-    name: Build and publish image
-    # Only run when CI on main succeeded (or when started by hand)
-    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    name: Build, verify and publish image
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_branch == 'main' &&
+      github.event.workflow_run.head_repository.full_name == github.repository &&
+      (github.event.workflow_run.event == 'push' ||
+       github.event.workflow_run.event == 'workflow_dispatch')
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 35
     steps:
       - name: Check out the commit that passed CI
         uses: actions/checkout@v5
         with:
-          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+          ref: ${{ env.RELEASE_SHA }}
+          persist-credentials: false
 
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v6
+      - name: Reject a stale release
+        run: |
+          current=$(git ls-remote origin refs/heads/main | cut -f1)
+          test "$RELEASE_SHA" = "$current" || { echo "Main advanced; release the newer tested commit instead."; exit 1; }
+
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.11"
 
@@ -54,36 +58,50 @@ jobs:
           dvc remote modify origin --local password "$DAGSHUB_TOKEN"
           dvc pull models/model.skops.dvc
 
-      - name: Log in to GitHub Container Registry
+      - name: Log in to GHCR
         uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v4
+      - uses: docker/setup-buildx-action@v4
 
-      - name: Build and push image
+      - name: Build the release image locally
         uses: docker/build-push-action@v7
         with:
           context: .
-          push: true
+          platforms: linux/amd64
+          load: true
+          build-args: BUILD_SHA=${{ env.RELEASE_SHA }}
           tags: |
+            ${{ env.IMAGE }}:${{ env.RELEASE_SHA }}
             ${{ env.IMAGE }}:latest
-            ${{ env.IMAGE }}:${{ github.event.workflow_run.head_sha || github.sha }}
           labels: |
             org.opencontainers.image.source=https://github.com/${{ github.repository }}
-            org.opencontainers.image.revision=${{ github.event.workflow_run.head_sha || github.sha }}
-            org.opencontainers.image.description=Cardiometabolic risk API (FastAPI + Logistic Regression)
+            org.opencontainers.image.revision=${{ env.RELEASE_SHA }}
 
-      - name: Trigger redeploy on Render
+      - name: Verify the exact image before publishing
+        run: |
+          docker run -d --name api -p 8000:8000 "$IMAGE:$RELEASE_SHA"
+          python -m scripts.smoke_test --base-url http://127.0.0.1:8000 --expected-commit "$RELEASE_SHA"
+          docker exec api sh -c 'test "$(id -u)" -ne 0 && test ! -w /app/models/model.skops'
+
+      - name: Publish the tested image
+        run: |
+          docker push "$IMAGE:$RELEASE_SHA"
+          docker push "$IMAGE:latest"
+
+      - name: Deploy SHA image and verify Render
         env:
           RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
-        run: |
-          if [ -z "$RENDER_DEPLOY_HOOK" ]; then
-            echo "RENDER_DEPLOY_HOOK is not set yet - skipping redeploy."
-            exit 0
-          fi
-          curl -fsS -X POST "$RENDER_DEPLOY_HOOK" > /dev/null
-          echo "Redeploy triggered."
+          RENDER_SERVICE_URL: ${{ vars.RENDER_SERVICE_URL }}
+        run: python -m scripts.render_deploy
+
+      - name: Show container logs on failure
+        if: failure()
+        run: docker logs api || true
+
+      - name: Stop test container
+        if: always()
+        run: docker rm -f api || true

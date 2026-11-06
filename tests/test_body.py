@@ -13,8 +13,11 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+import pytest
 
 from src.data.body import CONTRACT, build, process_bp, process_bpq
+
+pytestmark = pytest.mark.real_artifacts
 
 
 class TestBodyPipeline(unittest.TestCase):

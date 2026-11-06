@@ -23,13 +23,39 @@ permissions:
   contents: read
 
 jobs:
+  offline:
+    name: Offline tests (no secrets)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      WANDB_MODE: disabled
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: python -m pip install -r requirements.txt
+      - name: Test without downloading data or models
+        run: python -m pytest --offline -q
+
   test:
     name: Data checks and tests
+    needs: offline
+    # Forks never receive DagsHub credentials. Their offline checks still run.
+    if: >-
+      github.event_name != 'pull_request' ||
+      (github.event.pull_request.head.repo.full_name == github.repository &&
+       github.event.pull_request.draft == false)
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
       - name: Check out code
         uses: actions/checkout@v5
+        with:
+          persist-credentials: false
 
       - name: Set up Python 3.11
         uses: actions/setup-python@v6
@@ -58,13 +84,12 @@ jobs:
       - name: Pull data and models with DVC
         run: dvc pull
 
-      - name: Check the pipeline is up to date
+      - name: Rebuild and verify the locked pipeline
         run: |
-          dvc status
-          dvc status | grep -q "Data and pipelines are up to date"
-
-      - name: Validate data (pandera)
-        run: python -m src.data.validate --cycle 2017-2018
+          dvc repro --force
+          git diff --exit-code -- dvc.lock reports/validation_2017-2018.json
+          dvc status --json > /tmp/dvc-status.json
+          python -c "import json; assert not json.load(open('/tmp/dvc-status.json')), 'DVC pipeline is dirty'"
 
       - name: Run tests
         run: pytest -q
@@ -95,6 +120,8 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v5
+        with:
+          persist-credentials: false
 
       - name: Set up Python 3.11
         uses: actions/setup-python@v6
@@ -113,21 +140,19 @@ jobs:
           dvc pull models/model.skops.dvc
 
       - name: Build image
-        run: docker build -t health-api .
+        run: docker build --build-arg BUILD_SHA="$GITHUB_SHA" -t health-api .
 
       - name: Start container and check /health and /predict
         run: |
           docker run -d --name api -p 8000:8000 health-api
-          for i in $(seq 1 30); do
-            curl -sf http://localhost:8000/health && break
-            sleep 2
-          done
-          curl -sf http://localhost:8000/health
-          curl -sf -X POST http://localhost:8000/predict \
-            -H "Content-Type: application/json" \
-            -d '{"age": 55, "sex": 1, "bmi": 30, "sbp": 140, "told_high_bp": 1}'
+          python -m scripts.smoke_test --base-url http://127.0.0.1:8000 --expected-commit "$GITHUB_SHA"
+          docker exec api sh -c 'test "$(id -u)" -ne 0 && test ! -w /app/models/model.skops'
           docker images health-api --format "Image size: {{.Size}}"
 
       - name: Show container logs on failure
         if: failure()
         run: docker logs api
+
+      - name: Stop test container
+        if: always()
+        run: docker rm -f api || true

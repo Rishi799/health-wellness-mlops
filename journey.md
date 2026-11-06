@@ -2,6 +2,14 @@
 
 A running engineering log of progress, challenges encountered, root-cause analyses, and resolutions across project phases.
 
+## 6 November 2026: Phase 2 deployment hardening (Rishab)
+
+- Started from current main on `p2-deployment-hardening`; added discrete API categories, boolean rejection, generic client errors, model/artifact contract checks, and a startup smoke prediction. Kept the registered model and display bands unchanged.
+- Reproduced and fixed DVC report drift caused by absolute checkout paths. Regenerated the pipeline/lock with DVC; all seven CSV hashes are unchanged and the validation report now uses repository-relative POSIX paths.
+- Added an offline CI tier and verified it in a separate copy with no NHANES data or champion binary. Full tests: 177 passed; offline copy: 87 passed, 90 intentionally skipped. Validated the workflows with actionlint 1.7.12 and compiled source/scripts.
+- Added application build identity, read-only model files, PORT support, pre-publish container checks, trusted main CI gating, SHA-specific Render hooks, and public deployment verification. Added a quality check before registry alias promotion; no remote model registration or alias mutation was performed.
+- Wrote `docs/render-deployment.md` with account setup, Free Singapore image deployment, private hook/repository variable configuration, synthetic smoke checks, and image rollback/restore. Public deployment and rollback remain pending manual Render setup; image build verification for this change runs in GitHub CI.
+
 ---
 
 ## Week 1: Phase 1 Setup, DVC Initialization & Clinical Pipeline (Person 2 — Rishabh)

@@ -263,6 +263,7 @@ def test_parity_fails_on_mismatched_model(mock_pipeline, sample_test_df):
 
 
 # Separate validation for actual exported artifacts in models/
+@pytest.mark.real_artifacts
 def test_disk_exported_artifacts_validation():
     """Verify the actual generated models/model.skops and models/model_info.json if present."""
     root = Path(__file__).resolve().parents[1]

@@ -6,7 +6,9 @@ reports/
 docs/
 tests/
 .env
-.dvc/config.local
+.env.*
+!.env.example
+.dvc/
 __pycache__
 *.pyc
 .pytest_cache

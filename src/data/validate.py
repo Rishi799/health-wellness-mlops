@@ -358,6 +358,16 @@ def _read(path: Path) -> pd.DataFrame:
     return pd.read_csv(path)
 
 
+def source_label(path: Path) -> str:
+    """Keep reports identical across checkout locations and operating systems."""
+    try:
+        return path.resolve().relative_to(REPO_ROOT.resolve()).as_posix()
+    except ValueError:
+        # External --path inputs have no repository-relative identity. Do not
+        # include a machine-specific absolute directory in a shareable report.
+        return path.name
+
+
 def _targets(args) -> list[tuple[str, Path, bool]]:
     """(schema, path, required) to validate."""
     if args.schema:
@@ -390,7 +400,7 @@ def main(argv: list[str] | None = None) -> int:
                     {
                         "schema": name,
                         "cycle": args.cycle,
-                        "source": str(path),
+                        "source": source_label(path),
                         "rows": 0,
                         "columns": 0,
                         "passed": False,
@@ -403,7 +413,7 @@ def main(argv: list[str] | None = None) -> int:
                                 "check": "file_exists",
                                 "status": "failed",
                                 "failed_count": 1,
-                                "bad_values": [f"{path} not found"],
+                                "bad_values": [f"{source_label(path)} not found"],
                             }
                         ],
                     }
@@ -411,7 +421,7 @@ def main(argv: list[str] | None = None) -> int:
             else:
                 skipped.append(name)
             continue
-        reports.append(validate_dataframe(_read(path), name, args.cycle, str(path)))
+        reports.append(validate_dataframe(_read(path), name, args.cycle, source_label(path)))
 
     ok = all(r["passed"] for r in reports)
     result = {
@@ -423,7 +433,7 @@ def main(argv: list[str] | None = None) -> int:
     }
     report_path = args.report or REPORTS_DIR / f"validation_{args.cycle}.json"
     report_path.parent.mkdir(parents=True, exist_ok=True)
-    report_path.write_text(json.dumps(result, indent=2, default=str), newline="\n")
+    report_path.write_text(json.dumps(result, indent=2, default=str), encoding="utf-8", newline="\n")
 
     for r in reports:
         status = "PASSED" if r["passed"] else "FAILED"
