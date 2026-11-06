@@ -5,7 +5,7 @@ the project data dictionary and src/data/validate.py pandera schemas.
 """
 
 from typing import Any, Dict, List, Literal, Optional
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 class PredictionInput(BaseModel):
@@ -18,6 +18,14 @@ class PredictionInput(BaseModel):
     """
 
     model_config = ConfigDict(extra="forbid")
+
+    @field_validator("*", mode="before")
+    @classmethod
+    def reject_boolean_values(cls, value):
+        # bool is a subclass of int in Python, but is not a survey category or measurement.
+        if isinstance(value, bool):
+            raise ValueError("Use a numeric value or category, not a boolean")
+        return value
 
     # Demographics (Required)
     age: int = Field(
@@ -36,10 +44,8 @@ class PredictionInput(BaseModel):
     )
 
     # Demographics & Socioeconomic (Optional)
-    education: Optional[float] = Field(
+    education: Optional[Literal[1.0, 2.0, 3.0, 4.0, 5.0]] = Field(
         None,
-        ge=1.0,
-        le=5.0,
         description="Education level: 1 = <9th grade, 2 = 9-11th grade, 3 = High school/GED, 4 = Some college/AA, 5 = College grad+",
         examples=[3.0],
     )
@@ -101,10 +107,8 @@ class PredictionInput(BaseModel):
         description="Resting pulse in beats per minute (30.0–200.0)",
         examples=[72.0],
     )
-    told_high_bp: Optional[float] = Field(
+    told_high_bp: Optional[Literal[0.0, 1.0]] = Field(
         None,
-        ge=0.0,
-        le=1.0,
         description="Ever told by doctor had high blood pressure: 1 = Yes, 0 = No",
         examples=[0.0],
     )
@@ -220,6 +224,7 @@ class ModelInfoResponse(BaseModel):
     model_version: str
     source_run_id: Optional[str] = None
     git_commit: Optional[str] = None
+    service_git_commit: str = "unknown"
     features: List[str]
     decision_threshold: float
     metrics: Dict[str, Any]

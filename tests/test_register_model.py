@@ -12,6 +12,7 @@ from src.models.register_model import (
     main,
     register_model_artifact,
     set_model_alias,
+    validate_candidate,
 )
 
 
@@ -189,6 +190,7 @@ def test_main_cli_execution(mock_run):
     with patch("src.models.register_model.MlflowClient") as mock_client_cls, \
          patch("src.models.register_model.find_best_logistic_regression_run", return_value=mock_run), \
          patch("src.models.register_model.register_model_artifact") as mock_reg, \
+         patch("src.models.register_model.validate_candidate", return_value={"passed": True}), \
          patch("src.models.register_model.set_model_alias", return_value=(True, "Alias champion set")), \
          patch("src.models.register_model.apply_model_metadata", return_value={"threshold": "0.5"}):
 
@@ -204,3 +206,34 @@ def test_main_cli_execution(mock_run):
             model_name=DEFAULT_MODEL_NAME,
             client=mock_client_cls.return_value,
         )
+
+
+def test_failed_candidate_does_not_register_or_move_alias(mock_run):
+    with patch("src.models.register_model.MlflowClient"), \
+         patch("src.models.register_model.find_best_logistic_regression_run", return_value=mock_run), \
+         patch("src.models.register_model.validate_candidate", side_effect=ValueError("quality gate failed")), \
+         patch("src.models.register_model.register_model_artifact") as register, \
+         patch("src.models.register_model.set_model_alias") as alias, \
+         patch("sys.argv", ["register_model.py"]):
+        with pytest.raises(ValueError, match="quality gate failed"):
+            main()
+    register.assert_not_called()
+    alias.assert_not_called()
+
+
+def test_non_logistic_run_is_rejected_before_loading(mock_run):
+    mock_run.data.tags["model_name"] = "Dummy Classifier"
+    with patch("mlflow.sklearn.load_model") as load:
+        with pytest.raises(ValueError, match="finished Logistic Regression"):
+            validate_candidate(mock_run)
+    load.assert_not_called()
+
+
+def test_candidate_quality_failure_blocks_promotion(mock_run):
+    model = MagicMock()
+    model.feature_names_in_ = ["age"]
+    with patch("mlflow.sklearn.load_model", return_value=model), \
+         patch("src.models.register_model.pd.read_csv"), \
+         patch("src.models.quality_gate.evaluate_quality", return_value={"passed": False, "checks": []}):
+        with pytest.raises(ValueError, match="champion was not changed"):
+            validate_candidate(mock_run)

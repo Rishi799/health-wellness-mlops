@@ -7,6 +7,7 @@ from sklearn.dummy import DummyClassifier
 from sklearn.metrics import recall_score, roc_auc_score
 
 from src.models.compare_models import EXCLUDE, TARGET
+from src.api.predictor import Predictor
 
 
 @pytest.fixture(scope="session")
@@ -70,7 +71,9 @@ def test_seqn_invariance(champion, median_person):
 
 def test_deterministic_predictions(champion, model_test):
     rows = model_test[champion.features].head(50)
-    np.testing.assert_array_equal(champion.model.predict_proba(rows), champion.model.predict_proba(rows))
+    reloaded = Predictor()
+    reloaded.load()
+    np.testing.assert_array_equal(champion.model.predict_proba(rows), reloaded.model.predict_proba(rows))
 
 
 def test_minimum_performance(champion, model_train, model_test, probabilities):

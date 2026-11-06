@@ -13,7 +13,7 @@ import numpy as np
 import pandas as pd
 import skops.io as sio
 
-from src.api.schemas import PredictionInput, PredictionResponse
+from src.api.schemas import ModelInfoResponse, PredictionInput, PredictionResponse
 
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_MODEL_PATH = ROOT / "models/model.skops"
@@ -92,7 +92,18 @@ class Predictor:
                 )
 
             self.model = sio.load(self.model_path, trusted=APPROVED_SKOPS_TRUSTED_TYPES)
+            ModelInfoResponse.model_validate(self.model_info)
+            if (len(self.features) != len(set(self.features)) or
+                    set(self.features) != set(PredictionInput.model_fields)):
+                raise ValueError("Model metadata does not match the serving feature contract")
+            if list(self.model.feature_names_in_) != self.features:
+                raise ValueError("Model artifact feature ordering differs from metadata")
+            if list(self.model.classes_) != [0, 1]:
+                raise ValueError("Model classes must be ordered [0, 1]")
             self.is_loaded = True
+            # A readable artifact is not necessarily a usable estimator. Keep
+            # /health unavailable unless a representative prediction succeeds.
+            self.predict(PredictionInput(age=55, sex=1))
             self.load_error = None
         except Exception as exc:
             self.model = None
@@ -116,6 +127,10 @@ class Predictor:
 
         # Calculate predicted probability of positive class (cardiometabolic risk)
         probs = self.model.predict_proba(df)
+        if (np.shape(probs) != (1, 2) or not np.isfinite(probs).all() or
+                not ((probs >= 0) & (probs <= 1)).all() or
+                not np.allclose(np.sum(probs, axis=1), 1)):
+            raise ValueError("Model returned invalid probabilities")
         prob_positive = float(probs[0, 1])
 
         prob_rounded = round(prob_positive, 4)

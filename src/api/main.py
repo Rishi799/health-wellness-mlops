@@ -8,6 +8,7 @@ Provides endpoints:
 
 from contextlib import asynccontextmanager
 import logging
+import os
 from typing import Any
 
 from fastapi import FastAPI, HTTPException, status
@@ -22,6 +23,7 @@ from src.api.schemas import (
 )
 
 logger = logging.getLogger("uvicorn.error")
+MODEL_UNAVAILABLE = "Model is unavailable"
 
 
 @asynccontextmanager
@@ -41,8 +43,11 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="Cardiometabolic Risk Assessment API",
     description=(
-        "Production inference service serving champion Logistic Regression model "
-        "for predicting cardiometabolic risk from NHANES clinical, demographic, and lifestyle features."
+        "Educational awareness service using NHANES clinical, demographic, and lifestyle features. "
+        "The model estimates association with prior self-reported diagnosis, not future disease. "
+        "Scores are uncalibrated model outputs and bands are project-defined, not clinical thresholds. "
+        "The current evaluation detected only 2 of 17 positive cases aged 20-39. "
+        "A low score must not be used to dismiss symptoms or delay professional care."
     ),
     version="1.0.0",
     lifespan=lifespan,
@@ -67,7 +72,7 @@ def health() -> Any:
                 "status": "unhealthy",
                 "model_loaded": False,
                 "model_version": None,
-                "error": predictor.load_error or "Model is not loaded",
+                "error": MODEL_UNAVAILABLE,
             },
         )
     return HealthResponse(
@@ -92,9 +97,12 @@ def model_info() -> Any:
     if not predictor.is_loaded:
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail=predictor.load_error or "Model is not loaded",
+            detail=MODEL_UNAVAILABLE,
         )
-    return ModelInfoResponse(**predictor.model_info)
+    return ModelInfoResponse(**{
+        **predictor.model_info,
+        "service_git_commit": os.getenv("SERVICE_GIT_COMMIT", "unknown"),
+    })
 
 
 @app.post(
@@ -116,14 +124,14 @@ def predict(payload: PredictionInput) -> Any:
     if not predictor.is_loaded:
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail=predictor.load_error or "Model is not loaded",
+            detail=MODEL_UNAVAILABLE,
         )
     try:
         return predictor.predict(payload)
-    except Exception as exc:
+    except Exception:
         logger.exception("Unexpected inference error")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Inference execution failure: {exc}",
+            detail="Prediction could not be completed",
         )
 

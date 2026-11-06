@@ -10,6 +10,19 @@ from src.api.predictor import Predictor
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def pytest_addoption(parser):
+    parser.addoption("--offline", action="store_true",
+                     help="Run tests that need no downloaded NHANES data or champion artifact")
+
+
+def pytest_collection_modifyitems(config, items):
+    if config.getoption("--offline"):
+        for item in items:
+            if (item.get_closest_marker("real_artifacts") or
+                    {"champion", "model_train", "model_test"} & set(item.fixturenames)):
+                item.add_marker(pytest.mark.skip(reason="requires DVC artifacts; full CI tier"))
+
+
 @pytest.fixture(scope="session")
 def champion():
     predictor = Predictor()

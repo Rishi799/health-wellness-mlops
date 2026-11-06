@@ -27,7 +27,7 @@ The inference pipeline accepts 21 features in the exact ordering expected by the
 |:---:|---|:---:|:---:|---|---|
 | 1 | `age` | `int` | **Yes** | `20` – `80` | Age in years (adult cohort) |
 | 2 | `sex` | `int` | **Yes** | `1` (Male), `2` (Female) | Biological sex |
-| 3 | `education` | `float` | No | `1.0` – `5.0` | 1: <9th grade, 2: 9–11th, 3: High school/GED, 4: Some college/AA, 5: College grad+ |
+| 3 | `education` | numeric category | No | Exactly `1`, `2`, `3`, `4`, `5` (equivalent floats accepted) | 1: <9th grade, 2: 9–11th, 3: High school/GED, 4: Some college/AA, 5: College grad+ |
 | 4 | `income_ratio` | `float` | No | `0.0` – `5.0` | Family income-to-poverty ratio |
 | 5 | `height_cm` | `float` | No | `50.0` – `230.0` | Standing height in cm |
 | 6 | `weight_kg` | `float` | No | `2.0` – `300.0` | Measured weight in kg |
@@ -54,11 +54,15 @@ The inference pipeline accepts 21 features in the exact ordering expected by the
 
 ## 3. Risk Stratification Bands
 
-| Risk Band | Risk Score Range | Probability Range | Clinical Meaning |
+| Risk Band | Risk Score Range | Approximate Model Output Range | Project Display Meaning |
 |---|---|---|---|
-| **Low** | `< 30.0` | `< 0.3000` | Below baseline population risk |
-| **Moderate** | `30.0` – `59.9` | `0.3000` – `0.5999` | Intermediate cardiometabolic risk |
-| **High** | `≥ 60.0` | `≥ 0.6000` | Substantially elevated risk |
+| **Low** | `< 30.0` | `< 0.3000` | Low awareness band |
+| **Moderate** | `30.0` – `59.9` | `0.3000` – `0.5999` | Moderate awareness band |
+| **High** | `≥ 60.0` | `≥ 0.6000` | High awareness band |
+
+Bands are applied after rounding the score to one decimal. These are project-defined display bands, not clinically validated thresholds. The model is uncalibrated and predicts association with prior self-reported diagnosis, not future disease. See the model card, including the 2/17 recall finding for ages 20-39. Boolean values are rejected for all inputs; fractional education and binary BP-history values return 422. Missing optional values remain supported.
+
+`GET /model-info` also returns `service_git_commit` for the application build. Its `git_commit` field remains the model training commit. Public 500/503 errors omit internal exception details; use private server logs for diagnosis.
 
 ---
 
@@ -87,7 +91,7 @@ If the model artifact failed to load, `/health` returns `503 Service Unavailable
   "status": "unhealthy",
   "model_loaded": false,
   "model_version": null,
-  "error": "FileNotFoundError: Model artifact not found at models/model.skops"
+  "error": "Model is unavailable"
 }
 ```
 

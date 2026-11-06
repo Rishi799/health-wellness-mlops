@@ -126,3 +126,21 @@ def test_cli_exit_codes_and_report(good, tmp_path):
 def test_missing_merged_file_fails(tmp_path, monkeypatch):
     monkeypatch.setattr(V, "INTERIM_DIR", tmp_path)
     assert V.main(["--cycle", "2017-2018", "--report", str(tmp_path / "r.json")]) == 1
+
+
+def test_reports_identical_in_two_checkout_locations(good, tmp_path, monkeypatch):
+    _, merged = good
+    reports = []
+    for name in ("checkout-a", "different/checkout-b"):
+        root = tmp_path / name
+        interim = root / "data/interim"
+        interim.mkdir(parents=True)
+        merged.to_csv(interim / "merged_2017-2018.csv", index=False)
+        monkeypatch.setattr(V, "REPO_ROOT", root)
+        monkeypatch.setattr(V, "INTERIM_DIR", interim)
+        report = root / "report.json"
+        assert V.main(["--cycle", "2017-2018", "--only", "merged", "--report", str(report)]) == 0
+        reports.append(report.read_bytes())
+    assert reports[0] == reports[1]
+    assert b"data/interim/merged_2017-2018.csv" in reports[0]
+    assert str(tmp_path).encode() not in reports[0]

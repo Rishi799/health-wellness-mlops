@@ -12,9 +12,11 @@ import os
 from pathlib import Path
 import warnings
 from typing import Any, Dict, Optional, Tuple
+from types import SimpleNamespace
 
 from dotenv import load_dotenv
 import mlflow
+import pandas as pd
 from mlflow.entities import Run
 from mlflow.tracking import MlflowClient
 from mlflow.tracking._model_registry import fluent
@@ -26,6 +28,31 @@ DEFAULT_ALIAS = "champion"
 DEFAULT_DATASET_VERSION = "data-v1"
 TARGET_MODEL_TYPE = "Logistic Regression"
 VERIFIED_RUN_ID = "077b778198d448628bf29fbf8c4fd9e6"
+
+
+def validate_candidate(run: Run) -> dict:
+    """Run existing quality policy before registration or champion alias writes.
+
+    This is a regression gate, not a new unbiased model-selection experiment.
+    """
+    from src.models.quality_gate import evaluate_quality
+
+    if (run.info.status != "FINISHED" or
+            run.data.tags.get("model_name", run.data.tags.get("mlflow.runName")) != TARGET_MODEL_TYPE):
+        raise ValueError("Candidate must be a finished Logistic Regression run")
+    model = mlflow.sklearn.load_model(f"runs:/{run.info.run_id}/model")
+    candidate = SimpleNamespace(
+        model=model, features=list(model.feature_names_in_), model_version="candidate",
+        model_info={"model_name": DEFAULT_MODEL_NAME, "decision_threshold": 0.5},
+    )
+    report = evaluate_quality(candidate, pd.read_csv(ROOT / "data/processed/train.csv"),
+                              pd.read_csv(ROOT / "data/processed/test.csv"),
+                              ROOT / "reports/figures/candidate_calibration.png")
+    for check in report["checks"]:
+        print(f"[{check['status']}] candidate {check['check']}")
+    if not report["passed"]:
+        raise ValueError("Candidate failed the quality gate; champion was not changed")
+    return report
 
 
 def _patch_fluent_get_logged_models(client: MlflowClient) -> None:
@@ -240,6 +267,12 @@ def main() -> None:
     print(f"  Train ROC-AUC: {train_roc_auc:.4f}")
     print(f"  Train Recall: {train_recall:.4f}")
 
+    validate_candidate(run)
+    try:
+        previous_version = str(client.get_model_version_by_alias(args.model_name, args.alias).version)
+    except Exception:
+        previous_version = None
+
     print(f"\nRegistering model as '{args.model_name}'...")
     model_version = register_model_artifact(
         run_id=run_id,
@@ -248,14 +281,6 @@ def main() -> None:
     )
     version = str(model_version.version)
     print(f"Registered version: {version}")
-
-    alias_ok, alias_msg = set_model_alias(
-        client=client,
-        model_name=args.model_name,
-        alias=args.alias,
-        version=version,
-    )
-    print(f"Alias status: {alias_msg}")
 
     tags = apply_model_metadata(
         client=client,
@@ -267,6 +292,11 @@ def main() -> None:
     print("Metadata & tags successfully applied:")
     for k, v in tags.items():
         print(f"  {k} = {v}")
+
+    if previous_version:
+        client.set_model_version_tag(args.model_name, version, "previous_champion_version", previous_version)
+    alias_ok, alias_msg = set_model_alias(client, args.model_name, args.alias, version)
+    print(f"Alias status: {alias_msg}")
 
     print(f"\nModel registration complete: {args.model_name} version {version}")
 

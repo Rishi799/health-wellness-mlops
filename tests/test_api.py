@@ -25,6 +25,8 @@ from src.api.predictor import (
     predictor,
 )
 
+pytestmark = pytest.mark.real_artifacts
+
 
 @pytest.fixture(autouse=True)
 def ensure_predictor_loaded():
@@ -203,7 +205,8 @@ def test_health_endpoint_503_when_model_fails_to_load(client):
         data = response.json()
         assert data["status"] == "unhealthy"
         assert data["model_loaded"] is False
-        assert "Simulated disk failure" in data["error"]
+        assert data["error"] == "Model is unavailable"
+        assert "Simulated disk failure" not in response.text
     finally:
         predictor.load()
 

@@ -41,8 +41,8 @@ curl http://localhost:8000/health
 
 ## How the Model Gets Into the Image
 
-1. `dvc pull` downloads `models/model.skops` and `models/model_info.json` to your local `models/` directory
-2. `docker build` copies `models/` into the image (`COPY models/ models/`)
+1. `dvc pull models/model.skops.dvc` downloads the binary; `models/model_info.json` comes from Git
+2. `docker build` copies exactly those two files into the image and removes model-directory write permissions
 3. The running container loads the model at startup — no network or credentials needed at runtime
 
 ## Why `requirements-api.txt` Instead of `requirements.txt`
@@ -68,3 +68,9 @@ Requirements are copied and installed **before** the source code. This means tha
 - Container runs as non-root user `appuser`
 - No `.env`, tokens, or credentials are copied into the image
 - Model files are read-only inside the container
+
+## Render and release verification
+
+The container honors `PORT` (default 8000). Build with `--build-arg BUILD_SHA=<full-commit>` to expose the application identity as `service_git_commit` from `/model-info`. CI/CD sets this automatically. It is separate from the model's training commit.
+
+Follow [the Render runbook](render-deployment.md) for public hosting, a synthetic deployment check, private deploy-hook configuration, and image rollback. Image size and startup-time values above are targets until measured for the selected release.

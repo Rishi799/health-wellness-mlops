@@ -67,7 +67,12 @@ def test_real_champion_passes_and_writes_report(champion, model_train, model_tes
     assert report["calibration_plot"] == "calibration.png"
 
 
-def test_default_paths_store_relative_calibration_plot():
+@pytest.mark.real_artifacts
+def test_default_paths_store_relative_calibration_plot(monkeypatch, tmp_path):
+    # Report generation in a test must never rewrite committed review evidence.
+    monkeypatch.setattr(gate, "REPO_ROOT", tmp_path)
+    monkeypatch.setattr(gate, "REPORT_PATH", tmp_path / "reports/model_quality.json")
+    monkeypatch.setattr(gate, "PLOT_PATH", tmp_path / "reports/figures/calibration.png")
     assert gate.main([]) == 0
     report_text = gate.REPORT_PATH.read_text(encoding="utf-8")
     report = json.loads(report_text)
