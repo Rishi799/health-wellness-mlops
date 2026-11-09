@@ -73,4 +73,16 @@ Requirements are copied and installed **before** the source code. This means tha
 
 The container honors `PORT` (default 8000). Build with `--build-arg BUILD_SHA=<full-commit>` to expose the application identity as `service_git_commit` from `/model-info`. CI/CD sets this automatically. It is separate from the model's training commit.
 
-Follow [the Render runbook](render-deployment.md) for public hosting, a synthetic deployment check, private deploy-hook configuration, and image rollback. Image size and startup-time values above are targets until measured for the selected release.
+Follow the Render runbook for public hosting, a synthetic deployment check, private deploy-hook configuration, and image rollback. [Render runbook](render-deployment.md)
+
+## Published image measurements
+
+Measured on 10 November 2026 with Docker Desktop and Docker Engine 29.9.3 (`linux/amd64`). The image is `ghcr.io/rishi799/health-wellness-api@sha256:8e469efe370e04bce52f752fde0f47e43e59a0ce7e8f70706e632f55d9ed5790` for application commit `0acf8cf`.
+
+| Measurement | Result | Target |
+| --- | --- | --- |
+| Docker image inspect `.Size` | 706,616,375 bytes (706.6 MB) | Under 600 MB · missed |
+| Compressed registry layer bytes | 159,498,548 bytes (159.5 MB) | Registry transfer measurement |
+| Fresh container readiness | 6.671 s, 4.203 s, 3.844 s (median 4.203 s) | Under 10 s · met |
+
+Readiness measures elapsed time from `docker run` to the first healthy `/health` response with `model_loaded: true`, using the already pulled image. Each run passed the full smoke test against the expected commit and model version. Render deployment and free-instance wake-up have their own timings.
