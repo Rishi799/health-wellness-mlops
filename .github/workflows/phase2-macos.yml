@@ -1,0 +1,40 @@
+name: Phase 2 macOS verification
+
+on:
+  push:
+    branches: [verify/phase2-macos]
+
+permissions:
+  contents: read
+
+jobs:
+  reproduce:
+    name: Rebuild the locked pipeline on macOS
+    runs-on: macos-15
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+      - name: Install pinned pipeline dependencies
+        run: |
+          grep -Ei '^(dvc|fsspec|numpy|pandas|pandera|pyyaml|scikit-learn|scipy)==' requirements.txt > "$RUNNER_TEMP/pipeline-requirements.txt"
+          python -m pip install -r "$RUNNER_TEMP/pipeline-requirements.txt"
+      - name: Pull the versioned inputs
+        env:
+          DAGSHUB_USER: ${{ secrets.DAGSHUB_USER }}
+          DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
+        run: |
+          dvc remote modify origin --local auth basic
+          dvc remote modify origin --local user "$DAGSHUB_USER"
+          dvc remote modify origin --local password "$DAGSHUB_TOKEN"
+          dvc pull
+      - name: Verify the reproduced hashes
+        run: |
+          dvc repro --force
+          git diff --exit-code -- dvc.lock reports/validation_2017-2018.json
+          dvc status --json > "$RUNNER_TEMP/dvc-status.json"
+          python -c 'import json, os; from pathlib import Path; assert not json.loads((Path(os.environ["RUNNER_TEMP"]) / "dvc-status.json").read_text())'
