@@ -2,9 +2,9 @@
 
 Owner: Rishab (Docker/deployment), with Rishi (GitHub CI/CD). This is an educational API demo, not a clinically validated risk service. The model card records calibration and subgroup limitations.
 
-## 1. Publish the fixes before deploying them
+## 1. Publish a verified image
 
-The local deployment fixes do not change the image that is already on GHCR. Have a teammate review and merge the deployment-hardening pull request. Do not merge your own PR without the review required by the team workflow.
+Have a teammate review and approve changes before merging to `main` under the team workflow.
 
 1. On GitHub, check that the PR's **Offline tests (no secrets)**, **Data checks and tests**, and **Docker image builds and starts** jobs pass. A draft PR runs only the offline job; mark it ready for review to run the full jobs.
 2. Merge after approval, then open Actions. Wait for **CI** on `main` and its resulting **CD** run to succeed.
@@ -91,12 +91,26 @@ Inviting Rishi to the Render workspace is optional. Use your own workspace membe
 
 1. Record the currently verified service URL, application SHA, model version, and successful deploy in Render.
 2. Keep the previous successful image SHA/digest in GHCR. Do not delete images required for rollback.
-3. In Render's Events/deployment history, select a previous successful deploy and use **Rollback** if available. Alternatively edit the service's image reference to `ghcr.io/rishi799/health-wellness-api:<PREVIOUS_SUCCESSFUL_SHA>` and use **Manual Deploy > Deploy latest reference**.
+3. In Render's **Deploys** history, select a previous successful deploy and use **Rollback** if available. Alternatively edit the service's image reference to `ghcr.io/rishi799/health-wellness-api:<PREVIOUS_SUCCESSFUL_SHA>` and use **Manual Deploy > Deploy latest reference**.
 4. Wait for Live and run the smoke test with the **previous application SHA**. Confirm `/model-info` reports the expected old service commit. If rolling back to the historical image published before these fixes, it lacks `service_git_commit`; use that only as an explicitly limited compatibility check, not as a successful new release verification. Prefer two successful hardened releases for the full drill.
 5. Restore the chosen current SHA/reference and verify again. After a temporary explicit SHA override in Settings, restore `:latest` if that is the intended default; the CD hook still overrides each automated deployment with its exact published SHA.
 6. Record previous/current application identities, model versions, times, smoke results, and reason. Moving the MLflow champion alias alone does not change a model baked into an existing image.
 
-Render re-pulls the referenced image for rollback, so the old digest must remain available. See [image rollback requirements](https://render.com/docs/deploying-an-image#rollback-support).
+Render re-pulls the referenced image for rollback. Check that both the target digest and restore digest remain available, and check that the recorded tag still resolves to the intended digest. [Image rollback requirements](https://render.com/docs/deploying-an-image#rollback-support)
+
+### Recorded Phase 2 drill
+
+On 10 November 2026, the public API passed a baseline smoke check on `0acf8cf`. Both SHA tags still resolved to the digests recorded by Render. The two deploys below used Render's rollback action and passed the full public smoke test after becoming live.
+
+| Step | Application commit | Model | Live at (IST) | Render deploy | Smoke |
+| --- | --- | --- | --- | --- | --- |
+| Roll back | `9704e4370b48e172244103ad220aae5ac0a22e9d` | `2` | 00:23:33 | `dep-dbp1d12jnfac7394hon0` | PASS |
+| Restore | `0acf8cf2f92584bb58f8bf258142be238a949524` | `2` | 00:24:42 | `dep-dbp1di3l550s73c1no10` | PASS |
+
+- Rollback image digest `sha256:79a9ba1dbf4b17b7ecfa5cf7c6ac934a7a883dd9ff3d96ba8137a04c7a243219`
+- Restored image digest `sha256:8e469efe370e04bce52f752fde0f47e43e59a0ce7e8f70706e632f55d9ed5790`
+
+The service's default image reference is `:latest` and Render checks `/health`. GitHub CD supplies a SHA tag through the deploy hook. Model version 2 comes from MLflow run `077b778198d448628bf29fbf8c4fd9e6`. [Public model information](https://health-wellness-api.onrender.com/model-info) · [Release CI](https://github.com/Rishi799/health-wellness-mlops/actions/runs/42282663898) · [Release CD](https://github.com/Rishi799/health-wellness-mlops/actions/runs/42283291228)
 
 ## 6. Troubleshooting and evidence
 
@@ -112,4 +126,4 @@ Render re-pulls the referenced image for rollback, so the old digest must remain
 
 Free services have ephemeral storage and usage limits. Do not rely on local prediction logs surviving a restart; Phase 3 persistence needs a separate design. See [Free service limitations](https://render.com/docs/free). Keep the demo on Free unless you deliberately choose otherwise.
 
-Before declaring Phase 2 deployed, retain: public URL, published application SHA/image digest, model version/run ID, passing CI/CD links, smoke PASS, successful rollback/restore evidence, and the model card. Add the review tag and release only after these are verified and the team approves. Public deployment and rollback are pending until performed; this runbook does not mark them complete.
+For each release, retain the public URL, application SHA and image digest, model version and run ID, passing CI/CD links, smoke results, and any rollback evidence. The `phase2-review` tag identifies the release verified in the drill above. [Phase 2 tag](https://github.com/Rishi799/health-wellness-mlops/tree/phase2-review) · [Model card](model_card.md)

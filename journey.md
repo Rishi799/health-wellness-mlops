@@ -2,6 +2,14 @@
 
 A running engineering log of progress, challenges encountered, root-cause analyses, and resolutions across project phases.
 
+## 10 November 2026 — Phase 2 deployment and recovery verification
+
+- Confirmed `RENDER_SERVICE_URL` matches the public origin exactly. The `phase2-review` tag and the restored API identify application commit `0acf8cf` and champion model version `2`. [Live model information](https://health-wellness-api.onrender.com/model-info) · [Phase 2 tag](https://github.com/Rishi799/health-wellness-mlops/tree/phase2-review)
+- Rolled back to `9704e43`, verified the public API, and restored `0acf8cf`. Both deploys passed the smoke test against their expected commits. [Recovery evidence](docs/render-deployment.md#recorded-phase-2-drill)
+- Started three fresh containers from the published release digest. Median readiness was 4.203 s against a 10 s target. Docker reported 706.6 MB against a 600 MB target. [Docker measurements](docs/docker.md#published-image-measurements)
+- Confirmed GitHub requires **Data checks and tests** and **Docker image builds and starts** on `main` for non-admins. Windows DVC status was clean. Linux CI and a one-off macOS ARM64 job rebuilt the pipeline without changing the lockfile or validation report. [Linux CI](https://github.com/Rishi799/health-wellness-mlops/actions/runs/42282663898) · [macOS rebuild](https://github.com/Rishi799/health-wellness-mlops/actions/runs/42678789764)
+- Opened a follow-up for model version 2's recall of 2 out of 17 positive examples in ages 20–39. [Model-risk issue #25](https://github.com/Rishi799/health-wellness-mlops/issues/25)
+
 ## 6 November 2026: Phase 2 deployment hardening (Rishab)
 
 - Started from current main on `p2-deployment-hardening`; added discrete API categories, boolean rejection, generic client errors, model/artifact contract checks, and a startup smoke prediction. Kept the registered model and display bands unchanged.
