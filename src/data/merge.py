@@ -29,7 +29,7 @@ BUILDERS = {
     "people": "python -m src.data.people {cycle}",
     "body": "python -m src.data.body {cycle}",
     "lifestyle": "python -m src.data.lifestyle --cycle {cycle}",
-    "mental": "python -m src.data.mental",
+    "mental": "python -m src.data.mental {cycle}",
 }
 
 
