@@ -1,0 +1,112 @@
+[
+  {
+    "batch": "batch_01",
+    "n": 1298,
+    "drifted": 10,
+    "prediction_drift": false,
+    "roc_auc": 0.8279530483878955,
+    "recall": 0.7934426229508197,
+    "retrain_needed": true,
+    "reasons": [
+      "data drift"
+    ]
+  },
+  {
+    "batch": "batch_02",
+    "n": 1297,
+    "drifted": 8,
+    "prediction_drift": false,
+    "roc_auc": 0.8476488688013891,
+    "recall": 0.8099688473520249,
+    "retrain_needed": true,
+    "reasons": [
+      "data drift"
+    ]
+  },
+  {
+    "batch": "batch_03",
+    "n": 1297,
+    "drifted": 8,
+    "prediction_drift": false,
+    "roc_auc": 0.8155783756788814,
+    "recall": 0.7740963855421686,
+    "retrain_needed": true,
+    "reasons": [
+      "data drift",
+      "recall degradation"
+    ]
+  },
+  {
+    "batch": "batch_04",
+    "n": 1297,
+    "drifted": 9,
+    "prediction_drift": false,
+    "roc_auc": 0.8082521531831252,
+    "recall": 0.7557755775577558,
+    "retrain_needed": true,
+    "reasons": [
+      "data drift",
+      "recall degradation"
+    ]
+  },
+  {
+    "batch": "batch_05",
+    "n": 1297,
+    "drifted": 9,
+    "prediction_drift": false,
+    "roc_auc": 0.8258758184131317,
+    "recall": 0.8149253731343283,
+    "retrain_needed": true,
+    "reasons": [
+      "data drift"
+    ]
+  },
+  {
+    "batch": "batch_06",
+    "n": 1297,
+    "drifted": 9,
+    "prediction_drift": false,
+    "roc_auc": 0.8241655910012908,
+    "recall": 0.7588235294117647,
+    "retrain_needed": true,
+    "reasons": [
+      "data drift",
+      "recall degradation"
+    ]
+  },
+  {
+    "batch": "batch_shifted",
+    "n": 1298,
+    "drifted": 13,
+    "prediction_drift": true,
+    "roc_auc": 0.7533038982603117,
+    "recall": 0.9292929292929293,
+    "retrain_needed": true,
+    "reasons": [
+      "data drift",
+      "ROC-AUC below quality-gate floor"
+    ]
+  },
+  {
+    "batch": "full_production",
+    "n": 7783,
+    "drifted": 8,
+    "prediction_drift": false,
+    "roc_auc": 0.8247808793659813,
+    "recall": 0.7846074380165289,
+    "retrain_needed": true,
+    "reasons": [
+      "data drift"
+    ]
+  },
+  {
+    "batch": "negative_control",
+    "n": 1108,
+    "drifted": 0,
+    "prediction_drift": false,
+    "roc_auc": 0.8501632930698674,
+    "recall": 0.8269896193771626,
+    "retrain_needed": false,
+    "reasons": []
+  }
+]

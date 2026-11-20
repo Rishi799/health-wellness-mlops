@@ -1,0 +1,21 @@
+{
+  "retrain_needed": true,
+  "reasons": [
+    "data drift",
+    "recall degradation"
+  ],
+  "values": {
+    "share_drifted_features": 0.42857142857142855,
+    "recall": 0.7588235294117647,
+    "roc_auc": 0.8241655910012908
+  },
+  "rules": {
+    "share_drifted_features": 0.3,
+    "recall": 0.777,
+    "roc_auc": 0.8
+  },
+  "date": "2026-11-20T18:12:01.204430+00:00",
+  "batch": "batch_06.csv",
+  "model_version": "2",
+  "data_sha256": "06f37e4458c0e13e6dcb2bbf1bf2985a734b06fe02fd0aee27cdf67023a82c5b"
+}
