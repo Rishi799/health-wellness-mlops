@@ -1,6 +1,28 @@
+import json
+from types import SimpleNamespace
+
 import pytest
 
 from src.monitoring.fairness import subgroup_metrics
+
+
+def test_challenger_default_assessment_uses_only_holdout(tmp_path, monkeypatch):
+    from src.monitoring import fairness
+    production = tmp_path / "data/production"
+    production.mkdir(parents=True)
+    (production / "test_2021.csv").write_text("marker\n1\n")
+    (production / "2021-2023_clean.csv").write_text("marker\n2\n")
+    artifact = tmp_path / "candidate.skops"
+    artifact.write_bytes(b"candidate")
+    model = SimpleNamespace(load=lambda: None, model_info={}, model_path=artifact)
+    seen = []
+    monkeypatch.setattr(fairness, "ROOT", tmp_path)
+    monkeypatch.setattr(fairness, "Predictor", lambda *args: model)
+    monkeypatch.setattr(fairness, "assess", lambda model, frame: seen.append(frame.marker.tolist()) or {})
+    out = tmp_path / "fairness.json"
+    assert fairness.main(["--challenger", "--out", str(out)]) == 0
+    assert seen == [[1]]
+    assert json.loads(out.read_text())["dataset"] == "test_2021.csv"
 
 
 def test_counts_intervals_and_recall_difference():

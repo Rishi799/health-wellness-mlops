@@ -60,10 +60,12 @@ def assess(predictor, frame):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--current", type=Path, default=ROOT / "data/production/2021-2023_clean.csv")
+    parser.add_argument("--current", type=Path, help="Defaults to the later holdout for a challenger; full production for the champion")
     parser.add_argument("--challenger", action="store_true")
     parser.add_argument("--out", type=Path, default=ROOT / "reports/retraining/fairness.json")
     args = parser.parse_args(argv)
+    if args.current is None:
+        args.current = ROOT / "data/production" / ("test_2021.csv" if args.challenger else "2021-2023_clean.csv")
     predictor = (Predictor(ROOT / "artifacts/retraining/challenger.skops", ROOT / "artifacts/retraining/model_info.json")
                  if args.challenger else Predictor())
     predictor.load()

@@ -127,6 +127,8 @@ python -m src.monitoring.explanations --challenger --current data/production/tes
 
 For the original holdout, use `data/processed/test.csv` and distinct output names. Fairlearn and SHAP summaries identify their source data, model fingerprint and MLflow run. After an intentional new fit, refresh the DVC pointers with `dvc add data/production/train_2021.csv data/production/test_2021.csv artifacts/retraining`, upload with `dvc push`, and commit only pointers and aggregate reports.
 
+If `--current` is omitted, challenger fairness assessment defaults to `test_2021.csv`, excluding its training rows. Champion production monitoring defaults to the full later cycle, which was not part of that model's fitting data. Use explicit holdout paths for model comparisons as shown above.
+
 ## Observed results, 20–21 November 2026
 
 The cleaned later cycle has 7,783 adults and 1,936 positive labels (24.87%). All five table validations pass. The six partitions contain 1,298 / 1,297 / 1,297 / 1,297 / 1,297 / 1,297 rows. All seven original-cycle CSV fingerprints remained identical after the complete DVC rebuild.
@@ -156,7 +158,7 @@ The leading challenger SHAP inputs in the seeded later-holdout sample are age, p
 
 Review the stacked changes in order: production data (PR 28), traffic (PR 29), monitoring (PR 30), retraining (PR 31), then fairness/explanations. Rishi can retarget dependent PRs as their parents merge. The production-data PR's complete CI passed, including the Docker job. Final combined validation is recorded in the review PR.
 
-Final local verification passed all 252 tests, including registration idempotency and protection of the champion alias. `pip check`, DVC pipeline status and DVC remote status passed. Both DVC status commands returned empty JSON, confirming an up-to-date pipeline and uploaded tracked artifacts. The SHAP chart was visually inspected. The combined assessment branch passed all three GitHub CI jobs before the final registration extension; its final-head CI is linked in the review PR. Dependency deprecation warnings remain in upstream libraries; no test failures occurred.
+Local verification passed the complete 252-test suite, including registration idempotency and protection of the champion alias, followed by all four fairness tests after the holdout-default regression was added. `pip check`, DVC pipeline status and DVC remote status passed. Both DVC status commands returned empty JSON, confirming an up-to-date pipeline and uploaded tracked artifacts. The SHAP chart was visually inspected. The combined assessment branch passed all three GitHub CI jobs before the final registration extension; its final-head CI is linked in the review PR. Dependency deprecation warnings remain in upstream libraries; no test failures occurred.
 
 Rishabh's data, traffic, offline monitoring, trigger and candidate implementation are delivered with real evidence. Team Phase 3 completion still requires Niranjan's prediction JSONL and dashboard integration, Rishi's scheduled workflow/alert integration and reviewed merges, and Rhea's model-release review. Retain a human gate between retraining eligibility and champion promotion. The public API continues to serve the Phase 2 champion during this work.
 
