@@ -5,6 +5,7 @@ from datetime import datetime, timezone
 import hashlib
 import json
 import math
+import os
 from pathlib import Path
 
 import pandas as pd
@@ -75,11 +76,44 @@ def verify_provenance(metadata, artifact, root=ROOT):
         raise ValueError("Candidate artifact does not match its metadata")
 
 
+def register_challenger(metadata, decision, client=None):
+    """Opt-in registration of an eligible run; only the challenger alias is written."""
+    if decision.get("promote") is not True:
+        raise ValueError("An ineligible candidate cannot be registered")
+    run_id = metadata.get("source_run_id")
+    if not run_id:
+        raise ValueError("Registration requires a tracked source run")
+    from dotenv import load_dotenv
+    import mlflow
+    from mlflow.tracking import MlflowClient
+    from src.models.register_model import DEFAULT_MODEL_NAME, register_model_artifact
+
+    load_dotenv(ROOT / ".env")
+    mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI", "https://dagshub.com/Rishi799/health-wellness-mlops.mlflow"))
+    client = client or MlflowClient()
+    run = client.get_run(run_id)
+    if (run.info.status != "FINISHED" or run.data.tags.get("git_commit") != metadata.get("git_commit") or
+            run.data.tags.get("production_sha256") != metadata["input_sha256"]["data/production/2021-2023_clean.csv"]):
+        raise ValueError("Tracked run must be finished and match candidate provenance")
+    experiment = client.get_experiment(run.info.experiment_id)
+    if experiment.name != "cardiometabolic-retraining":
+        raise ValueError("Candidate must come from the retraining experiment")
+    # Repeated registration commands must reuse the same run's version.
+    existing = [version for version in client.search_model_versions(f"name='{DEFAULT_MODEL_NAME}'")
+                if version.run_id == run_id]
+    version = existing[0] if existing else register_model_artifact(run_id, DEFAULT_MODEL_NAME, client)
+    client.set_registered_model_alias(name=DEFAULT_MODEL_NAME, alias="challenger", version=str(version.version))
+    client.set_model_version_tag(name=DEFAULT_MODEL_NAME, version=str(version.version), key="review_required", value="true")
+    return {"model_name": DEFAULT_MODEL_NAME, "version": str(version.version), "alias": "challenger",
+            "source_run_id": run_id, "champion_alias_changed": False}
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--candidate", type=Path, default=ROOT / "artifacts/retraining/challenger.skops")
     parser.add_argument("--metadata", type=Path, default=ROOT / "artifacts/retraining/model_info.json")
     parser.add_argument("--out", type=Path, default=ROOT / "reports/retraining")
+    parser.add_argument("--register", action="store_true", help="Register an eligible tracked run with alias challenger")
     args = parser.parse_args(argv)
     champion = Predictor()
     champion.load()
@@ -98,6 +132,8 @@ def main(argv=None):
     report["source_run_id"] = challenger.model_info.get("source_run_id")
     report["input_sha256"] = challenger.model_info["input_sha256"]
     report["artifact_sha256"] = challenger.model_info["artifact_sha256"]
+    if args.register and decision["promote"]:
+        decision["registration"] = register_challenger(challenger.model_info, decision)
     for name, result in (("comparison.json", report), ("promotion_decision.json", decision)):
         with (args.out / name).open("w", encoding="utf-8", newline="\n") as output:
             json.dump(result, output, indent=2, allow_nan=False)

@@ -65,7 +65,7 @@
       ],
       "model_version": "2",
       "decision_threshold": 0.5,
-      "date": "2026-11-20T18:37:42.673522+00:00"
+      "date": "2026-11-20T19:28:37.144785+00:00"
     },
     "2021-2023": {
       "n": 1557,
@@ -132,7 +132,7 @@
       ],
       "model_version": "2",
       "decision_threshold": 0.5,
-      "date": "2026-11-20T18:37:42.843739+00:00"
+      "date": "2026-11-20T19:28:37.187465+00:00"
     }
   },
   "challenger": {
@@ -201,7 +201,7 @@
       ],
       "model_version": "challenger",
       "decision_threshold": 0.5,
-      "date": "2026-11-20T18:37:42.895548+00:00"
+      "date": "2026-11-20T19:28:37.223936+00:00"
     },
     "2021-2023": {
       "n": 1557,
@@ -268,13 +268,13 @@
       ],
       "model_version": "challenger",
       "decision_threshold": 0.5,
-      "date": "2026-11-20T18:37:42.949999+00:00"
+      "date": "2026-11-20T19:28:37.256137+00:00"
     }
   },
-  "date": "2026-11-20T18:37:42.610428+00:00",
+  "date": "2026-11-20T19:28:37.084452+00:00",
   "quality_gates": {
     "2017-2018": {
-      "date": "2026-11-20T18:37:42.949999+00:00",
+      "date": "2026-11-20T19:28:37.256137+00:00",
       "model_name": "cardiometabolic-risk-model",
       "model_version": "challenger",
       "thresholds": {
@@ -519,7 +519,7 @@
       "passed": true
     },
     "2021-2023": {
-      "date": "2026-11-20T18:37:43.897051+00:00",
+      "date": "2026-11-20T19:28:37.865592+00:00",
       "model_name": "cardiometabolic-risk-model",
       "model_version": "challenger",
       "thresholds": {
