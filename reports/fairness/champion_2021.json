@@ -1,0 +1,166 @@
+{
+  "model_version": "2",
+  "n": 1557,
+  "date": "2026-11-20T19:21:19.593392+00:00",
+  "threshold": 0.5,
+  "overall": {
+    "n": 1557,
+    "positives": 387,
+    "recall": 0.8191214470284238,
+    "precision": 0.49300155520995337,
+    "roc_auc": 0.8400693478212858,
+    "brier": 0.1722963018829557,
+    "subgroups": [
+      {
+        "field": "sex",
+        "group": "1",
+        "n": 740,
+        "positives": 201,
+        "recall": 0.8557213930348259,
+        "precision": 0.49283667621776506,
+        "roc_auc": 0.8433158880920075
+      },
+      {
+        "field": "sex",
+        "group": "2",
+        "n": 817,
+        "positives": 186,
+        "recall": 0.7795698924731183,
+        "precision": 0.4931972789115646,
+        "roc_auc": 0.8351396486205546
+      },
+      {
+        "field": "age",
+        "group": "20-39",
+        "n": 411,
+        "positives": 14,
+        "recall": 0.07142857142857142,
+        "precision": 0.2,
+        "roc_auc": 0.7952500899604175
+      },
+      {
+        "field": "age",
+        "group": "40-59",
+        "n": 446,
+        "positives": 92,
+        "recall": 0.5434782608695652,
+        "precision": 0.4672897196261682,
+        "roc_auc": 0.803488086465242
+      },
+      {
+        "field": "age",
+        "group": "60-79",
+        "n": 594,
+        "positives": 228,
+        "recall": 0.9342105263157895,
+        "precision": 0.4965034965034965,
+        "roc_auc": 0.7517975266033937
+      },
+      {
+        "field": "age",
+        "group": "80",
+        "n": 106,
+        "positives": 53,
+        "recall": 1.0,
+        "precision": 0.5196078431372549,
+        "roc_auc": 0.7383410466358135
+      }
+    ],
+    "model_version": "2",
+    "decision_threshold": 0.5,
+    "date": "2026-11-20T19:21:19.584391+00:00"
+  },
+  "interval_note": "95% Wilson intervals quantify binomial recall uncertainty within each group",
+  "sex": {
+    "groups": [
+      {
+        "group": "1",
+        "n": 740,
+        "positives": 201,
+        "detected": 172,
+        "recall": 0.8557213930348259,
+        "recall_ci95_wilson": [
+          0.8004723480718966,
+          0.8976285189267786
+        ],
+        "precision": 0.49283667621776506,
+        "selection_rate": 0.47162162162162163
+      },
+      {
+        "group": "2",
+        "n": 817,
+        "positives": 186,
+        "detected": 145,
+        "recall": 0.7795698924731183,
+        "recall_ci95_wilson": [
+          0.7146741483781031,
+          0.8331513932399074
+        ],
+        "precision": 0.4931972789115646,
+        "selection_rate": 0.3598531211750306
+      }
+    ],
+    "recall_difference": 0.07615150056170761
+  },
+  "age": {
+    "groups": [
+      {
+        "group": "20-39",
+        "n": 411,
+        "positives": 14,
+        "detected": 1,
+        "recall": 0.07142857142857142,
+        "recall_ci95_wilson": [
+          0.012722215247890939,
+          0.3146870442415113
+        ],
+        "precision": 0.2,
+        "selection_rate": 0.012165450121654502
+      },
+      {
+        "group": "40-59",
+        "n": 446,
+        "positives": 92,
+        "detected": 50,
+        "recall": 0.5434782608695652,
+        "recall_ci95_wilson": [
+          0.44199785570563255,
+          0.6414733278347482
+        ],
+        "precision": 0.4672897196261682,
+        "selection_rate": 0.2399103139013453
+      },
+      {
+        "group": "60-79",
+        "n": 594,
+        "positives": 228,
+        "detected": 213,
+        "recall": 0.9342105263157895,
+        "recall_ci95_wilson": [
+          0.8943030514743872,
+          0.9597288417304125
+        ],
+        "precision": 0.4965034965034965,
+        "selection_rate": 0.7222222222222222
+      },
+      {
+        "group": "80",
+        "n": 106,
+        "positives": 53,
+        "detected": 53,
+        "recall": 1.0,
+        "recall_ci95_wilson": [
+          0.932418011423458,
+          0.9999999999999999
+        ],
+        "precision": 0.5196078431372549,
+        "selection_rate": 0.9622641509433962
+      }
+    ],
+    "recall_difference": 0.9285714285714286
+  },
+  "dataset": "test_2021.csv",
+  "data_sha256": "2e3359b44ac8fdd73fff1b4d3beb3f3f518ddbc30dfd7ffb7883d81513864251",
+  "model_sha256": "26706222552f938c8afd53080ceba6a50fbe78778492c43bcdf051ad81879ce0",
+  "source_run_id": "077b778198d448628bf29fbf8c4fd9e6"
+}

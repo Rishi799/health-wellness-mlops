@@ -149,6 +149,10 @@ curl http://localhost:8000/health
 ```
 See [`docs/docker.md`](docs/docker.md) and the [Render deployment and rollback runbook](docs/render-deployment.md).
 
+### Phase 3 monitoring and retraining
+
+See the [Phase 3 runbook](docs/phase3-p2.md) for production data, traffic replay, Evidently drift, retraining triggers, challenger comparison, Fairlearn assessment and SHAP explanations, including measured results and team integration steps.
+
 ## Project structure
 ```
 .github/workflows/ ci.yml (3 jobs) · cd.yml (publish + deploy)
