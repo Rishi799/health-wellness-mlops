@@ -20,7 +20,8 @@ def main(argv=None):
     parser.add_argument("--out", type=Path, default=ROOT / "reports/drift")
     args = parser.parse_args(argv)
     # A failed attempt must never leave a previous affirmative decision here.
-    (args.out / "trigger.json").unlink(missing_ok=True)
+    for name in ("trigger.json", "drift_summary.json", "performance.json", f"{args.current.stem}_drift.html"):
+        (args.out / name).unlink(missing_ok=True)
     model = Predictor()
     model.load()
     current = read_inputs(args.current, model)

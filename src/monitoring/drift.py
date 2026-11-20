@@ -98,6 +98,9 @@ def main(argv=None):
     parser.add_argument("--current", type=Path, required=True)
     parser.add_argument("--out", type=Path, default=ROOT / "reports/drift")
     args = parser.parse_args(argv)
+    # A failed rerun must not leave a previous successful report at these paths.
+    (args.out / "drift_summary.json").unlink(missing_ok=True)
+    (args.out / f"{args.current.stem}_drift.html").unlink(missing_ok=True)
     predictor = Predictor()
     predictor.load()
     snapshot, summary = evaluate_drift(predictor, read_inputs(args.reference, predictor), read_inputs(args.current, predictor))

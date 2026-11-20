@@ -24,3 +24,5 @@ def test_workflow_pairs_reports_by_fingerprint_and_removes_stale_decision(tmp_pa
     with pytest.raises(FileNotFoundError):
         monitor_batch.main(args)
     assert not (out / "trigger.json").exists()
+    assert not (out / "drift_summary.json").exists()
+    assert not (out / "performance.json").exists()

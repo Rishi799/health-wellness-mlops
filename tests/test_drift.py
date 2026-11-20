@@ -74,3 +74,26 @@ def test_jsonl_contract_and_model_version(tmp_path):
     log.write_text(json.dumps(record))
     with pytest.raises(ValueError, match='different model'):
         read_inputs(log, predictor)
+
+
+def test_sparse_logs_fail_with_insufficient_distribution_data(tmp_path):
+    predictor, reference = fixture()
+    path = tmp_path / "sparse.jsonl"
+    record = {"model_version": "2", "inputs": {"age": 55, "sex": 1}}
+    path.write_text(json.dumps(record) + "\n", encoding="utf-8")
+    current = read_inputs(path, predictor)
+    with pytest.raises(ValueError, match="entirely missing"):
+        evaluate_drift(predictor, reference, current)
+
+
+def test_failed_drift_rerun_removes_stale_outputs(tmp_path, monkeypatch):
+    from src.monitoring import drift
+    predictor, _ = fixture()
+    predictor.load = lambda: None
+    monkeypatch.setattr(drift, "Predictor", lambda: predictor)
+    summary, html = tmp_path / "drift_summary.json", tmp_path / "missing_drift.html"
+    summary.write_text('{"dataset_drift": false}')
+    html.write_text("old report")
+    with pytest.raises(FileNotFoundError):
+        drift.main(["--reference", str(tmp_path / "missing.csv"), "--current", str(tmp_path / "missing.csv"), "--out", str(tmp_path)])
+    assert not summary.exists() and not html.exists()
