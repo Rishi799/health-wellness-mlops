@@ -12,6 +12,16 @@ mlflow.db
 mlruns/
 mlartifacts/
 
+# Phase 3 runtime outputs and candidate artifacts
+logs/
+artifacts/
+reports/drift/**/*.html
+reports/drift/*.html
+reports/retraining/**/*.png
+reports/retraining/*.png
+reports/explanations/**/*.png
+reports/explanations/*.png
+
 # Data - versioned by DVC, not Git (Person 2)
 data/raw/nhanes/
 data/interim/*
