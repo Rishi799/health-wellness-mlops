@@ -1,0 +1,140 @@
+{
+  "share_drifted_features": 0.42857142857142855,
+  "drifted_features": [
+    "age",
+    "income_ratio",
+    "sbp",
+    "dbp",
+    "hdl",
+    "alcohol_drinks_week",
+    "exercise_min_week",
+    "sedentary_min_day",
+    "phq9_score"
+  ],
+  "dataset_drift": true,
+  "prediction_drift": false,
+  "model_version": "2",
+  "feature_count": 21,
+  "reference_rows": 4428,
+  "current_rows": 1297,
+  "methods": {
+    "numeric": "normalized Wasserstein",
+    "categorical": "Jensen-Shannon distance",
+    "column_threshold": 0.1,
+    "dataset_threshold": 0.3
+  },
+  "distances": {
+    "age": 0.13686244606011042,
+    "sex": 0.03634193524922829,
+    "education": 0.09139029959690907,
+    "income_ratio": 0.18680489809501385,
+    "height_cm": 0.030015501733603893,
+    "weight_kg": 0.02761832133206727,
+    "bmi": 0.03238140921855845,
+    "waist_cm": 0.04100321824235089,
+    "sbp": 0.1769060719753182,
+    "dbp": 0.17042752596886973,
+    "pulse": 0.08499585796430333,
+    "told_high_bp": 5.691689468217905e-05,
+    "total_chol": 0.03991578097234648,
+    "hdl": 0.12560317472093008,
+    "smoking_status": 0.037140316516488775,
+    "alcohol_drinks_week": 0.1258782074024664,
+    "exercise_min_week": 0.397577839012261,
+    "sedentary_min_day": 0.12810822450326567,
+    "sleep_hours": 0.06405974783984078,
+    "phq9_score": 0.22728730829661345,
+    "phq9_category": 0.06469706775354707,
+    "prediction": 0.04026400909836951
+  },
+  "missing_fractions": {
+    "age": {
+      "reference": 0.0,
+      "current": 0.0
+    },
+    "sex": {
+      "reference": 0.0,
+      "current": 0.0
+    },
+    "education": {
+      "reference": 0.002258355916892502,
+      "current": 0.0007710100231303007
+    },
+    "income_ratio": {
+      "reference": 0.1425022583559169,
+      "current": 0.16885119506553586
+    },
+    "height_cm": {
+      "reference": 0.06639566395663957,
+      "current": 0.2212798766383963
+    },
+    "weight_kg": {
+      "reference": 0.06639566395663957,
+      "current": 0.2243639167309175
+    },
+    "bmi": {
+      "reference": 0.06865401987353206,
+      "current": 0.2259059367771781
+    },
+    "waist_cm": {
+      "reference": 0.11065943992773261,
+      "current": 0.2544333076329992
+    },
+    "sbp": {
+      "reference": 0.10004516711833784,
+      "current": 0.243639167309175
+    },
+    "dbp": {
+      "reference": 0.10275519421860885,
+      "current": 0.243639167309175
+    },
+    "pulse": {
+      "reference": 0.0966576332429991,
+      "current": 0.243639167309175
+    },
+    "told_high_bp": {
+      "reference": 0.002258355916892502,
+      "current": 0.0030840400925212026
+    },
+    "total_chol": {
+      "reference": 0.10953026196928636,
+      "current": 0.28064764841942946
+    },
+    "hdl": {
+      "reference": 0.10953026196928636,
+      "current": 0.28064764841942946
+    },
+    "smoking_status": {
+      "reference": 0.0,
+      "current": 0.0015420200462606013
+    },
+    "alcohol_drinks_week": {
+      "reference": 0.11991869918699187,
+      "current": 0.32228218966846567
+    },
+    "exercise_min_week": {
+      "reference": 0.001129177958446251,
+      "current": 0.01233616037008481
+    },
+    "sedentary_min_day": {
+      "reference": 0.008355916892502258,
+      "current": 0.006168080185042405
+    },
+    "sleep_hours": {
+      "reference": 0.005420054200542005,
+      "current": 0.005397070161912105
+    },
+    "phq9_score": {
+      "reference": 0.13008130081300814,
+      "current": 0.3238242097147263
+    },
+    "phq9_category": {
+      "reference": 0.13008130081300814,
+      "current": 0.3238242097147263
+    }
+  },
+  "date": "2026-11-20T18:11:59.157410+00:00",
+  "batch": "batch_05.csv",
+  "data_sha256": "77c37e5f136192b5de7f50e33c88ccfc085f3df88bbbc8f56e705957d1fd5353",
+  "reference_sha256": "37a02cf1af8f040e57ee7640e5ab382474ffe51eaf48bec001526303039db4f4"
+}

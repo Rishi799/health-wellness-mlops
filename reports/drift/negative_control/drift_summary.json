@@ -1,0 +1,130 @@
+{
+  "share_drifted_features": 0.0,
+  "drifted_features": [],
+  "dataset_drift": false,
+  "prediction_drift": false,
+  "model_version": "2",
+  "feature_count": 21,
+  "reference_rows": 1108,
+  "current_rows": 1108,
+  "methods": {
+    "numeric": "normalized Wasserstein",
+    "categorical": "Jensen-Shannon distance",
+    "column_threshold": 0.1,
+    "dataset_threshold": 0.3
+  },
+  "distances": {
+    "age": 0.0,
+    "sex": 0.0,
+    "education": 0.0,
+    "income_ratio": 0.0,
+    "height_cm": 0.0,
+    "weight_kg": 0.0,
+    "bmi": 0.0,
+    "waist_cm": 0.0,
+    "sbp": 0.0,
+    "dbp": 0.0,
+    "pulse": 0.0,
+    "told_high_bp": 0.0,
+    "total_chol": 0.0,
+    "hdl": 0.0,
+    "smoking_status": 0.0,
+    "alcohol_drinks_week": 0.0,
+    "exercise_min_week": 0.0,
+    "sedentary_min_day": 0.0,
+    "sleep_hours": 0.0,
+    "phq9_score": 0.0,
+    "phq9_category": 0.0,
+    "prediction": 0.0
+  },
+  "missing_fractions": {
+    "age": {
+      "reference": 0.0,
+      "current": 0.0
+    },
+    "sex": {
+      "reference": 0.0,
+      "current": 0.0
+    },
+    "education": {
+      "reference": 0.0009025270758122744,
+      "current": 0.0009025270758122744
+    },
+    "income_ratio": {
+      "reference": 0.13447653429602888,
+      "current": 0.13447653429602888
+    },
+    "height_cm": {
+      "reference": 0.07942238267148015,
+      "current": 0.07942238267148015
+    },
+    "weight_kg": {
+      "reference": 0.07942238267148015,
+      "current": 0.07942238267148015
+    },
+    "bmi": {
+      "reference": 0.0812274368231047,
+      "current": 0.0812274368231047
+    },
+    "waist_cm": {
+      "reference": 0.12274368231046931,
+      "current": 0.12274368231046931
+    },
+    "sbp": {
+      "reference": 0.11010830324909747,
+      "current": 0.11010830324909747
+    },
+    "dbp": {
+      "reference": 0.11281588447653429,
+      "current": 0.11281588447653429
+    },
+    "pulse": {
+      "reference": 0.10830324909747292,
+      "current": 0.10830324909747292
+    },
+    "told_high_bp": {
+      "reference": 0.0,
+      "current": 0.0
+    },
+    "total_chol": {
+      "reference": 0.13086642599277978,
+      "current": 0.13086642599277978
+    },
+    "hdl": {
+      "reference": 0.13086642599277978,
+      "current": 0.13086642599277978
+    },
+    "smoking_status": {
+      "reference": 0.0,
+      "current": 0.0
+    },
+    "alcohol_drinks_week": {
+      "reference": 0.14350180505415164,
+      "current": 0.14350180505415164
+    },
+    "exercise_min_week": {
+      "reference": 0.0036101083032490976,
+      "current": 0.0036101083032490976
+    },
+    "sedentary_min_day": {
+      "reference": 0.005415162454873646,
+      "current": 0.005415162454873646
+    },
+    "sleep_hours": {
+      "reference": 0.005415162454873646,
+      "current": 0.005415162454873646
+    },
+    "phq9_score": {
+      "reference": 0.14711191335740073,
+      "current": 0.14711191335740073
+    },
+    "phq9_category": {
+      "reference": 0.14711191335740073,
+      "current": 0.14711191335740073
+    }
+  },
+  "date": "2026-11-20T18:12:08.369657+00:00",
+  "batch": "test.csv",
+  "data_sha256": "fdde9e138a8a1f846cef5d3561fcf3cd15c864f8de50a8150a6a8c0b4545a5c2",
+  "reference_sha256": "fdde9e138a8a1f846cef5d3561fcf3cd15c864f8de50a8150a6a8c0b4545a5c2"
+}

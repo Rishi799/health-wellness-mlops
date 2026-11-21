@@ -1,0 +1,21 @@
+{
+  "retrain_needed": true,
+  "reasons": [
+    "data drift",
+    "ROC-AUC below quality-gate floor"
+  ],
+  "values": {
+    "share_drifted_features": 0.6190476190476191,
+    "recall": 0.9292929292929293,
+    "roc_auc": 0.7533038982603117
+  },
+  "rules": {
+    "share_drifted_features": 0.3,
+    "recall": 0.777,
+    "roc_auc": 0.8
+  },
+  "date": "2026-11-20T18:12:03.780303+00:00",
+  "batch": "batch_shifted.csv",
+  "model_version": "2",
+  "data_sha256": "17ef30ffec16e499db2c1a8680f11cc47c7d515ff0d2d1a122769eb4986b2c88"
+}
