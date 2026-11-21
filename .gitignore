@@ -20,6 +20,9 @@ data/processed/*
 !data/processed/.gitkeep
 *.zip
 
+# Prediction logs (Phase 3 monitoring)
+logs/
+
 # OS / editor
 .DS_Store
 Thumbs.db

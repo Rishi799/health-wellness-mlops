@@ -16,3 +16,4 @@ __pycache__
 *.md
 *.xlsx
 mlruns/
+logs/
