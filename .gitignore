@@ -14,7 +14,9 @@ mlartifacts/
 
 # Phase 3 runtime outputs and candidate artifacts
 logs/
-artifacts/
+/artifacts/*
+!/artifacts/*.dvc
+!/artifacts/.gitignore
 reports/drift/**/*.html
 reports/drift/*.html
 reports/retraining/**/*.png

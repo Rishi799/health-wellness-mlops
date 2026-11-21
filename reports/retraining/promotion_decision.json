@@ -1,0 +1,21 @@
+{
+  "promote": true,
+  "reasons": [],
+  "values": {
+    "champion_new_recall": 0.8191214470284238,
+    "challenger_new_recall": 0.8191214470284238,
+    "champion_new_auc": 0.8400693478212858,
+    "challenger_new_auc": 0.8457430596965481,
+    "challenger_old_auc": 0.8495211055764689,
+    "hard_quality_checks_passed": true
+  },
+  "rule": {
+    "recall_must_not_decrease": true,
+    "new_auc_tolerance": 0.01,
+    "old_auc_floor": 0.8,
+    "hard_quality_checks_required": true
+  },
+  "date": "2026-11-20T18:37:44.095168+00:00",
+  "review_required": true,
+  "champion_alias_changed": false
+}
