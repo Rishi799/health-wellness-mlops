@@ -80,7 +80,7 @@ python -m scripts.simulate_traffic --batch data/production/batches/batch_01.csv 
 python -m scripts.simulate_traffic --batch data/production/batches/batch_01.csv --limit 2 --bad 2
 ```
 
-The local demonstration returned 20/20 HTTP 200 responses, then two HTTP 200 and two HTTP 422 responses, with no transport failures. This was a bounded functional demonstration, not a capacity benchmark. For public endpoints the simulator enforces at most 20 requests at one per second; use localhost for full batches.
+The initial local demonstration returned 20/20 HTTP 200 responses and expected validation failures. The 21 November audit replayed the entire first batch: **1,298/1,298 HTTP 200**, plus **5/5 HTTP 422** in a separate deliberately invalid run, with no transport errors. Aggregate evidence is in `reports/phase3/local_replay.json`. This verifies functional replay rather than concurrent capacity. For public endpoints the simulator enforces at most 20 requests at one per second; use localhost for full batches.
 
 Generate a matched report set and trigger with one command:
 
@@ -100,6 +100,8 @@ Open each generated `*_drift.html` in a browser and inspect the JSON beside it. 
 ```
 
 The component CLIs remain available as `src.monitoring.drift`, `src.monitoring.performance` and `src.monitoring.retrain_trigger`. For unlabelled API JSONL, run drift only. Performance requires observed labels; the combined workflow rejects unlabelled inputs and clears a stale decision before starting.
+
+Failed standalone monitoring reruns now remove their previous report, and the combined workflow clears its entire current report set. If a feature is completely absent from successful API inputs, distribution drift is unavailable and evaluation raises an explicit error. Minimal age/sex-only traffic is valid for prediction but insufficient for this full 21-feature drift report. Missingness is recorded for evaluable batches; it does not change the agreed trigger rules. See the [completion audit](phase3-verification.md#operational-limits-and-fixes).
 
 ```powershell
 python -m src.monitoring.drift --current logs/predictions.jsonl --out reports/drift/live_logs
@@ -156,11 +158,11 @@ The leading challenger SHAP inputs in the seeded later-holdout sample are age, p
 
 ## Delivery and remaining integration
 
-Review the stacked changes in order: production data (PR 28), traffic (PR 29), monitoring (PR 30), retraining (PR 31), then fairness/explanations. Rishi can retarget dependent PRs as their parents merge. The production-data PR's complete CI passed, including the Docker job. Final combined validation is recorded in the review PR.
+Review the stacked changes in order: production data (PR 28), traffic (PR 29), monitoring (PR 30), retraining (PR 31), then fairness/explanations and the completion audit (PR 32). All five PRs were still open at the 21 November remote check. Rishi can retarget dependent PRs as their parents merge. The production-data and combined assessment CI runs passed, including Docker startup. Final-head validation is recorded in the review PR.
 
-Local verification passed the complete 252-test suite, including registration idempotency and protection of the champion alias, followed by all four fairness tests after the holdout-default regression was added. `pip check`, DVC pipeline status and DVC remote status passed. Both DVC status commands returned empty JSON, confirming an up-to-date pipeline and uploaded tracked artifacts. The SHAP chart was visually inspected. The combined assessment branch passed all three GitHub CI jobs before the final registration extension; its final-head CI is linked in the review PR. Dependency deprecation warnings remain in upstream libraries; no test failures occurred.
+The completion audit passed **256 local tests**, independently reproduced the saved metrics, verified all batch payloads and candidate provenance, opened the Evidently HTML, and captured screenshots of both trigger outcomes. `pip check`, DVC pipeline status and DVC remote status passed; both DVC status commands returned `{}`. The prior combined implementation passed [all three CI jobs with 253 tests](https://github.com/Rishi799/health-wellness-mlops/actions/runs/44803814445); updated final-head CI is linked in PR 32. Dependency deprecation warnings remain without test failures. See [machine-readable audit evidence](../reports/phase3/numerical_verification.json).
 
-Rishabh's data, traffic, offline monitoring, trigger and candidate implementation are delivered with real evidence. Team Phase 3 completion still requires Niranjan's prediction JSONL and dashboard integration, Rishi's scheduled workflow/alert integration and reviewed merges, and Rhea's model-release review. Retain a human gate between retraining eligibility and champion promotion. The public API continues to serve the Phase 2 champion during this work.
+Rishabh's data, simulator, offline monitoring, degradation experiment, trigger and candidate implementation are delivered with real evidence. The simulator's strict live acceptance criterion remains open: Niranjan must first provide the prediction JSONL writer, then Rishabh must verify API → log → drift with actual local logs. Team Phase 3 also needs dashboards, Rishi's monitoring CI step and reviewed merges, and Rhea's model-release review. The [completion audit](phase3-verification.md) provides the requirement matrix, complete degradation/subgroup tables, screenshots and exact handoff steps. The public API was rechecked and continues to serve model 2.
 
 ## Reference documentation
 
