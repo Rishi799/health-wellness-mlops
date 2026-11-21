@@ -1,0 +1,61 @@
+{
+  "checked_at": "2026-11-20T19:51:30.872108+00:00",
+  "pull_requests": [
+    {
+      "number": 28,
+      "state": "open",
+      "merged": false,
+      "head": "e1b9aa8f1ee49fb8e28083268a25cace20b16463",
+      "base": "main",
+      "url": "https://github.com/Rishi799/health-wellness-mlops/pull/28"
+    },
+    {
+      "number": 29,
+      "state": "open",
+      "merged": false,
+      "head": "fbcc2f01c6d618a8f639c420ae2fb6edf9ee3e2c",
+      "base": "p2-production-data",
+      "url": "https://github.com/Rishi799/health-wellness-mlops/pull/29"
+    },
+    {
+      "number": 30,
+      "state": "open",
+      "merged": false,
+      "head": "23206b082cabbe9f485707ab32fdd4fc08ba2ca8",
+      "base": "p2-traffic-simulator",
+      "url": "https://github.com/Rishi799/health-wellness-mlops/pull/30"
+    },
+    {
+      "number": 31,
+      "state": "open",
+      "merged": false,
+      "head": "90f2e6aad08e55cb1271f008fb0d42519df48edf",
+      "base": "p2-drift-trigger",
+      "url": "https://github.com/Rishi799/health-wellness-mlops/pull/31"
+    },
+    {
+      "number": 32,
+      "state": "open",
+      "merged": false,
+      "head": "928489a619e080722725254db6b56acce7222873",
+      "base": "p3-retraining",
+      "url": "https://github.com/Rishi799/health-wellness-mlops/pull/32"
+    }
+  ],
+  "main_commit": "54727beb18fa8b1ddb1e79d1453e16ff6512623c",
+  "registry": {
+    "champion": "2",
+    "challenger": "3"
+  },
+  "candidate_run": {
+    "id": "893b1b05690d4870ba99b0628355395f",
+    "status": "FINISHED",
+    "git_commit": "8fcfdc5534d391c570c0bae7808372b27b50c006",
+    "production_sha256": "9087e9d6123ce88237726bdca9464209a48335cf1910064f54e2f5e049f88b0b",
+    "review_artifacts": [
+      "reports/explanations",
+      "reports/fairness",
+      "reports/retraining"
+    ]
+  }
+}

@@ -3,7 +3,7 @@
 [![CI](https://github.com/Rishi799/health-wellness-mlops/actions/workflows/ci.yml/badge.svg)](https://github.com/Rishi799/health-wellness-mlops/actions/workflows/ci.yml)
 [![CD](https://github.com/Rishi799/health-wellness-mlops/actions/workflows/cd.yml/badge.svg)](https://github.com/Rishi799/health-wellness-mlops/actions/workflows/cd.yml)
 
-An end-to-end MLOps project that estimates a person's cardiometabolic risk (0–100 score, Low / Moderate / High) from basic health and lifestyle data, and demonstrates the ML lifecycle: data validation, versioning, experiment tracking, model registry, testing, containerisation, CI/CD and deployment (monitoring and drift detection follow in Phase 3).
+An end-to-end MLOps project that produces an educational cardiometabolic awareness score (0–100, Low / Moderate / High) from health and lifestyle data. It demonstrates data validation, DVC versioning, MLflow tracking and registry, FastAPI serving, containerisation, CI/CD, drift monitoring, subgroup assessment, explanations and reviewed challenger retraining. The label concerns prior self-reported diagnosis; the score is not a validated forecast of future disease.
 
 > **Disclaimer:** awareness and educational tool only — not a medical diagnosis.
 
@@ -14,10 +14,10 @@ An end-to-end MLOps project that estimates a person's cardiometabolic risk (0–
 | Course | AI252TA Machine Learning Operations — Topic 27 |
 | SDGs | 3 Good Health and Well-being · 4 Quality Education |
 | Team | Rishi Agarwal · Rishabh · Rhea · Niranjan (John) |
-| Phase | 2 — Model deployment and productionisation |
+| Phase | Phase 2 live; Phase 3 monitoring and challenger implementation under review |
 
 ## Dataset
-NHANES (CDC, public domain, no personal identifiers). 2017–2018 (9,254 people) for training; 2021–2023 (11,933 people) kept for Phase 3 drift. 15 files per cycle, joined on `SEQN`. See `DATA_README.md` and `DATA_DICTIONARY.xlsx`.
+NHANES public-use CDC data: 15 source files per cycle, joined using the survey participant key `SEQN`, which is excluded from serving inputs. The raw 2017–2018 demographics file has 9,254 participants and the later 2021–2023 file has 11,933. After adult/known-label filtering, there are 5,536 original-cycle and 7,783 later-cycle records. The later cycle is now cleaned, validated and used for Phase 3 monitoring and a separately split challenger experiment. See [data documentation](DATA_README.md) and `DATA_DICTIONARY.xlsx`.
 
 ## Prediction target
 `cardiometabolic = 1` if an adult (20+) was ever told by a doctor they have **diabetes (borderline counts as yes), heart failure, coronary heart disease, angina, a heart attack or a stroke**; `0` if all six answers are no. Adults whose answers leave the target unknown (only "don't know" instead of "no") are dropped.
@@ -106,19 +106,52 @@ Known limitation: only 2 of 17 at-risk adults aged 20–39 are detected; predict
 ### CI/CD (GitHub Actions)
 | Workflow | When | What it does |
 | --- | --- | --- |
-| CI — Offline tests (no secrets) | every PR and push | tests that need no data or credentials |
-| CI — Data checks and tests *(required)* | every PR and push | `dvc pull`, rebuild and verify the locked pipeline, all tests, model quality gate, upload quality report |
-| CI — Docker image builds and starts *(required)* | every PR and push | build the image, run it, smoke-test `/health` and `/predict`, check non-root and read-only model |
+| CI — Offline tests (no secrets) | PRs to `main`, pushes to `main`, manual dispatch | tests that need no data or credentials |
+| CI — Data checks and tests *(required)* | after offline checks | `dvc pull`, rebuild and verify the locked pipeline, all tests, model quality gate, upload quality report |
+| CI — Docker image builds and starts *(required)* | after data checks | build the image, run it, smoke-test `/health` and `/predict`, check non-root and read-only model |
 | CD | after CI succeeds on `main` | build and verify the image, publish `ghcr.io/rishi799/health-wellness-api:<commit>` and `:latest`, deploy that commit to Render and verify the live service reports it |
 
 `main` is protected: a pull request needs one approval and both required checks. Every merge is deployed automatically; previous images remain tagged by commit for rollback ([runbook](docs/render-deployment.md)).
 
 ## Tech stack
-Python 3.11 · pandas · scikit-learn · XGBoost · pandera · pytest · FastAPI · pydantic · skops · Docker · GitHub Actions · GitHub Container Registry · Render · Git/GitHub · DVC (remote on DagsHub) · MLflow (tracking and Model Registry on DagsHub) — Phase 3: Prometheus/Grafana, Evidently.
+Python 3.11 · pandas · scikit-learn · XGBoost · Pandera · pytest · FastAPI · Pydantic · skops · Docker · GitHub Actions · GHCR · Render · Git/GitHub · DVC · MLflow/DagsHub · Evidently 0.7.17 · Fairlearn 0.15.0 · SHAP 0.51.0. Prometheus/Grafana and live prediction logging remain the API-observability integration work.
+
+## Phase 3: production monitoring and challenger review
+
+Rishabh's implementation includes the later-cycle DVC pipeline, six reproducible batches and one synthetic stress batch, local traffic replay, Evidently input/prediction drift, labelled degradation evaluation, the three-rule trigger, challenger training/comparison, Fairlearn and SHAP. Candidate version **3** has alias `challenger`; the served/registered champion remains **2**. PRs **28 → 32** are open for teammate review and merging.
+
+```mermaid
+flowchart LR
+    A[Validated later-cycle data] --> B[Production batches]
+    B --> C[Traffic replay]
+    B --> D[Drift and labelled performance]
+    D --> E[Rule-based trigger]
+    E --> F[Separate challenger fit]
+    F --> G[Both holdouts and quality gate]
+    G --> H[Fairlearn and SHAP review]
+    H --> I[Team approval before champion release]
+```
+
+Full later-cycle monitoring finds **8/21 drifting inputs**, ROC-AUC **0.8248**, recall **0.7846**, precision **0.4848** and Brier **0.1759**. The trigger fires for data drift. All six ordinary later-cycle batches show drift; the identical-data negative control demonstrates a valid no-trigger result. The rules were preserved rather than tuned to force a demonstration outcome.
+
+Both models are compared on the same held-out participants:
+
+| Holdout | Champion ROC-AUC | Challenger ROC-AUC | Champion recall | Challenger recall |
+| --- | ---: | ---: | ---: | ---: |
+| 2017–2018, n=1,108 | 0.8502 | 0.8495 | 0.8270 | 0.8062 |
+| 2021–2023, n=1,557 | 0.8401 | 0.8457 | 0.8191 | 0.8191 |
+
+The numerical eligibility rules pass, but the candidate detects only **3/14** positive young adults on the later holdout and original-holdout recall decreases. This requires release review. The candidate has not been deployed.
+
+The 21 November audit independently reproduced the saved metrics, verified data/model fingerprints and disjoint participants, validated all 9,081 batch payloads, and replayed the complete first batch locally: **1,298 HTTP 200**, with **five expected 422s** in a separate invalid-input run. The local suite passes **256 tests** after the audit safeguards.
+
+**Pending integration:** successful API predictions are not yet written to the shared JSONL contract. Niranjan's log writer/dashboard, the subsequent logging-to-drift demonstration, Rishi's monitoring CI step and reviewed merges remain pending. The [completion audit](docs/phase3-verification.md) distinguishes implementation, measured evidence and these dependencies. The [runbook](docs/phase3-p2.md) gives exact commands; the [report](docs/phase3-report.md) summarizes the work.
 
 ## Setup & Quickstart
 
 ### 1. Local development
+Use a patched Python 3.11 interpreter. Python 3.11.0 failed to import the pinned Evidently library locally; validation used 3.11.9, and CI uses the current available 3.11 patch. Check `python --version` after activation and recreate the environment with a patched interpreter if necessary. On Windows, set `$env:PYTHONUTF8 = "1"` before MLflow commands.
+
 ```bash
 git clone https://github.com/Rishi799/health-wellness-mlops.git
 cd health-wellness-mlops
@@ -149,20 +182,31 @@ curl http://localhost:8000/health
 ```
 See [`docs/docker.md`](docs/docker.md) and the [Render deployment and rollback runbook](docs/render-deployment.md).
 
+### 4. Monitor a labelled production batch
+
+```bash
+python -m scripts.monitor_batch --current data/production/2021-2023_clean.csv --out reports/drift/full_production
+```
+
+Inspect the generated HTML plus `drift_summary.json`, `performance.json` and `trigger.json`. See the [Phase 3 runbook](docs/phase3-p2.md) before fitting or registering another candidate. Monitoring dependencies are kept out of `requirements-api.txt`.
+
 ## Project structure
 ```
 .github/workflows/ ci.yml (3 jobs) · cd.yml (publish + deploy)
 data/raw/nhanes/   original CDC files (never edited, tracked by DVC)
 data/interim/      topic tables + merged table
 data/processed/    train.csv, test.csv
+data/production/   later-cycle data, six batches, stress batch and challenger splits (DVC)
 models/            champion model artifact (.skops via DVC) & metadata
+artifacts/         separate challenger artifact and metadata (DVC)
 notebooks/         exploration notebooks
 src/data/          data scripts
 src/models/        comparison, registration, export & quality-gate scripts
 src/api/           FastAPI inference service & validation schemas
+src/monitoring/    production batches, drift, performance, triggers, fairness and explanations
 scripts/           smoke test and Render deploy helpers
 tests/             unit, model, API, contract and deployment tests
-reports/           figures, validation and model-quality reports
+reports/           figures, validation, drift, retraining, fairness, SHAP and audit evidence
 docs/              decision logs, data dictionaries, model card, API examples, Docker & Render runbooks
 dvc.yaml           pipeline stages · params.yaml  pipeline settings
 Dockerfile         slim production container image (python:3.11-slim, non-root)
@@ -179,12 +223,12 @@ docker-compose.yml local container execution on port 8000
 Charts: `reports/figures/`.
 
 ## Team
-| Member | Phase 1 | Phase 2 |
-| --- | --- | --- |
-| Rishi Agarwal | people table, target, merge, split, repository | CI, quality-gate and Docker checks, CD, deployment, release |
-| Rishabh | body and clinical data, DVC pipeline | Docker, line-ending fix, deployment hardening, Render |
-| Rhea | lifestyle data, data validation | model tests, quality gate, fairness checks, model card |
-| Niranjan (John) | mental-health data, MLflow, baseline models | 7-model comparison, Model Registry, export, FastAPI service |
+| Member | Phase 1 | Phase 2 | Phase 3 ownership |
+| --- | --- | --- | --- |
+| Rishi Agarwal | people table, target, merge, split, repository | CI, quality-gate and Docker checks, CD, deployment, release | integration, reviews/merges, monitoring CI step, final report |
+| Rishabh | body and clinical data, DVC pipeline | Docker, line-ending fix, deployment hardening, Render | production data, replay, drift, degradation, trigger; additionally implemented challenger, Fairlearn and SHAP |
+| Rhea | lifestyle data, data validation | model tests, quality gate, fairness checks, model card | model quality/governance and candidate release review |
+| Niranjan (John) | mental-health data, MLflow, baseline models | 7-model comparison, Model Registry, export, FastAPI service | prediction JSONL, metrics endpoint, Prometheus/Grafana |
 
 ## Team workflow
 `main` is protected: work on a branch, open a pull request, one teammate reviews, and both required CI checks must pass. Pin new packages in `requirements.txt` (runtime packages also in `requirements-api.txt`). Never edit raw data; never commit data, models, `.env` or tokens.

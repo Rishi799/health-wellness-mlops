@@ -1,0 +1,89 @@
+{
+  "checked_at": "2026-11-20T19:56:51.924602+00:00",
+  "source_commit": "6b6f12a09bc9b0c290c7a39edfeb92c37d83a1f0",
+  "status": "passed",
+  "checks": {
+    "candidate_provenance": "passed",
+    "participant_separation": "passed",
+    "stratified_split_reproduction": "passed",
+    "ordered_31_column_contract": "passed",
+    "six_batches_partition_every_source_row_once": "passed",
+    "all_batch_payloads_validate": "passed",
+    "nine_monitoring_report_sets": "passed",
+    "fairlearn_holdout_fingerprints_and_counts": "passed",
+    "shap_fingerprints_and_additivity": "passed",
+    "original_seven_csv_hashes": "passed",
+    "promotion_rule_recomputed": "passed"
+  },
+  "metrics_max_absolute_error": 0.0,
+  "metrics": {
+    "champion": {
+      "2017-2018": {
+        "roc_auc": 0.8501632930698674,
+        "recall": 0.8269896193771626,
+        "precision": 0.5494252873563218,
+        "brier": 0.16167717090628705,
+        "n": 1108,
+        "positives": 289
+      },
+      "2021-2023": {
+        "roc_auc": 0.8400693478212858,
+        "recall": 0.8191214470284238,
+        "precision": 0.49300155520995337,
+        "brier": 0.1722963018829557,
+        "n": 1557,
+        "positives": 387
+      },
+      "full_production": {
+        "roc_auc": 0.8247808793659813,
+        "recall": 0.7846074380165289,
+        "precision": 0.4848388126396425,
+        "brier": 0.17591885040112684,
+        "n": 7783,
+        "positives": 1936
+      }
+    },
+    "challenger": {
+      "2017-2018": {
+        "roc_auc": 0.8495211055764689,
+        "recall": 0.8062283737024222,
+        "precision": 0.5521327014218009,
+        "brier": 0.16082794893114427,
+        "n": 1108,
+        "positives": 289
+      },
+      "2021-2023": {
+        "roc_auc": 0.8457430596965481,
+        "recall": 0.8191214470284238,
+        "precision": 0.5055821371610846,
+        "brier": 0.1658124530357823,
+        "n": 1557,
+        "positives": 387
+      }
+    }
+  },
+  "payloads_validated": {
+    "batch_01.csv": 1298,
+    "batch_02.csv": 1297,
+    "batch_03.csv": 1297,
+    "batch_04.csv": 1297,
+    "batch_05.csv": 1297,
+    "batch_06.csv": 1297,
+    "batch_shifted.csv": 1298
+  },
+  "training_rows": 10654,
+  "holdout_rows": {
+    "2017-2018": 1108,
+    "2021-2023": 1557
+  },
+  "integration_pending": [
+    "successful API predictions written to JSONL",
+    "live logging-to-drift demonstration",
+    "teammate review and merges"
+  ],
+  "findings": [
+    "All six ordinary later-cycle batches drift; no threshold changes made to force a no-trigger story.",
+    "Young-adult recall remains weak; numerical eligibility is not release approval.",
+    "Drift needs a nonempty observed distribution for every feature; sparse traffic is insufficient."
+  ]
+}

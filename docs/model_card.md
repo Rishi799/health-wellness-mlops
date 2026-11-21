@@ -7,7 +7,7 @@
   standardization for numeric features, most-frequent imputation and one-hot
   encoding for categorical features; 21 input features.
 - **Owner:** Health and Wellness MLOps team; Rhea (Person 3) maintains model quality.
-- **Card date:** 2026-11-04. **Artifact export:** 2026-11-03.
+- **Card updated:** 2026-11-21 (Phase 3 evaluation addendum). **Artifact export:** 2026-11-03.
 - **Source run:** `077b778198d448628bf29fbf8c4fd9e6`.
 - **Provenance:** `models/model_info.json`; the champion artifact is versioned
   through DVC, not stored in this change.
@@ -90,6 +90,27 @@ and a mismatch between artifact feature ordering and the metadata. All hard
 failures are reported together and cause exit code 1. Thresholds may change
 only after a team decision.
 
+## Phase 3 evaluation and challenger review — 21 November 2026
+
+The served champion is still version 2. Its later-cycle evaluation now uses 7,783 adult records with 1,936 positive labels; all were unseen during its fitting. The unchanged champion achieves ROC-AUC 0.8248, recall 0.7846, precision 0.4848 and Brier 0.1759 on that full cohort. Eight of 21 input distributions drift relative to the original training data. All six ordinary later-cycle batches cross the fixed drift trigger; an identical-data negative control produces no trigger.
+
+For challenger comparison, the later cohort is separately split 6,226/1,557 with stratification and seed 42. Only the later training portion joins the 4,428 original training rows. Both holdouts remain disjoint from fitting and preprocessing. The full later cohort contains candidate fitting rows and is therefore not used as a candidate test set.
+
+| Model / holdout | ROC-AUC | Recall | Precision | Brier |
+| --- | ---: | ---: | ---: | ---: |
+| Champion v2 / original | 0.8502 | 0.8270 | 0.5494 | 0.1617 |
+| Challenger v3 / original | 0.8495 | 0.8062 | 0.5521 | 0.1608 |
+| Champion v2 / later holdout | 0.8401 | 0.8191 | 0.4930 | 0.1723 |
+| Challenger v3 / later holdout | 0.8457 | 0.8191 | 0.5056 | 0.1658 |
+
+Version 3 is registered with alias `challenger`, from finished run `893b1b05690d4870ba99b0628355395f`. It passes the prescribed numerical eligibility conditions, but is not approved or deployed as champion. Version 2's `champion` alias was verified remotely during the audit. Original-holdout recall decreases by about 2.08 percentage points and must be considered in review.
+
+Fairlearn's later-holdout age 20–39 counts are 1/14 positives detected by the champion and 3/14 by the candidate. Candidate recall is 0.2143 with a descriptive Wilson 95% interval of 0.0757–0.4759. The candidate detects 3/17 original-holdout young-adult positives. The later recorded-sex recall gap is 0.0865 for the candidate versus 0.0762 for the champion. These findings do not establish fairness or resolve the young-adult limitation. The intervals ignore the NHANES complex survey design and reflect small subgroup counts.
+
+SHAP `LinearExplainer` uses training-only backgrounds, explains positive-class log-odds, groups encoded contributions into the 21 serving features and verifies additivity. Its attribution assumptions and correlated measurements prevent a causal interpretation. No individual explanation records are published in the aggregate summary.
+
+Evidence: [full comparison](../reports/retraining/comparison.json), [decision](../reports/retraining/promotion_decision.json), [Fairlearn](../reports/fairness/), [SHAP](../reports/explanations/) and the [requirement/evaluation audit](phase3-verification.md). The later holdout has already been inspected in this educational study; further tuning must use training-only validation. Live JSONL monitoring, dashboards and scheduled integration remain pending; current offline reports do not prove that the full live feedback loop operates.
+
 ## Threshold and risk bands
 
 The classification threshold is **0.5**, read from `model_info.json`.
@@ -110,9 +131,9 @@ These are educational display bands, not clinically validated cutoffs.
 - **Potential shortcut:** `told_high_bp` may reflect previous healthcare contact
   or existing illness and act as a shortcut for reported diagnosis. Strong
   prediction does not establish a causal relationship.
-- **Drift:** NHANES 2021-2023 may differ in population, measurement, missingness,
-  and healthcare access. Those data are reserved for later drift evaluation;
-  current performance must not be assumed to transfer.
+- **Drift:** the 2021-2023 evaluation above shows input and performance differences.
+  Population, measurement, missingness and healthcare-access changes may contribute;
+  the observed drift does not establish a cause or guarantee transfer elsewhere.
 - **Associations, not causes:** neither feature coefficients nor directional
   tests show that changing a lifestyle factor will change an individual's risk.
 - Self-report, excluded unknown labels, missing-value imputation, class

@@ -2,6 +2,35 @@
 
 A running engineering log of progress, challenges encountered, root-cause analyses, and resolutions across project phases.
 
+## 21 November 2026 — Phase 3 audit and handoff verification (Rishabh)
+
+- Audited each P2 handbook requirement and the additionally requested retraining, Fairlearn and SHAP implementation. The [completion audit](docs/phase3-verification.md) records completed code/evidence and the pending live logging handoff separately.
+- Recomputed both models' ROC-AUC, recall, precision and Brier on both disjoint holdouts; all saved values matched exactly. Verified source/split/artifact SHA256s, six-batch row coverage, 10,654 training participants with no holdout overlap, and all seven unchanged original CSV fingerprints.
+- Validated all 9,081 ordinary/stress payloads against the serving schema. Replayed the complete first batch over local HTTP: 1,298/1,298 predictions returned 200, while a separate five-request invalid run returned five 422s. [Aggregate replay evidence](reports/phase3/local_replay.json)
+- Opened the Evidently HTML in a browser and captured the input-drift view plus both trigger outcomes. The no-trigger example is explicitly an identical-data control; the six ordinary later-cycle batches genuinely drift. [Screenshots and interpretation](docs/phase3-verification.md#evidence-checked)
+- Found and fixed stale outputs after failed standalone monitoring reruns. Added regression tests for drift/performance cleanup and sparse valid JSONL inputs. Full local suite: **256 passed**; dependency and DVC local/remote checks are clean. The [review PR](https://github.com/Rishi799/health-wellness-mlops/pull/32) links final CI.
+- Rechecked DagsHub: candidate run `893b1b05690d4870ba99b0628355395f` is finished, version 3 is `challenger`, and version 2 is still `champion`. Public `/health`, `/model-info`, `/docs` and one synthetic prediction returned 200; the API identifies `54727be` and model 2. No deployment or champion change was made.
+- Corrected stale README/data/model-card status and added the full degradation table, subgroup counts, source-codebook links and handoff commands. The complete API → JSONL → live drift/dashboard demonstration remains pending Niranjan's writer and the subsequent Rishabh integration check; review/merges and the monitoring CI step remain with Rishi.
+
+## 20–21 November 2026 — Phase 3 production data and model feedback loop (Rishabh)
+
+### Delivered
+
+- Added a cycle-aware mental-health builder and eight later-cycle/production DVC stages while preserving original outputs. Produced 7,783 adult records with the same ordered 31 columns; 1,936 labels are positive (24.87%). Created six seed-42 partitions plus a clearly synthetic older/BMI/SBP stress batch.
+- Added rate-limited traffic replay, Evidently reports with a 21-feature denominator and separate prediction drift, quality-gate-aligned labelled metrics, and the fixed OR trigger: drift ≥0.30, recall <0.777 or ROC-AUC <0.80.
+- Implemented challenger training after a stratified later split, both-holdout comparison, provenance checks and opt-in registry handoff. Version 3 is an eligible review candidate; version 2 remains the served champion. Data/splits/model bytes are in DVC; code and aggregate reports are in Git; the candidate and review artifacts are in MLflow/DagsHub.
+- Integrated Fairlearn counts, recall intervals and group gaps, and SHAP log-odds explanations with encoded fields grouped back to 21 inputs. The candidate's later-holdout AUC improves from 0.8401 to 0.8457 with equal recall 0.8191. Young-adult performance remains weak (3/14 detected) and original recall decreases; these are release-review findings, not resolved fairness claims.
+
+### What the results changed
+
+The initial handbook expected ordinary batches to show little drift, but every later-cycle batch crossed the fixed rule. We retained the observed result and used a clearly labelled identity control for the no-trigger demonstration. CDC's changed questionnaire/measurement context and observed missingness shifts warrant investigation; the audit does not assert a single cause or prove concept drift. The complete degradation experiment is in the [verification report](docs/phase3-verification.md#degradation-experiment-the-unchanged-champion).
+
+### Environment lessons
+
+Evidently's import hit a typing error in local Python 3.11.0; validation used an isolated 3.11.9 runtime with the same dependency pins, while CI requests patched Python 3.11. The Windows sandbox also blocked the local socket used during asynchronous initialization, requiring ordinary checks outside that sandbox. MLflow console output needed UTF-8 to print its run URL, and DVC used the installed CA bundle with TLS verification enabled. No credentials or local CA paths were committed.
+
+Changes are reviewable in PRs [28](https://github.com/Rishi799/health-wellness-mlops/pull/28) → [29](https://github.com/Rishi799/health-wellness-mlops/pull/29) → [30](https://github.com/Rishi799/health-wellness-mlops/pull/30) → [31](https://github.com/Rishi799/health-wellness-mlops/pull/31) → [32](https://github.com/Rishi799/health-wellness-mlops/pull/32). They are not yet merged into `main`.
+
 ## 10 November 2026 — Phase 2 deployment and recovery verification
 
 - Confirmed `RENDER_SERVICE_URL` matches the public origin exactly. The `phase2-review` tag and the restored API identify application commit `0acf8cf` and champion model version `2`. [Live model information](https://health-wellness-api.onrender.com/model-info) · [Phase 2 tag](https://github.com/Rishi799/health-wellness-mlops/tree/phase2-review)
@@ -68,7 +97,7 @@ A running engineering log of progress, challenges encountered, root-cause analys
 
 ### 1. What was done
 - **Production Containerisation:** Created `Dockerfile` based on `python:3.11-slim` with a non-root user (`appuser`), Docker layer caching (copying dependencies before application code), automatic `HEALTHCHECK` probing `/health`, and execution on port 8000.
-- **Slim API Runtime Requirements:** Created `requirements-api.txt` pinned to only the 7 minimal dependencies required for inference (`fastapi`, `uvicorn`, `pydantic`, `pandas`, `numpy`, `scikit-learn`, `skops`), keeping container size under target (< 600 MB) rather than bundling the 254-package dev environment.
+- **Slim API Runtime Requirements:** Created `requirements-api.txt` with the 7 direct inference dependencies (`fastapi`, `uvicorn`, `pydantic`, `pandas`, `numpy`, `scikit-learn`, `skops`), avoiding the full development environment. The size target was <600 MB; the later published-image measurement was 706.6 MB, as recorded in the 10 November entry above.
 - **Local Composition & Operations Runbook:** Added `docker-compose.yml` for single-command developer onboarding (`docker compose up --build`) and documented container lifecycle, troubleshooting, and security in `docs/docker.md`.
 - **Cross-Platform Hash Parity:** Solved Windows/Linux DVC hash divergence by authoring `.gitattributes` (`* text=auto eol=lf` plus binary exceptions for `.xpt`, `.png`, `.skops`, `.xlsx`, `.pptx`, `.pdf`) and enforcing `lineterminator="\n"` on all data pipeline writers in `src/data/*.py`.
 - **Pipeline Re-synchronization:** Ran `dvc repro` to regenerate all 7 stages with deterministic LF line endings, validated data integrity with Pandera (358 checks passed, 0 errors), and pushed updated cache to DagsHub remote via `dvc push`.

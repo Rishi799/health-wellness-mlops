@@ -51,6 +51,7 @@ def main(argv=None):
     parser.add_argument("--current", type=Path, default=ROOT / "data/production/2021-2023_clean.csv")
     parser.add_argument("--out", type=Path, default=ROOT / "reports/drift/performance.json")
     args = parser.parse_args(argv)
+    args.out.unlink(missing_ok=True)
     predictor = Predictor()
     predictor.load()
     report = evaluate_performance(predictor, pd.read_csv(args.current))
