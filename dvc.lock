@@ -101,8 +101,8 @@ stages:
       size: 489280
     - path: src/data/mental.py
       hash: md5
-      md5: a0040f30153dcdb54df44d06575e8d6f
-      size: 2148
+      md5: 400dbf5762fb6a0896aaa1e548294753
+      size: 2496
     outs:
     - path: data/interim/mental_2017-2018.csv
       hash: md5
@@ -129,8 +129,8 @@ stages:
       size: 174610
     - path: src/data/merge.py
       hash: md5
-      md5: c14d657821bd353b132634c320cfb453
-      size: 3570
+      md5: efe00bbbe1722f5d8528112012c133ef
+      size: 3578
     outs:
     - path: data/interim/merged_2017-2018.csv
       hash: md5
@@ -198,3 +198,216 @@ stages:
       hash: md5
       md5: 5d4c281c6ecb136ea95316d441a9c588
       size: 606698
+  people_2021:
+    cmd: python -m src.data.people 2021-2023
+    deps:
+    - path: data/raw/nhanes/2021-2023/DEMO_L.xpt
+      hash: md5
+      md5: 14555b1f4e3c909172e900f63a2ecd03
+      size: 2582160
+    - path: data/raw/nhanes/2021-2023/DIQ_L.xpt
+      hash: md5
+      md5: 59760c8e3765f44dff6e27fef2c02e43
+      size: 847600
+    - path: data/raw/nhanes/2021-2023/MCQ_L.xpt
+      hash: md5
+      md5: 8ddeb438ef55a9d73c7ab8bd882b21e9
+      size: 3294000
+    - path: src/data/people.py
+      hash: md5
+      md5: 9ebd2593a62be5dc1c993bc9c0d4fc8c
+      size: 5119
+    outs:
+    - path: data/interim/people_2021-2023.csv
+      hash: md5
+      md5: 972fd1e28d0224a32b050cc02f1b0f74
+      size: 249470
+  body_2021:
+    cmd: python -m src.data.body 2021-2023
+    deps:
+    - path: data/raw/nhanes/2021-2023/BMX_L.xpt
+      hash: md5
+      md5: ab25a36296e5b61881d42fef61c06b84
+      size: 1563200
+    - path: data/raw/nhanes/2021-2023/BPQ_L.xpt
+      hash: md5
+      md5: 83e8199b0333d87e2434399924379c52
+      size: 409680
+    - path: data/raw/nhanes/2021-2023/BPXO_L.xpt
+      hash: md5
+      md5: 06b22e450f3b5f5b7867119331fe12a4
+      size: 696720
+    - path: data/raw/nhanes/2021-2023/GHB_L.xpt
+      hash: md5
+      md5: 525acd4e3d18ea49b2341b43b5dc3b3d
+      size: 174000
+    - path: data/raw/nhanes/2021-2023/HDL_L.xpt
+      hash: md5
+      md5: 4b449509d2212b0417594eb354c48086
+      size: 259520
+    - path: data/raw/nhanes/2021-2023/TCHOL_L.xpt
+      hash: md5
+      md5: 2a7026e5df3f8abc9b063b243a4d321f
+      size: 259520
+    - path: src/data/body.py
+      hash: md5
+      md5: 02d811af5d2d35965cc475cd8850280e
+      size: 9371
+    outs:
+    - path: data/interim/body_2021-2023.csv
+      hash: md5
+      md5: a0cb9336f6949eb27c9c809b2d8d0ed5
+      size: 529509
+  lifestyle_2021:
+    cmd: python -m src.data.lifestyle --cycle 2021-2023
+    deps:
+    - path: data/raw/nhanes/2021-2023/ALQ_L.xpt
+      hash: md5
+      md5: 532a48072885eeb7d7538b7d2a1ac743
+      size: 458320
+    - path: data/raw/nhanes/2021-2023/DBQ_L.xpt
+      hash: md5
+      md5: b33249ae9fa04e1eca28ccbc32dc51c9
+      size: 2582160
+    - path: data/raw/nhanes/2021-2023/PAQ_L.xpt
+      hash: md5
+      md5: 1010e68a314d12168821ef58a6d99436
+      size: 409520
+    - path: data/raw/nhanes/2021-2023/SLQ_L.xpt
+      hash: md5
+      md5: 1713f7297abea6c63e500b7f3cbc6c70
+      size: 375840
+    - path: data/raw/nhanes/2021-2023/SMQ_L.xpt
+      hash: md5
+      md5: 6c7ca3a707b6005c4d9ce97c81b7a6d0
+      size: 651120
+    - path: src/data/lifestyle.py
+      hash: md5
+      md5: 94011ff23e28d0e64f730983d77ee856
+      size: 13528
+    outs:
+    - path: data/interim/lifestyle_2021-2023.csv
+      hash: md5
+      md5: d77d8c3344c808830fafb29beb1fc81f
+      size: 327404
+  mental_2021:
+    cmd: python -m src.data.mental 2021-2023
+    deps:
+    - path: data/raw/nhanes/2021-2023/DPQ_L.xpt
+      hash: md5
+      md5: dab8a93b131fc97c58965012947e16ce
+      size: 560000
+    - path: src/data/mental.py
+      hash: md5
+      md5: 400dbf5762fb6a0896aaa1e548294753
+      size: 2496
+    outs:
+    - path: data/interim/mental_2021-2023.csv
+      hash: md5
+      md5: 8459d6c416c792d19555de49a4bd7206
+      size: 123991
+  merge_2021:
+    cmd: python -m src.data.merge 2021-2023
+    deps:
+    - path: data/interim/body_2021-2023.csv
+      hash: md5
+      md5: a0cb9336f6949eb27c9c809b2d8d0ed5
+      size: 529509
+    - path: data/interim/lifestyle_2021-2023.csv
+      hash: md5
+      md5: d77d8c3344c808830fafb29beb1fc81f
+      size: 327404
+    - path: data/interim/mental_2021-2023.csv
+      hash: md5
+      md5: 8459d6c416c792d19555de49a4bd7206
+      size: 123991
+    - path: data/interim/people_2021-2023.csv
+      hash: md5
+      md5: 972fd1e28d0224a32b050cc02f1b0f74
+      size: 249470
+    - path: src/data/merge.py
+      hash: md5
+      md5: efe00bbbe1722f5d8528112012c133ef
+      size: 3578
+    outs:
+    - path: data/interim/merged_2021-2023.csv
+      hash: md5
+      md5: db07513ec2bda4deaeab7e42a5ce95f7
+      size: 975834
+  validate_2021:
+    cmd: python -m src.data.validate --cycle 2021-2023
+    deps:
+    - path: data/interim/body_2021-2023.csv
+      hash: md5
+      md5: a0cb9336f6949eb27c9c809b2d8d0ed5
+      size: 529509
+    - path: data/interim/lifestyle_2021-2023.csv
+      hash: md5
+      md5: d77d8c3344c808830fafb29beb1fc81f
+      size: 327404
+    - path: data/interim/mental_2021-2023.csv
+      hash: md5
+      md5: 8459d6c416c792d19555de49a4bd7206
+      size: 123991
+    - path: data/interim/merged_2021-2023.csv
+      hash: md5
+      md5: db07513ec2bda4deaeab7e42a5ce95f7
+      size: 975834
+    - path: data/interim/people_2021-2023.csv
+      hash: md5
+      md5: 972fd1e28d0224a32b050cc02f1b0f74
+      size: 249470
+    - path: src/data/validate.py
+      hash: md5
+      md5: d630569900867d5d79e5478592721544
+      size: 17035
+    outs:
+    - path: reports/validation_2021-2023.json
+      hash: md5
+      md5: 5fe17f6f1fe1a77383b49e7d04e2a320
+      size: 65985
+  production_2021:
+    cmd: python -m src.monitoring.prepare_production
+    deps:
+    - path: data/interim/merged_2017-2018.csv
+      hash: md5
+      md5: 7da7562823428b82bf140b61edae38f5
+      size: 757538
+    - path: data/interim/merged_2021-2023.csv
+      hash: md5
+      md5: db07513ec2bda4deaeab7e42a5ce95f7
+      size: 975834
+    - path: reports/validation_2021-2023.json
+      hash: md5
+      md5: 5fe17f6f1fe1a77383b49e7d04e2a320
+      size: 65985
+    - path: src/monitoring/prepare_production.py
+      hash: md5
+      md5: 67427303f16794e3a57e9adec8d4711f
+      size: 2132
+    outs:
+    - path: data/production/2021-2023_clean.csv
+      hash: md5
+      md5: db07513ec2bda4deaeab7e42a5ce95f7
+      size: 975834
+  production_batches:
+    cmd: python -m src.monitoring.make_batches
+    deps:
+    - path: data/production/2021-2023_clean.csv
+      hash: md5
+      md5: db07513ec2bda4deaeab7e42a5ce95f7
+      size: 975834
+    - path: src/api/schemas.py
+      hash: md5
+      md5: 8197a55806cca838a77f55da4bf08e63
+      size: 6768
+    - path: src/monitoring/make_batches.py
+      hash: md5
+      md5: 314ba541901ae31ed73b14725ccfa6f2
+      size: 3395
+    outs:
+    - path: data/production/batches
+      hash: md5
+      md5: 39b6d244063355a182f0bf342f2c38ce.dir
+      size: 1141168
+      nfiles: 8

@@ -1,3 +1,4 @@
+import argparse
 from pathlib import Path
 
 import pandas as pd
@@ -56,10 +57,14 @@ def process_mental_health(input_path: str, output_path: str) -> pd.DataFrame:
     return result
 
 
-if __name__ == "__main__":
+def main(argv=None):
+    parser = argparse.ArgumentParser(description="Build PHQ-9 scores for one NHANES cycle")
+    parser.add_argument("cycle", nargs="?", choices=("2017-2018", "2021-2023"), default="2017-2018")
+    args = parser.parse_args(argv)
     root = Path(__file__).resolve().parents[2]
-    source = root / "data/raw/nhanes/2017-2018/DPQ_J.xpt"
-    destination = root / "data/interim/mental_2017-2018.csv"
+    suffix = "J" if args.cycle == "2017-2018" else "L"
+    source = root / f"data/raw/nhanes/{args.cycle}/DPQ_{suffix}.xpt"
+    destination = root / f"data/interim/mental_{args.cycle}.csv"
 
     result = process_mental_health(str(source), str(destination))
     print(f"Saved: {destination}")
@@ -67,3 +72,7 @@ if __name__ == "__main__":
     print(f"Complete PHQ-9 scores: {result['phq9_score'].notna().sum()}")
     print("\nCategory counts:")
     print(result["phq9_category"].value_counts(dropna=False))
+
+
+if __name__ == "__main__":
+    main()

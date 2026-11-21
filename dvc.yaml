@@ -77,3 +77,89 @@ stages:
     outs:
       - data/processed/train.csv
       - data/processed/test.csv
+
+  people_2021:
+    cmd: python -m src.data.people 2021-2023
+    deps:
+      - src/data/people.py
+      - data/raw/nhanes/2021-2023/DEMO_L.xpt
+      - data/raw/nhanes/2021-2023/MCQ_L.xpt
+      - data/raw/nhanes/2021-2023/DIQ_L.xpt
+    outs:
+      - data/interim/people_2021-2023.csv
+
+  body_2021:
+    cmd: python -m src.data.body 2021-2023
+    deps:
+      - src/data/body.py
+      - data/raw/nhanes/2021-2023/BMX_L.xpt
+      - data/raw/nhanes/2021-2023/BPXO_L.xpt
+      - data/raw/nhanes/2021-2023/BPQ_L.xpt
+      - data/raw/nhanes/2021-2023/TCHOL_L.xpt
+      - data/raw/nhanes/2021-2023/HDL_L.xpt
+      - data/raw/nhanes/2021-2023/GHB_L.xpt
+    outs:
+      - data/interim/body_2021-2023.csv
+
+  lifestyle_2021:
+    cmd: python -m src.data.lifestyle --cycle 2021-2023
+    deps:
+      - src/data/lifestyle.py
+      - data/raw/nhanes/2021-2023/SMQ_L.xpt
+      - data/raw/nhanes/2021-2023/ALQ_L.xpt
+      - data/raw/nhanes/2021-2023/PAQ_L.xpt
+      - data/raw/nhanes/2021-2023/SLQ_L.xpt
+      - data/raw/nhanes/2021-2023/DBQ_L.xpt
+    outs:
+      - data/interim/lifestyle_2021-2023.csv
+
+  mental_2021:
+    cmd: python -m src.data.mental 2021-2023
+    deps:
+      - src/data/mental.py
+      - data/raw/nhanes/2021-2023/DPQ_L.xpt
+    outs:
+      - data/interim/mental_2021-2023.csv
+
+  merge_2021:
+    cmd: python -m src.data.merge 2021-2023
+    deps:
+      - src/data/merge.py
+      - data/interim/people_2021-2023.csv
+      - data/interim/body_2021-2023.csv
+      - data/interim/lifestyle_2021-2023.csv
+      - data/interim/mental_2021-2023.csv
+    outs:
+      - data/interim/merged_2021-2023.csv
+
+  validate_2021:
+    cmd: python -m src.data.validate --cycle 2021-2023
+    deps:
+      - src/data/validate.py
+      - data/interim/people_2021-2023.csv
+      - data/interim/body_2021-2023.csv
+      - data/interim/lifestyle_2021-2023.csv
+      - data/interim/mental_2021-2023.csv
+      - data/interim/merged_2021-2023.csv
+    metrics:
+      - reports/validation_2021-2023.json:
+          cache: false
+
+  production_2021:
+    cmd: python -m src.monitoring.prepare_production
+    deps:
+      - src/monitoring/prepare_production.py
+      - data/interim/merged_2021-2023.csv
+      - data/interim/merged_2017-2018.csv
+      - reports/validation_2021-2023.json
+    outs:
+      - data/production/2021-2023_clean.csv
+
+  production_batches:
+    cmd: python -m src.monitoring.make_batches
+    deps:
+      - src/monitoring/make_batches.py
+      - src/api/schemas.py
+      - data/production/2021-2023_clean.csv
+    outs:
+      - data/production/batches
