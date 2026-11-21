@@ -1,0 +1,69 @@
+{
+  "n": 1297,
+  "positives": 321,
+  "recall": 0.8099688473520249,
+  "precision": 0.5019305019305019,
+  "roc_auc": 0.8476488688013891,
+  "brier": 0.1661093815479421,
+  "subgroups": [
+    {
+      "field": "sex",
+      "group": "1",
+      "n": 596,
+      "positives": 167,
+      "recall": 0.8682634730538922,
+      "precision": 0.5534351145038168,
+      "roc_auc": 0.8580182292757143
+    },
+    {
+      "field": "sex",
+      "group": "2",
+      "n": 701,
+      "positives": 154,
+      "recall": 0.7467532467532467,
+      "precision": 0.44921875,
+      "roc_auc": 0.8347064270281821
+    },
+    {
+      "field": "age",
+      "group": "20-39",
+      "n": 365,
+      "positives": 15,
+      "recall": 0.13333333333333333,
+      "precision": 0.5,
+      "roc_auc": 0.7872380952380952
+    },
+    {
+      "field": "age",
+      "group": "40-59",
+      "n": 366,
+      "positives": 76,
+      "recall": 0.5657894736842105,
+      "precision": 0.48314606741573035,
+      "roc_auc": 0.8075771324863883
+    },
+    {
+      "field": "age",
+      "group": "60-79",
+      "n": 493,
+      "positives": 189,
+      "recall": 0.9206349206349206,
+      "precision": 0.49291784702549574,
+      "roc_auc": 0.7603557504873295
+    },
+    {
+      "field": "age",
+      "group": "80",
+      "n": 73,
+      "positives": 41,
+      "recall": 1.0,
+      "precision": 0.5694444444444444,
+      "roc_auc": 0.7873475609756098
+    }
+  ],
+  "model_version": "2",
+  "decision_threshold": 0.5,
+  "date": "2026-11-20T18:11:52.323490+00:00",
+  "batch": "batch_02.csv",
+  "data_sha256": "d0b3fbd697d83cc544d7ebe20bf3e4325e115fa204b6e9b63bdcc5d42b21f737"
+}
