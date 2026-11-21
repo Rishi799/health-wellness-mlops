@@ -1,0 +1,6 @@
+outs:
+- md5: 871c1721350bc58dc1e7a7c515adf816.dir
+  size: 234352
+  nfiles: 2
+  hash: md5
+  path: retraining
