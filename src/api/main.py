@@ -33,6 +33,21 @@ from src.api.schemas import (
 )
 
 logger = logging.getLogger("health_api")
+
+# ---------------------------------------------------------------------------
+# Ensure health_api logs reach Docker stdout/stderr (StreamHandler).
+# Guard against duplicate handlers when the module is re-imported or when
+# Uvicorn reloads the application.
+# ---------------------------------------------------------------------------
+if not logger.handlers:
+    _stream_handler = logging.StreamHandler()
+    _stream_handler.setLevel(logging.INFO)
+    _stream_handler.setFormatter(
+        logging.Formatter("%(asctime)s %(levelname)s %(name)s — %(message)s")
+    )
+    logger.addHandler(_stream_handler)
+logger.setLevel(logging.INFO)
+
 MODEL_UNAVAILABLE = "Model is unavailable"
 
 _prediction_logger = PredictionLogger()

@@ -8,6 +8,8 @@ Covers:
 5. JSON response bodies are unchanged (no extra monitoring keys).
 6. PredictionLogger failure never affects prediction response.
 7. PredictionLogger receives all 21 input fields including null values.
+8. Request logs contain method, path, status, latency_ms, and request_id.
+9. Request logs never contain patient input data.
 """
 
 import json
@@ -456,3 +458,53 @@ class TestRequestIDValidation:
         )
         assert response.status_code == 200
         assert response.headers["X-Request-ID"] == boundary_id
+
+
+# ---------------------------------------------------------------------------
+# 8. Request logs contain required fields and never patient data
+# ---------------------------------------------------------------------------
+
+
+class TestRequestLogContent:
+    """The health_api logger must emit structured info with specific fields."""
+
+    def test_request_log_contains_required_fields(self, client, low_risk_payload, caplog):
+        """Each request log record must include method, path, status, latency_ms, request_id."""
+        with caplog.at_level(logging.INFO, logger="health_api"):
+            response = client.post("/predict", json=low_risk_payload)
+
+        assert response.status_code == 200
+
+        # Find the middleware "request completed" record.
+        req_records = [
+            r for r in caplog.records
+            if r.name == "health_api" and r.message == "request completed"
+        ]
+        assert len(req_records) >= 1, "No 'request completed' log record found"
+        rec = req_records[-1]
+
+        # All five structured fields must be present in the log record's extras.
+        assert rec.method == "POST"
+        assert rec.path == "/predict"
+        assert rec.status == 200
+        assert isinstance(rec.latency_ms, (int, float)) and rec.latency_ms > 0
+        assert hasattr(rec, "request_id") and len(rec.request_id) > 0
+
+    def test_request_log_never_contains_patient_data(self, client, low_risk_payload, caplog):
+        """No log record from health_api should contain patient input values."""
+        with caplog.at_level(logging.DEBUG, logger="health_api"):
+            client.post("/predict", json=low_risk_payload)
+
+        # Sensitive field values that must NOT appear in any log message.
+        sensitive_markers = [
+            '"age"', '"bmi"', '"waist_cm"', '"sbp"', '"hdl"',
+            '"smoking_status"', '"phq9_score"', '"phq9_category"',
+        ]
+        for rec in caplog.records:
+            if rec.name != "health_api":
+                continue
+            msg = rec.getMessage()
+            for marker in sensitive_markers:
+                assert marker not in msg, (
+                    f"Patient data key {marker} leaked into log message: {msg!r}"
+                )
