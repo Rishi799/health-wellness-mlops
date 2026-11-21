@@ -1,0 +1,9 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Phase 3 decision — batch_shifted</title><style>body{font:17px/1.5 system-ui,sans-serif;margin:28px;color:#162134;background:#f5f7fa}main{max-width:850px;margin:auto;padding:24px;background:white;border:1px solid #cbd5e1;border-radius:8px}h1{font-size:28px;color:#9a3412;margin:8px 0}p{margin:12px 0}table{border-collapse:collapse;width:100%;margin:16px 0}td{border-bottom:1px solid #d1d5db;padding:8px}code{overflow-wrap:anywhere;font-size:14px}.meta{font-size:13px;color:#475569}strong{color:#9a3412}</style>
+<main><div class="meta">AI-Assisted Health and Wellness Awareness Platform · Phase 3 evidence</div>
+<h1>Retraining requested</h1><p>Synthetic older-adult stress batch with BMI +3 and SBP +15. Retained source labels are not counterfactual outcomes.</p><p><strong>retrain_needed: true</strong><br>Reasons: data drift, ROC-AUC below quality-gate floor</p>
+<p>Drifting serving features: <b>13/21</b>. Prediction drift: <b>true</b>.</p>
+<table><thead><tr><th align="left">Observed signal</th><th align="left">Value</th></tr></thead><tbody><tr><td>share_drifted_features</td><td>0.619048</td></tr><tr><td>recall</td><td>0.929293</td></tr><tr><td>roc_auc</td><td>0.753304</td></tr></tbody></table>
+<p>Rules (OR): input drift ≥ 0.30; recall &lt; 0.777; ROC-AUC &lt; 0.80.</p>
+<p class="meta">Source: <code>reports/drift/batch_shifted/trigger.json</code><br>Model version: 2<br>Decision date: 2026-11-20T18:12:03.780303+00:00<br>Data SHA256: <code>17ef30ffec16e499db2c1a8680f11cc47c7d515ff0d2d1a122769eb4986b2c88</code></p>
+<p class="meta">A positive trigger requests an experiment. Champion promotion and deployment require team review.</p></main></html>

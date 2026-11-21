@@ -1,0 +1,122 @@
+{
+  "model_version": "challenger",
+  "sample_rows": 500,
+  "background_rows": 200,
+  "seed": 42,
+  "units": "positive-class log-odds",
+  "method": "LinearExplainer with an Independent masker on fitted transformed inputs",
+  "additivity_max_error": 1.1102230246251565e-15,
+  "features": [
+    {
+      "feature": "age",
+      "mean_absolute_shap": 0.798255985696775,
+      "mean_shap": 0.17668456639759306
+    },
+    {
+      "feature": "told_high_bp",
+      "mean_absolute_shap": 0.4609556451233929,
+      "mean_shap": 0.010754002325254095
+    },
+    {
+      "feature": "waist_cm",
+      "mean_absolute_shap": 0.20070795016428974,
+      "mean_shap": 0.028503818745812613
+    },
+    {
+      "feature": "total_chol",
+      "mean_absolute_shap": 0.19259756582185003,
+      "mean_shap": -0.03868549051642065
+    },
+    {
+      "feature": "phq9_score",
+      "mean_absolute_shap": 0.18235865631889053,
+      "mean_shap": 0.04621705501984722
+    },
+    {
+      "feature": "pulse",
+      "mean_absolute_shap": 0.16065484147772566,
+      "mean_shap": 0.016516753158165504
+    },
+    {
+      "feature": "sex",
+      "mean_absolute_shap": 0.14613029047410378,
+      "mean_shap": 0.004396218124973053
+    },
+    {
+      "feature": "smoking_status",
+      "mean_absolute_shap": 0.1438672723867884,
+      "mean_shap": 0.008249369611612939
+    },
+    {
+      "feature": "hdl",
+      "mean_absolute_shap": 0.12348488098600616,
+      "mean_shap": 0.019926662646877296
+    },
+    {
+      "feature": "dbp",
+      "mean_absolute_shap": 0.12031361596284969,
+      "mean_shap": -0.039990587703803544
+    },
+    {
+      "feature": "education",
+      "mean_absolute_shap": 0.1024500415457711,
+      "mean_shap": -0.029034505826954826
+    },
+    {
+      "feature": "height_cm",
+      "mean_absolute_shap": 0.09914268047288649,
+      "mean_shap": -0.0061602211164606515
+    },
+    {
+      "feature": "bmi",
+      "mean_absolute_shap": 0.08010712181591427,
+      "mean_shap": 0.0022318407060506933
+    },
+    {
+      "feature": "income_ratio",
+      "mean_absolute_shap": 0.07417677407053958,
+      "mean_shap": -0.005916942716853465
+    },
+    {
+      "feature": "sedentary_min_day",
+      "mean_absolute_shap": 0.07063328501675933,
+      "mean_shap": 0.0007961106652918843
+    },
+    {
+      "feature": "weight_kg",
+      "mean_absolute_shap": 0.06928306739556685,
+      "mean_shap": 0.0013381886851955556
+    },
+    {
+      "feature": "exercise_min_week",
+      "mean_absolute_shap": 0.060537575814398316,
+      "mean_shap": -0.012587976724456055
+    },
+    {
+      "feature": "sbp",
+      "mean_absolute_shap": 0.05160186502419448,
+      "mean_shap": 0.0037586246957846433
+    },
+    {
+      "feature": "phq9_category",
+      "mean_absolute_shap": 0.049329086044824916,
+      "mean_shap": -0.00976257309037446
+    },
+    {
+      "feature": "alcohol_drinks_week",
+      "mean_absolute_shap": 0.03201364671617995,
+      "mean_shap": -0.005082061957510016
+    },
+    {
+      "feature": "sleep_hours",
+      "mean_absolute_shap": 0.01108260703436532,
+      "mean_shap": -0.0006863508888902891
+    }
+  ],
+  "date": "2026-11-20T19:21:20.434572+00:00",
+  "dataset": "test_2021.csv",
+  "background_population": "2017-2018 + 2021-2023 training partitions",
+  "data_sha256": "2e3359b44ac8fdd73fff1b4d3beb3f3f518ddbc30dfd7ffb7883d81513864251",
+  "model_sha256": "b48e45cc7989752628b5b27744e7fb1958e7b4cbd10e1998e7ab1b985b205a88",
+  "source_run_id": "893b1b05690d4870ba99b0628355395f"
+}

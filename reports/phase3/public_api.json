@@ -1,0 +1,42 @@
+{
+  "checked_at": "2026-11-20T19:57:20.897815+00:00",
+  "base_url": "https://health-wellness-api.onrender.com",
+  "checks": [
+    {
+      "method": "GET",
+      "path": "/health",
+      "status_code": 200,
+      "response": {
+        "status": "healthy",
+        "model_loaded": true,
+        "model_version": "2"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/model-info",
+      "status_code": 200,
+      "response": {
+        "model_version": "2",
+        "service_git_commit": "54727beb18fa8b1ddb1e79d1453e16ff6512623c"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/docs",
+      "status_code": 200
+    },
+    {
+      "method": "POST",
+      "path": "/predict",
+      "status_code": 200,
+      "response": {
+        "probability": 0.5965,
+        "risk_score": 59.6,
+        "risk_band": "Moderate",
+        "model_version": "2"
+      }
+    }
+  ],
+  "all_passed": true
+}

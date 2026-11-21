@@ -3,12 +3,13 @@ import hashlib
 import json
 from pathlib import Path
 from types import SimpleNamespace
+from unittest.mock import MagicMock, patch
 
 import numpy as np
 import pandas as pd
 import pytest
 
-from src.models.compare_champion import compare, promotion_decision, verify_provenance
+from src.models.compare_champion import compare, promotion_decision, register_challenger, verify_provenance
 from tests.test_quality_gate import FixedProbabilityModel
 
 
@@ -85,3 +86,37 @@ def test_stale_artifact_or_changed_evaluation_data_rejected(tmp_path):
     (tmp_path / names[-1]).write_bytes(b"different holdout")
     with pytest.raises(ValueError, match="Data changed"):
         verify_provenance(metadata, artifact, tmp_path)
+
+
+@pytest.mark.parametrize("existing", [True, False])
+def test_registration_writes_only_challenger_alias_and_reuses_version(existing):
+    client = MagicMock()
+    client.get_run.return_value = SimpleNamespace(
+        info=SimpleNamespace(status="FINISHED", experiment_id="2"),
+        data=SimpleNamespace(tags={"git_commit": "abc", "production_sha256": "data"}))
+    client.get_experiment.return_value.name = "cardiometabolic-retraining"
+    version = SimpleNamespace(run_id="run", version="3")
+    client.search_model_versions.return_value = [version] if existing else []
+    metadata = {"source_run_id": "run", "git_commit": "abc",
+                "input_sha256": {"data/production/2021-2023_clean.csv": "data"}}
+    with patch("src.models.register_model.register_model_artifact", return_value=version) as create:
+        result = register_challenger(metadata, {"promote": True}, client)
+    if existing:
+        create.assert_not_called()
+    else:
+        create.assert_called_once_with("run", "cardiometabolic-risk-model", client)
+    client.set_registered_model_alias.assert_called_once_with(
+        name="cardiometabolic-risk-model", alias="challenger", version="3")
+    assert result["version"] == "3" and not result["champion_alias_changed"]
+    client.get_run.return_value.info.status = "FAILED"
+    with pytest.raises(ValueError, match="finished"):
+        register_challenger(metadata, {"promote": True}, client)
+
+
+def test_registration_rejects_ineligible_or_untracked_candidate():
+    client = MagicMock()
+    with pytest.raises(ValueError, match="ineligible"):
+        register_challenger({}, {"promote": False}, client)
+    with pytest.raises(ValueError, match="source run"):
+        register_challenger({}, {"promote": True}, client)
+    client.get_run.assert_not_called()

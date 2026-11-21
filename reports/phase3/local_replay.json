@@ -1,0 +1,29 @@
+{
+  "checked_at": "2026-11-20T19:51:37.005207+00:00",
+  "scope": "complete batch_01 over local HTTP",
+  "source_sha256": "3f90ce4c7878513312619cb17dcd1c9c9986c14bd24648220249180be48a862c",
+  "health": {
+    "status": "healthy",
+    "model_loaded": true,
+    "model_version": "2",
+    "error": null
+  },
+  "rate_per_second": 25,
+  "results": {
+    "sent": 1298,
+    "200": 1298,
+    "422": 0,
+    "other": 0,
+    "network_errors": 0,
+    "mean_latency_ms": 14.844
+  },
+  "invalid_requests": {
+    "sent": 5,
+    "200": 0,
+    "422": 5,
+    "other": 0,
+    "network_errors": 0,
+    "mean_latency_ms": 3.0
+  },
+  "prediction_jsonl_integration": "pending API logging writer; not demonstrated"
+}

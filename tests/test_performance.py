@@ -55,3 +55,15 @@ def test_rejects_unknown_labels():
     frame.loc[0, "cardiometabolic"] = np.nan
     with pytest.raises(ValueError, match="labels"):
         evaluate_performance(predictor, frame)
+
+
+def test_failed_performance_rerun_removes_old_report(tmp_path, monkeypatch):
+    from src.monitoring import performance
+    predictor, _ = case()
+    predictor.load = lambda: None
+    monkeypatch.setattr(performance, "Predictor", lambda: predictor)
+    out = tmp_path / "performance.json"
+    out.write_text('{"recall": 1.0}')
+    with pytest.raises(FileNotFoundError):
+        performance.main(["--current", str(tmp_path / "missing.csv"), "--out", str(out)])
+    assert not out.exists()
