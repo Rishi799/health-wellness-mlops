@@ -111,6 +111,52 @@ SHAP `LinearExplainer` uses training-only backgrounds, explains positive-class l
 
 Evidence: [full comparison](../reports/retraining/comparison.json), [decision](../reports/retraining/promotion_decision.json), [Fairlearn](../reports/fairness/), [SHAP](../reports/explanations/) and the [requirement/evaluation audit](phase3-verification.md). The later holdout has already been inspected in this educational study; further tuning must use training-only validation. Live JSONL monitoring, dashboards and scheduled integration remain pending; current offline reports do not prove that the full live feedback loop operates.
 
+## Fairness follow-up for issue #25 - 22 November 2026
+
+The [consolidated fairness report](../reports/retraining/fairness.json) audits
+the four saved [Fairlearn assessments](../reports/fairness/) against the
+comparison report's holdout/model fingerprints, run IDs, threshold and subgroup
+counts. It recomputes Wilson intervals from detected/positive counts. It is a
+consistency check of saved aggregate evidence, not a new fit, new prediction run
+or a live registry check. Reproduce with
+`python -m src.monitoring.fairness_followup`; no raw data or model download is
+required for that aggregation. Threshold 0.5 is unchanged.
+
+Original 2017-2018 holdout:
+
+| Group | n | Positives | Champion detected | Champion recall | Challenger detected | Challenger recall |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Sex 1 | 542 | 142 | 126 | 0.8873 | 120 | 0.8451 |
+| Sex 2 | 566 | 147 | 113 | 0.7687 | 113 | 0.7687 |
+| Age 20-39 | 358 | 17 | 2 | 0.1176 | 3 | 0.1765 |
+| Age 40-59 | 319 | 55 | 40 | 0.7273 | 39 | 0.7091 |
+| Age 60-79 | 345 | 174 | 154 | 0.8851 | 149 | 0.8563 |
+| Age 80, capped | 86 | 43 | 43 | 1.0000 | 42 | 0.9767 |
+
+Later 2021-2023 holdout (not the full production cohort):
+
+| Group | n | Positives | Champion detected | Champion recall | Challenger detected | Challenger recall |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Sex 1 | 740 | 201 | 172 | 0.8557 | 173 | 0.8607 |
+| Sex 2 | 817 | 186 | 145 | 0.7796 | 144 | 0.7742 |
+| Age 20-39 | 411 | 14 | 1 | 0.0714 | 3 | 0.2143 |
+| Age 40-59 | 446 | 92 | 50 | 0.5435 | 55 | 0.5978 |
+| Age 60-79 | 594 | 228 | 213 | 0.9342 | 207 | 0.9079 |
+| Age 80, capped | 106 | 53 | 53 | 1.0000 | 52 | 0.9811 |
+
+**Interpretation:** young-adult weakness persists on both holdouts: the
+candidate detects 3/17 original and 3/14 later positives, compared with the
+champion's 2/17 and 1/14. On the later holdout the candidate still misses 11 of
+14 positives, and its descriptive Wilson 95% recall interval is 0.0757-0.4759;
+the small positive count and unweighted complex-survey data limit certainty.
+The age 40-59 candidate recall is also below the 0.60 warning level on the
+later holdout, and candidate original-population recall falls overall.
+Neither numerical eligibility nor a higher young-adult point estimate resolves
+these risks, so [issue #25](https://github.com/Rishi799/health-wellness-mlops/issues/25)
+remains an investigation requiring team review; no deployed threshold or model
+was changed. Further threshold/ablation work must use training-only validation,
+and these descriptive intervals do not establish causal effects or fairness.
+
 ## Governance, monitoring and release status
 
 The [governance policy](governance.md) names owners, approval rights, the
