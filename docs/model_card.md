@@ -7,7 +7,7 @@
   standardization for numeric features, most-frequent imputation and one-hot
   encoding for categorical features; 21 input features.
 - **Owner:** Health and Wellness MLOps team; Rhea (Person 3) maintains model quality.
-- **Card updated:** 2026-11-21 (Phase 3 evaluation addendum). **Artifact export:** 2026-11-03.
+- **Card updated:** 2026-11-22 (Phase 3 governance review). **Artifact export:** 2026-11-03.
 - **Source run:** `077b778198d448628bf29fbf8c4fd9e6`.
 - **Provenance:** `models/model_info.json`; the champion artifact is versioned
   through DVC, not stored in this change.
@@ -110,6 +110,38 @@ Fairlearn's later-holdout age 20–39 counts are 1/14 positives detected by the 
 SHAP `LinearExplainer` uses training-only backgrounds, explains positive-class log-odds, groups encoded contributions into the 21 serving features and verifies additivity. Its attribution assumptions and correlated measurements prevent a causal interpretation. No individual explanation records are published in the aggregate summary.
 
 Evidence: [full comparison](../reports/retraining/comparison.json), [decision](../reports/retraining/promotion_decision.json), [Fairlearn](../reports/fairness/), [SHAP](../reports/explanations/) and the [requirement/evaluation audit](phase3-verification.md). The later holdout has already been inspected in this educational study; further tuning must use training-only validation. Live JSONL monitoring, dashboards and scheduled integration remain pending; current offline reports do not prove that the full live feedback loop operates.
+
+## Governance, monitoring and release status
+
+The [governance policy](governance.md) names owners, approval rights, the
+trigger-to-release process, versioning, privacy boundaries and rollback. Its
+acceptance requires teammate review. The 20 November [training record](../reports/retraining/training.json)
+contains 10,654 fitting rows, stratified seed 42, source hashes and the MLflow
+run ID. The [trigger](../reports/retraining/trigger.json) cites data drift;
+the [drift summary](../reports/drift/drift_summary.json) records 8/21 drifting
+inputs. These are saved offline survey evaluations, not evidence of a current
+live monitoring service or a newly repeated run.
+
+Rhea's release-review recommendation is to retain the currently exported
+champion while the team considers the old-population recall decrease and
+persistent young-adult limitation. Numerical `promote: true` only establishes
+eligibility. The decision records version 3 as `challenger`, with review
+required and no champion-alias change; this document does not approve promotion.
+Follow [issue #25](https://github.com/Rishi799/health-wellness-mlops/issues/25)
+for the young-adult investigation and do not treat modest point-estimate
+improvements as resolution. Lower thresholds or a `told_high_bp` ablation would
+be new experiments requiring training-only validation and team review.
+
+The current main branch still awaits Niranjan's prediction-log/metrics/dashboard
+integration. Offline drift/performance reports and the existing CI quality step
+are implemented; a scheduled live monitoring loop, log access/retention controls
+and alert routing are not verified. Use public de-identified survey or synthetic
+demo inputs until real-user data handling is explicitly reviewed. Never use
+the score for diagnosis, treatment, triage or decisions about access to services.
+
+The [Phase 2 rollback drill](render-deployment.md#5-rehearse-image-rollback)
+provides the incident procedure. No new deployment, threshold change or registry
+alias change was made for this review.
 
 ## Threshold and risk bands
 
