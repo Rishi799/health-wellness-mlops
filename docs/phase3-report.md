@@ -36,6 +36,18 @@ claimed from offline reports; their integration remains with the named owners.
 Teammate review of the card/policy and a team decision on any model replacement
 remain required.
 
+Rhea's [fairness follow-up](../reports/retraining/fairness.json) consolidates all
+24 model/holdout/sex-or-age entries with n, positives, detected, missed, recall
+and descriptive Wilson intervals. The aggregator rejects mixed source runs,
+holdout fingerprints, model fingerprints, thresholds, counts or intervals;
+14 offline regression tests cover those paths. It validates saved aggregate
+evidence without claiming to refit or freshly re-evaluate the candidate. The
+[model card](model_card.md#fairness-follow-up-for-issue-25---22-november-2026)
+includes both subgroup tables and interpretation. The later candidate still
+misses 11 of 14 young-adult positives, so the follow-up does not resolve issue
+#25 or authorize changing the model/threshold. The full suite passes 270 local
+tests after this addition; teammate review and CI remain required.
+
 ## Rishabh — production data, monitoring, trigger and challenger handoff
 
 The later NHANES cycle produces 7,783 validated adult records with the original 31-column contract. Seed-42 partitioning gives six disjoint simulated production batches; a separate, explicitly synthetic older-adult batch adds clipped BMI/SBP offsets. A full DVC rebuild preserved all seven original-cycle CSV fingerprints. Data, splits and the candidate artifact are uploaded through DVC.
