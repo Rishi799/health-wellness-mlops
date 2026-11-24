@@ -43,7 +43,7 @@ if not logger.handlers:
     _stream_handler = logging.StreamHandler()
     _stream_handler.setLevel(logging.INFO)
     _stream_handler.setFormatter(
-        logging.Formatter("%(asctime)s %(levelname)s %(name)s — %(message)s")
+        logging.Formatter("%(asctime)s %(levelname)s %(name)s - %(message)s")
     )
     logger.addHandler(_stream_handler)
 logger.setLevel(logging.INFO)
@@ -127,7 +127,12 @@ async def request_id_and_latency_middleware(request: Request, call_next):
     response.headers["X-Request-ID"] = request_id
 
     logger.info(
-        "request completed",
+        "request completed - method=%s path=%s status=%d latency_ms=%.3f request_id=%s",
+        request.method,
+        request.url.path,
+        response.status_code,
+        latency_ms,
+        request_id,
         extra={
             "method": request.method,
             "path": request.url.path,

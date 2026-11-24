@@ -469,7 +469,7 @@ class TestRequestLogContent:
     """The health_api logger must emit structured info with specific fields."""
 
     def test_request_log_contains_required_fields(self, client, low_risk_payload, caplog):
-        """Each request log record must include method, path, status, latency_ms, request_id."""
+        """Printed log message must contain method=, path=, status=, latency_ms=, request_id= and a normal hyphen."""
         with caplog.at_level(logging.INFO, logger="health_api"):
             response = client.post("/predict", json=low_risk_payload)
 
@@ -478,17 +478,62 @@ class TestRequestLogContent:
         # Find the middleware "request completed" record.
         req_records = [
             r for r in caplog.records
-            if r.name == "health_api" and r.message == "request completed"
+            if r.name == "health_api" and "request completed" in r.getMessage()
         ]
         assert len(req_records) >= 1, "No 'request completed' log record found"
         rec = req_records[-1]
+        printed = rec.getMessage()
 
-        # All five structured fields must be present in the log record's extras.
+        # The printed message must start with prefix using a plain hyphen (never an em dash).
+        assert "request completed - " in printed, f"Prefix 'request completed - ' missing: {printed!r}"
+        assert " - " in printed, f"Normal hyphen missing: {printed!r}"
+        assert "\u2014" not in printed, f"Em dash '\u2014' found in log message: {printed!r}"
+
+        # The printed message itself must contain each of the 5 fields (not just extra).
+        assert "method=" in printed, f"'method=' missing from: {printed!r}"
+        assert "path=" in printed, f"'path=' missing from: {printed!r}"
+        assert "status=" in printed, f"'status=' missing from: {printed!r}"
+        assert "latency_ms=" in printed, f"'latency_ms=' missing from: {printed!r}"
+        assert "request_id=" in printed, f"'request_id=' missing from: {printed!r}"
+
+        # Spot-check values.
+        assert "method=POST" in printed
+        assert "path=/predict" in printed
+        assert "status=200" in printed
+
+        # Extra dict fields must also be present on the record for caplog compatibility.
         assert rec.method == "POST"
         assert rec.path == "/predict"
         assert rec.status == 200
         assert isinstance(rec.latency_ms, (int, float)) and rec.latency_ms > 0
         assert hasattr(rec, "request_id") and len(rec.request_id) > 0
+
+    def test_request_log_printed_message_on_health_endpoint(self, client, caplog):
+        """GET /health log line must contain all five fields, plain hyphen, and no patient data."""
+        with caplog.at_level(logging.INFO, logger="health_api"):
+            response = client.get("/health")
+
+        assert response.status_code == 200
+
+        req_records = [
+            r for r in caplog.records
+            if r.name == "health_api" and "request completed" in r.getMessage()
+        ]
+        assert len(req_records) >= 1, "No 'request completed' record for /health"
+        printed = req_records[-1].getMessage()
+
+        assert "request completed - " in printed
+        assert " - " in printed
+        assert "\u2014" not in printed
+
+        for field in ("method=GET", "path=/health", "status=200", "latency_ms=", "request_id="):
+            assert field in printed, f"'{field}' missing from health log: {printed!r}"
+
+        # Must NOT contain any patient-data keys.
+        for forbidden in ("bmi", "age", "waist_cm", "sbp", "hdl"):
+            assert forbidden not in printed, (
+                f"Patient data '{forbidden}' leaked into health log: {printed!r}"
+            )
 
     def test_request_log_never_contains_patient_data(self, client, low_risk_payload, caplog):
         """No log record from health_api should contain patient input values."""
