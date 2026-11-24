@@ -1,8 +1,21 @@
 services:
+  init:
+    image: python:3.11-slim
+    user: "0:0"
+    volumes:
+      - ./logs:/app/logs
+    command: ["sh", "-c", "mkdir -p /app/logs && chown -R 1000:1000 /app/logs && chmod -R 775 /app/logs"]
+    restart: "no"
+
   api:
     build: .
     ports:
       - "8000:8000"
+    volumes:
+      - ./logs:/app/logs
+    depends_on:
+      init:
+        condition: service_completed_successfully
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request;urllib.request.urlopen('http://localhost:8000/health')"]

@@ -5,10 +5,16 @@ COPY requirements-api.txt .
 RUN pip install --no-cache-dir -r requirements-api.txt
 COPY src/ src/
 COPY models/model.skops models/model_info.json models/
+# appuser is UID 1000, GID 1000 (default non-root user created by useradd in python:3.11-slim)
 RUN useradd --create-home appuser && chmod -R a-w /app/models
+# Create /app/logs owned by appuser (UID 1000, GID 1000) for prediction logging.
+RUN mkdir -p /app/logs && chown appuser:appuser /app/logs
+COPY entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
 USER appuser
 ARG BUILD_SHA=unknown
 ENV SERVICE_GIT_COMMIT=${BUILD_SHA}
 EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=30s CMD python -c "import os,urllib.request;urllib.request.urlopen('http://127.0.0.1:'+os.getenv('PORT','8000')+'/health',timeout=3)"
+ENTRYPOINT ["/app/entrypoint.sh"]
 CMD ["sh", "-c", "exec uvicorn src.api.main:app --host 0.0.0.0 --port \"${PORT:-8000}\""]

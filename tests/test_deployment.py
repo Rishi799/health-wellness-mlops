@@ -92,3 +92,77 @@ def test_missing_hook_explicitly_reports_no_deployment(monkeypatch, capsys):
     monkeypatch.delenv("RENDER_DEPLOY_HOOK", raising=False)
     deploy.main()
     assert "no service was deployed" in capsys.readouterr().out
+
+
+# ---------------------------------------------------------------------------
+# Dockerfile CMD — must honour Render PORT env var (Phase 2 requirement)
+# ---------------------------------------------------------------------------
+
+
+def _read_dockerfile_cmd() -> str:
+    """Return the last CMD line from the project Dockerfile as a raw string."""
+    import pathlib
+    dockerfile = pathlib.Path(__file__).parent.parent / "Dockerfile"
+    text = dockerfile.read_text(encoding="utf-8")
+    for line in reversed(text.splitlines()):
+        if line.strip().startswith("CMD"):
+            return line
+    raise AssertionError("No CMD instruction found in Dockerfile")
+
+
+def test_dockerfile_cmd_honours_port_env_var():
+    """CMD must use ${PORT:-8000} so Render's PORT variable is respected."""
+    cmd_line = _read_dockerfile_cmd()
+    assert "${PORT:-8000}" in cmd_line, (
+        f"CMD does not contain '${'{PORT:-8000}'}': {cmd_line!r}"
+    )
+
+
+def test_dockerfile_cmd_does_not_hardcode_port_8000():
+    """CMD must not hard-code '--port', '8000' as separate JSON array elements."""
+    cmd_line = _read_dockerfile_cmd()
+    # The old broken form used a JSON array with literal "--port" and "8000" items.
+    assert '"--port", "8000"' not in cmd_line, (
+        f"CMD hard-codes --port 8000 as separate array elements: {cmd_line!r}"
+    )
+    assert '"--port","8000"' not in cmd_line, (
+        f"CMD hard-codes --port 8000 as separate array elements: {cmd_line!r}"
+    )
+
+
+def test_dockerfile_cmd_exact_syntax():
+    """CMD must match the exact dynamic port instruction requested by Rishi."""
+    cmd_line = _read_dockerfile_cmd().strip()
+    expected = 'CMD ["sh", "-c", "exec uvicorn src.api.main:app --host 0.0.0.0 --port \\"${PORT:-8000}\\""]'
+    assert cmd_line == expected, f"CMD instruction mismatch.\nExpected: {expected}\nActual:   {cmd_line}"
+
+
+def test_port_expansion_default_and_custom():
+    """Shell expansion of ${PORT:-8000} defaults to 8000 and respects custom PORT."""
+    import subprocess
+    # Default (no PORT set)
+    res_default = subprocess.run(
+        ["sh", "-c", 'echo "${PORT:-8000}"'],
+        capture_output=True,
+        text=True,
+        env={},
+    )
+    assert res_default.stdout.strip() == "8000"
+
+    # Custom PORT (e.g. Render dynamic port)
+    res_custom = subprocess.run(
+        ["sh", "-c", 'echo "${PORT:-8000}"'],
+        capture_output=True,
+        text=True,
+        env={"PORT": "10000"},
+    )
+    assert res_custom.stdout.strip() == "10000"
+
+
+def test_entrypoint_preserves_exec_passthrough():
+    """entrypoint.sh must end with exec \"$@\" to pass through CMD arguments."""
+    import pathlib
+    entrypoint = pathlib.Path(__file__).parent.parent / "entrypoint.sh"
+    content = entrypoint.read_text(encoding="utf-8")
+    lines = [line.strip() for line in content.splitlines() if line.strip() and not line.strip().startswith("#")]
+    assert lines[-1] == 'exec "$@"', f"entrypoint.sh does not end with exec \"$@\": {lines[-1]!r}"
