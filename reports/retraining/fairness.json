@@ -1,0 +1,386 @@
+{
+  "date": "2026-11-22T14:11:45.988332+00:00",
+  "evidence_type": "consistency-checked saved aggregate reports; no fresh model evaluation",
+  "issue": "https://github.com/Rishi799/health-wellness-mlops/issues/25",
+  "decision_threshold": 0.5,
+  "source_runs": {
+    "champion": "077b778198d448628bf29fbf8c4fd9e6",
+    "challenger": "893b1b05690d4870ba99b0628355395f"
+  },
+  "model_sha256": {
+    "champion": "26706222552f938c8afd53080ceba6a50fbe78778492c43bcdf051ad81879ce0",
+    "challenger": "b48e45cc7989752628b5b27744e7fb1958e7b4cbd10e1998e7ab1b985b205a88"
+  },
+  "rows": [
+    {
+      "model": "champion",
+      "cycle": "2017-2018",
+      "field": "sex",
+      "group": "1",
+      "n": 542,
+      "positives": 142,
+      "detected": 126,
+      "missed": 16,
+      "recall": 0.8873239436619719,
+      "recall_ci95_wilson": [
+        0.8248001787640153,
+        0.9294435108526686
+      ]
+    },
+    {
+      "model": "champion",
+      "cycle": "2017-2018",
+      "field": "sex",
+      "group": "2",
+      "n": 566,
+      "positives": 147,
+      "detected": 113,
+      "missed": 34,
+      "recall": 0.7687074829931972,
+      "recall_ci95_wilson": [
+        0.6942275048905829,
+        0.8295011875898287
+      ]
+    },
+    {
+      "model": "champion",
+      "cycle": "2017-2018",
+      "field": "age",
+      "group": "20-39",
+      "n": 358,
+      "positives": 17,
+      "detected": 2,
+      "missed": 15,
+      "recall": 0.11764705882352941,
+      "recall_ci95_wilson": [
+        0.0328797737637927,
+        0.3433635059488586
+      ]
+    },
+    {
+      "model": "champion",
+      "cycle": "2017-2018",
+      "field": "age",
+      "group": "40-59",
+      "n": 319,
+      "positives": 55,
+      "detected": 40,
+      "missed": 15,
+      "recall": 0.7272727272727273,
+      "recall_ci95_wilson": [
+        0.5976780188832919,
+        0.8271924806089416
+      ]
+    },
+    {
+      "model": "champion",
+      "cycle": "2017-2018",
+      "field": "age",
+      "group": "60-79",
+      "n": 345,
+      "positives": 174,
+      "detected": 154,
+      "missed": 20,
+      "recall": 0.8850574712643678,
+      "recall_ci95_wilson": [
+        0.8291311088807458,
+        0.9243489901275705
+      ]
+    },
+    {
+      "model": "champion",
+      "cycle": "2017-2018",
+      "field": "age",
+      "group": "80",
+      "n": 86,
+      "positives": 43,
+      "detected": 43,
+      "missed": 0,
+      "recall": 1.0,
+      "recall_ci95_wilson": [
+        0.9179901967742088,
+        1.0
+      ]
+    },
+    {
+      "model": "champion",
+      "cycle": "2021-2023",
+      "field": "sex",
+      "group": "1",
+      "n": 740,
+      "positives": 201,
+      "detected": 172,
+      "missed": 29,
+      "recall": 0.8557213930348259,
+      "recall_ci95_wilson": [
+        0.8004723480718966,
+        0.8976285189267786
+      ]
+    },
+    {
+      "model": "champion",
+      "cycle": "2021-2023",
+      "field": "sex",
+      "group": "2",
+      "n": 817,
+      "positives": 186,
+      "detected": 145,
+      "missed": 41,
+      "recall": 0.7795698924731183,
+      "recall_ci95_wilson": [
+        0.7146741483781031,
+        0.8331513932399074
+      ]
+    },
+    {
+      "model": "champion",
+      "cycle": "2021-2023",
+      "field": "age",
+      "group": "20-39",
+      "n": 411,
+      "positives": 14,
+      "detected": 1,
+      "missed": 13,
+      "recall": 0.07142857142857142,
+      "recall_ci95_wilson": [
+        0.012722215247890939,
+        0.31468704424151117
+      ]
+    },
+    {
+      "model": "champion",
+      "cycle": "2021-2023",
+      "field": "age",
+      "group": "40-59",
+      "n": 446,
+      "positives": 92,
+      "detected": 50,
+      "missed": 42,
+      "recall": 0.5434782608695652,
+      "recall_ci95_wilson": [
+        0.44199785570563255,
+        0.6414733278347482
+      ]
+    },
+    {
+      "model": "champion",
+      "cycle": "2021-2023",
+      "field": "age",
+      "group": "60-79",
+      "n": 594,
+      "positives": 228,
+      "detected": 213,
+      "missed": 15,
+      "recall": 0.9342105263157895,
+      "recall_ci95_wilson": [
+        0.8943030514743872,
+        0.9597288417304125
+      ]
+    },
+    {
+      "model": "champion",
+      "cycle": "2021-2023",
+      "field": "age",
+      "group": "80",
+      "n": 106,
+      "positives": 53,
+      "detected": 53,
+      "missed": 0,
+      "recall": 1.0,
+      "recall_ci95_wilson": [
+        0.9324180114234583,
+        1.0
+      ]
+    },
+    {
+      "model": "challenger",
+      "cycle": "2017-2018",
+      "field": "sex",
+      "group": "1",
+      "n": 542,
+      "positives": 142,
+      "detected": 120,
+      "missed": 22,
+      "recall": 0.8450704225352113,
+      "recall_ci95_wilson": [
+        0.7765573006771804,
+        0.8954052591631378
+      ]
+    },
+    {
+      "model": "challenger",
+      "cycle": "2017-2018",
+      "field": "sex",
+      "group": "2",
+      "n": 566,
+      "positives": 147,
+      "detected": 113,
+      "missed": 34,
+      "recall": 0.7687074829931972,
+      "recall_ci95_wilson": [
+        0.6942275048905829,
+        0.8295011875898287
+      ]
+    },
+    {
+      "model": "challenger",
+      "cycle": "2017-2018",
+      "field": "age",
+      "group": "20-39",
+      "n": 358,
+      "positives": 17,
+      "detected": 3,
+      "missed": 14,
+      "recall": 0.17647058823529413,
+      "recall_ci95_wilson": [
+        0.061911266376209945,
+        0.4102945856883412
+      ]
+    },
+    {
+      "model": "challenger",
+      "cycle": "2017-2018",
+      "field": "age",
+      "group": "40-59",
+      "n": 319,
+      "positives": 55,
+      "detected": 39,
+      "missed": 16,
+      "recall": 0.7090909090909091,
+      "recall_ci95_wilson": [
+        0.5785927950724502,
+        0.8122880644604046
+      ]
+    },
+    {
+      "model": "challenger",
+      "cycle": "2017-2018",
+      "field": "age",
+      "group": "60-79",
+      "n": 345,
+      "positives": 174,
+      "detected": 149,
+      "missed": 25,
+      "recall": 0.8563218390804598,
+      "recall_ci95_wilson": [
+        0.7965017317439074,
+        0.90074850912946
+      ]
+    },
+    {
+      "model": "challenger",
+      "cycle": "2017-2018",
+      "field": "age",
+      "group": "80",
+      "n": 86,
+      "positives": 43,
+      "detected": 42,
+      "missed": 1,
+      "recall": 0.9767441860465116,
+      "recall_ci95_wilson": [
+        0.8794100655939282,
+        0.9958829127256662
+      ]
+    },
+    {
+      "model": "challenger",
+      "cycle": "2021-2023",
+      "field": "sex",
+      "group": "1",
+      "n": 740,
+      "positives": 201,
+      "detected": 173,
+      "missed": 28,
+      "recall": 0.8606965174129353,
+      "recall_ci95_wilson": [
+        0.8060340113779532,
+        0.9018305041102141
+      ]
+    },
+    {
+      "model": "challenger",
+      "cycle": "2021-2023",
+      "field": "sex",
+      "group": "2",
+      "n": 817,
+      "positives": 186,
+      "detected": 144,
+      "missed": 42,
+      "recall": 0.7741935483870968,
+      "recall_ci95_wilson": [
+        0.7089104729798805,
+        0.8283799620685528
+      ]
+    },
+    {
+      "model": "challenger",
+      "cycle": "2021-2023",
+      "field": "age",
+      "group": "20-39",
+      "n": 411,
+      "positives": 14,
+      "detected": 3,
+      "missed": 11,
+      "recall": 0.21428571428571427,
+      "recall_ci95_wilson": [
+        0.07571386712693184,
+        0.47589230586600284
+      ]
+    },
+    {
+      "model": "challenger",
+      "cycle": "2021-2023",
+      "field": "age",
+      "group": "40-59",
+      "n": 446,
+      "positives": 92,
+      "detected": 55,
+      "missed": 37,
+      "recall": 0.5978260869565217,
+      "recall_ci95_wilson": [
+        0.49565975089204156,
+        0.6921504120738151
+      ]
+    },
+    {
+      "model": "challenger",
+      "cycle": "2021-2023",
+      "field": "age",
+      "group": "60-79",
+      "n": 594,
+      "positives": 228,
+      "detected": 207,
+      "missed": 21,
+      "recall": 0.9078947368421053,
+      "recall_ci95_wilson": [
+        0.8633045000377062,
+        0.9389678844880147
+      ]
+    },
+    {
+      "model": "challenger",
+      "cycle": "2021-2023",
+      "field": "age",
+      "group": "80",
+      "n": 106,
+      "positives": 53,
+      "detected": 52,
+      "missed": 1,
+      "recall": 0.9811320754716981,
+      "recall_ci95_wilson": [
+        0.9005708794749878,
+        0.9966615466117363
+      ]
+    }
+  ],
+  "uncertainty_note": "Descriptive 95% Wilson binomial intervals; small positive counts, no survey weights/design correction, no causal or fairness proof.",
+  "release_status": "Human review required; no champion, threshold or deployment change.",
+  "source_report_sha256": {
+    "reports/retraining/comparison.json": "20c2ca66a0c0eb4464257b7230669f0a23527595e81de1940eed7863b9d489da",
+    "models/model_info.json": "3f9b8af59e373f8500203d162812f99444e1ae7cd65fe8e8071951a359efaeed",
+    "reports/fairness/champion_2017.json": "6289ce333933ccabbaa3c9d7e78258f8b404e82e7023245d984b8522ed4da1b0",
+    "reports/fairness/champion_2021.json": "33e8f1b788be495628da66f3cd944ca3e1a96ecc0e9b192461707a978a59ed18",
+    "reports/fairness/challenger_2017.json": "f48e0bd56b00f29510c34303ebdd7377031932d3f514b151e99e33e3bf28cd42",
+    "reports/fairness/challenger_2021.json": "02716deca55d1829b2cce6dc2728847dcd5714a1520c7a26e33314795ac4237f"
+  }
+}
