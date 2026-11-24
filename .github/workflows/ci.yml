@@ -110,6 +110,23 @@ jobs:
             reports/figures/calibration.png
           if-no-files-found: warn
 
+      # Phase 3: drift + labelled performance + retraining trigger on one
+      # production batch. "Retrain needed" is a decision, not a failure,
+      # so this step only fails if the monitoring code itself breaks.
+      - name: Monitoring check (drift, performance, retraining trigger)
+        run: >-
+          python -m scripts.monitor_batch
+          --current data/production/batches/batch_01.csv
+          --out reports/drift/ci
+
+      - name: Upload monitoring report
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: monitoring-report
+          path: reports/drift/ci/
+          if-no-files-found: warn
+
   # Builds the real Docker image, starts it and makes one prediction (smoke test),
   # so a broken image is caught before merge. Runs only after the tests pass.
   docker:
