@@ -35,6 +35,9 @@ data/processed/*
 # Prediction logs (Phase 3 monitoring)
 logs/
 
+# Grafana persistent data (Docker named volume on host)
+grafana-data/
+
 # OS / editor
 .DS_Store
 Thumbs.db

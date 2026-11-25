@@ -1,0 +1,12 @@
+# Prometheus configuration for Health & Wellness MLOps monitoring stack.
+# Scrapes the FastAPI inference API every 5 seconds.
+
+global:
+  scrape_interval: 5s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: "health-wellness-api"
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["api:8000"]
