@@ -4,12 +4,14 @@ Provides endpoints:
 - GET  /health      : System and model availability check (returns 503 if model unloaded).
 - GET  /model-info  : Champion model provenance metadata and schema specs.
 - POST /predict     : Single-patient cardiometabolic risk scoring with validation.
+- GET  /metrics     : Prometheus metrics exposition endpoint.
 
-Monitoring (Phase 3 Task 1):
+Monitoring (Phase 3 Task 1 & Phase 4 Metrics):
 - UUID-based X-Request-ID middleware injected on every request.
 - Request latency measured and logged via the ``health_api`` logger.
-- Successful /predict responses trigger PredictionLogger (JSONL sink).
-- Logging failures are fully isolated — they never affect prediction responses.
+- Successful /predict responses trigger PredictionLogger (JSONL sink) and prediction metrics.
+- Prometheus HTTP request metrics exclude GET /metrics scrapes and use bounded route templates.
+- Logging and metrics failures are fully isolated — they never affect prediction responses.
 """
 
 import re
@@ -20,10 +22,11 @@ import logging
 import os
 from typing import Any
 
-from fastapi import FastAPI, HTTPException, Request, status
+from fastapi import FastAPI, HTTPException, Request, Response, status
 from fastapi.responses import JSONResponse
+from prometheus_client import CONTENT_TYPE_LATEST
 
-from src.api.monitoring import PredictionLogger
+from src.api.monitoring import PredictionLogger, metrics
 from src.api.predictor import predictor
 from src.api.schemas import (
     HealthResponse,
@@ -82,7 +85,19 @@ async def lifespan(app: FastAPI):
             f"Successfully loaded champion model '{predictor.model_info.get('model_name')}' "
             f"version '{predictor.model_version}'."
         )
+        try:
+            metrics.set_model_info(
+                model_name=str(predictor.model_info.get("model_name", "unknown")),
+                model_version=str(predictor.model_version),
+                git_commit=os.getenv("SERVICE_GIT_COMMIT", "unknown"),
+            )
+        except Exception as metrics_exc:  # pragma: no cover
+            logger.warning("Failed to update model_info metric: %s", metrics_exc)
     except Exception as exc:
+        try:
+            metrics.set_model_unloaded()
+        except Exception as metrics_exc:  # pragma: no cover
+            logger.warning("Failed to clear model_info metric: %s", metrics_exc)
         logger.error(f"Failed to load model during application startup: {exc}")
     yield
 
@@ -106,6 +121,32 @@ app = FastAPI(
 # ---------------------------------------------------------------------------
 
 
+def _route_template(request: Request) -> str:
+    """Return a bounded FastAPI route template, never the raw request URL."""
+    route = request.scope.get("route")
+    if route is not None:
+        template = getattr(route, "path_format", None) or getattr(route, "path", None)
+        if isinstance(template, str) and template:
+            return template
+    return "unmatched"
+
+
+def _record_http_metrics(request: Request, status_code: int, latency_seconds: float) -> None:
+    """Record API request metrics while excluding Prometheus GET /metrics scrapes."""
+    endpoint = _route_template(request)
+    if request.method == "GET" and endpoint == "/metrics":
+        return
+    try:
+        metrics.record_request(
+            method=request.method,
+            endpoint=endpoint,
+            status=status_code,
+            latency_seconds=latency_seconds,
+        )
+    except Exception as metrics_exc:  # pragma: no cover
+        logger.warning("Failed to record request metrics: %s", metrics_exc)
+
+
 @app.middleware("http")
 async def request_id_and_latency_middleware(request: Request, call_next):
     """Attach a UUID request ID and measure per-request latency.
@@ -113,6 +154,7 @@ async def request_id_and_latency_middleware(request: Request, call_next):
     - Reads ``X-Request-ID`` from the incoming headers; generates a UUID v4
       if the header is absent or blank.
     - Injects ``X-Request-ID`` into the response headers.
+    - Records Prometheus HTTP request count and latency (excluding GET /metrics).
     - Logs method, path, status code, latency, and request ID via the
       ``health_api`` logger once the downstream handler returns.
     """
@@ -121,10 +163,18 @@ async def request_id_and_latency_middleware(request: Request, call_next):
     request.state.request_id = request_id
 
     start = time.perf_counter()
-    response = await call_next(request)
-    latency_ms = (time.perf_counter() - start) * 1000.0
+    try:
+        response = await call_next(request)
+    except Exception:
+        latency_seconds = time.perf_counter() - start
+        _record_http_metrics(request, status.HTTP_500_INTERNAL_SERVER_ERROR, latency_seconds)
+        raise
+
+    latency_seconds = time.perf_counter() - start
+    latency_ms = latency_seconds * 1000.0
 
     response.headers["X-Request-ID"] = request_id
+    _record_http_metrics(request, response.status_code, latency_seconds)
 
     logger.info(
         "request completed - method=%s path=%s status=%d latency_ms=%.3f request_id=%s",
@@ -200,6 +250,21 @@ def model_info() -> Any:
     })
 
 
+@app.get(
+    "/metrics",
+    summary="Prometheus metrics",
+    responses={
+        200: {
+            "description": "Prometheus metrics in text exposition format",
+            "content": {"text/plain": {}},
+        }
+    },
+)
+def get_metrics() -> Response:
+    """Expose Prometheus request, prediction, and model metadata metrics."""
+    return Response(content=metrics.render(), media_type=CONTENT_TYPE_LATEST)
+
+
 @app.post(
     "/predict",
     response_model=PredictionResponse,
@@ -237,7 +302,14 @@ def predict(payload: PredictionInput, request: Request) -> Any:
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Prediction could not be completed",
         )
-    inference_ms = (time.perf_counter() - t0) * 1000.0
+    inference_seconds = time.perf_counter() - t0
+    inference_ms = inference_seconds * 1000.0
+
+    # Record prediction metrics only after successful inference.
+    try:
+        metrics.record_prediction(response=response)
+    except Exception as metrics_exc:  # pragma: no cover
+        logger.warning("Failed to record prediction metrics: %s", metrics_exc)
 
     # Retrieve request ID injected by the middleware.
     request_id = getattr(request.state, "request_id", str(uuid.uuid4()))

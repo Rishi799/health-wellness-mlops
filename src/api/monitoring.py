@@ -1,9 +1,12 @@
 """Monitoring utilities for health API.
 
-Provides a thread-safe logger that writes a JSON line per successful prediction.
-The log location can be overridden with the ``PREDICTION_LOG_PATH`` environment
-variable; otherwise it defaults to ``logs/predictions.jsonl`` relative to the
-project root.
+Provides:
+- ``PredictionLogger``: thread-safe logger writing a JSON line per successful
+  prediction (configured via ``PREDICTION_LOG_PATH``, defaulting to
+  ``logs/predictions.jsonl``).
+- ``APIMetrics`` / ``metrics``: Prometheus metrics collectors backed by an
+  isolated ``CollectorRegistry`` for HTTP traffic, inference outcomes, and
+  model metadata.
 
 JSONL contract (Phase 3 handbook, page 3):
     Each line is a JSON object with top-level keys:
@@ -19,6 +22,17 @@ import threading
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import IO, Any, Dict, Optional
+
+from prometheus_client import (
+    CollectorRegistry,
+    Counter,
+    GCCollector,
+    Gauge,
+    Histogram,
+    PlatformCollector,
+    ProcessCollector,
+    generate_latest,
+)
 
 from src.api.schemas import PredictionInput, PredictionResponse
 
@@ -121,3 +135,115 @@ class PredictionLogger:
                 fh.flush()
         except Exception as exc:
             _logger.warning("Failed to write prediction log: %s", exc)
+
+
+# ---------------------------------------------------------------------------
+# Prometheus API metrics
+# ---------------------------------------------------------------------------
+
+REQUEST_LATENCY_BUCKETS = (0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1.0, 2.5, 5.0, 10.0)
+RISK_SCORE_BUCKETS = (0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100)
+PROBABILITY_BUCKETS = (0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0)
+
+
+def create_metrics_registry() -> CollectorRegistry:
+    """Create an isolated Prometheus registry with standard runtime collectors."""
+    registry = CollectorRegistry(auto_describe=True)
+    ProcessCollector(registry=registry)
+    PlatformCollector(registry=registry)
+    GCCollector(registry=registry)
+    return registry
+
+
+class APIMetrics:
+    """Container for the six Prometheus metrics exposed by the inference service."""
+
+    def __init__(self, registry: Optional[CollectorRegistry] = None) -> None:
+        self.registry = registry if registry is not None else CollectorRegistry(auto_describe=True)
+
+        self.api_requests_total = Counter(
+            "api_requests_total",
+            "Total number of HTTP API requests",
+            ["endpoint", "method", "status"],
+            registry=self.registry,
+        )
+        self.api_request_latency_seconds = Histogram(
+            "api_request_latency_seconds",
+            "HTTP API request latency in seconds",
+            ["endpoint"],
+            buckets=REQUEST_LATENCY_BUCKETS,
+            registry=self.registry,
+        )
+        self.predictions_total = Counter(
+            "predictions_total",
+            "Total number of successful predictions",
+            ["risk_band"],
+            registry=self.registry,
+        )
+        self.prediction_risk_score = Histogram(
+            "prediction_risk_score",
+            "Distribution of predicted cardiometabolic risk scores (0-100)",
+            buckets=RISK_SCORE_BUCKETS,
+            registry=self.registry,
+        )
+        self.prediction_probability = Histogram(
+            "prediction_probability",
+            "Distribution of predicted cardiometabolic risk probabilities (0.0-1.0)",
+            buckets=PROBABILITY_BUCKETS,
+            registry=self.registry,
+        )
+        self.model_info = Gauge(
+            "model_info",
+            "Metadata for the currently loaded champion model",
+            ["model_name", "model_version", "git_commit"],
+            registry=self.registry,
+        )
+
+    def set_model_info(
+        self,
+        model_name: str,
+        model_version: str,
+        git_commit: str,
+    ) -> None:
+        """Update model metadata gauge, clearing stale labelsets."""
+        self.model_info.clear()
+        self.model_info.labels(
+            model_name=model_name,
+            model_version=model_version,
+            git_commit=git_commit,
+        ).set(1)
+
+    def set_model_unloaded(self) -> None:
+        """Clear active model metadata when no model is loaded."""
+        self.model_info.clear()
+
+    def record_request(
+        self,
+        method: str,
+        endpoint: str,
+        status: int,
+        latency_seconds: float,
+    ) -> None:
+        """Record an HTTP request count and latency observation."""
+        self.api_requests_total.labels(
+            endpoint=endpoint,
+            method=method,
+            status=str(status),
+        ).inc()
+        self.api_request_latency_seconds.labels(
+            endpoint=endpoint,
+        ).observe(max(0.0, latency_seconds))
+
+    def record_prediction(self, response: PredictionResponse) -> None:
+        """Record metrics for a completed prediction."""
+        self.predictions_total.labels(risk_band=response.risk_band).inc()
+        self.prediction_risk_score.observe(response.risk_score)
+        self.prediction_probability.observe(response.probability)
+
+    def render(self) -> bytes:
+        """Serialize all registered metrics in Prometheus text exposition format."""
+        return generate_latest(self.registry)
+
+
+METRICS_REGISTRY = create_metrics_registry()
+metrics = APIMetrics(registry=METRICS_REGISTRY)
