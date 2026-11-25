@@ -14,7 +14,7 @@ An end-to-end MLOps project that produces an educational cardiometabolic awarene
 | Course | AI252TA Machine Learning Operations — Topic 27 |
 | SDGs | 3 Good Health and Well-being · 4 Quality Education |
 | Team | Rishi Agarwal · Rishabh · Rhea · Niranjan (John) |
-| Phase | Phase 2 live; Phase 3 monitoring and challenger implementation under review |
+| Phase | Phase 2 live; Phase 3 challenger and monitoring stack implemented |
 
 ## Dataset
 NHANES public-use CDC data: 15 source files per cycle, joined using the survey participant key `SEQN`, which is excluded from serving inputs. The raw 2017–2018 demographics file has 9,254 participants and the later 2021–2023 file has 11,933. After adult/known-label filtering, there are 5,536 original-cycle and 7,783 later-cycle records. The later cycle is now cleaned, validated and used for Phase 3 monitoring and a separately split challenger experiment. See [data documentation](DATA_README.md) and `DATA_DICTIONARY.xlsx`.
@@ -114,7 +114,7 @@ Known limitation: only 2 of 17 at-risk adults aged 20–39 are detected; predict
 `main` is protected: a pull request needs one approval and both required checks. Every merge is deployed automatically; previous images remain tagged by commit for rollback ([runbook](docs/render-deployment.md)).
 
 ## Tech stack
-Python 3.11 · pandas · scikit-learn · XGBoost · Pandera · pytest · FastAPI · Pydantic · skops · Docker · GitHub Actions · GHCR · Render · Git/GitHub · DVC · MLflow/DagsHub · Evidently 0.7.17 · Fairlearn 0.15.0 · SHAP 0.51.0. Prometheus/Grafana and live prediction logging remain the API-observability integration work.
+Python 3.11 · pandas · scikit-learn · XGBoost · Pandera · pytest · FastAPI · Pydantic · skops · Docker · Docker Compose · Prometheus · Grafana · GitHub Actions · GHCR · Render · Git/GitHub · DVC · MLflow/DagsHub · Evidently 0.7.17 · Fairlearn 0.15.0 · SHAP 0.51.0. Live prediction logging, Prometheus metrics, and the Grafana dashboard are implemented for local Docker Compose monitoring.
 
 ## Phase 3: production monitoring and challenger review
 
@@ -145,7 +145,7 @@ The numerical eligibility rules pass, but the candidate detects only **3/14** po
 
 The 21 November audit independently reproduced the saved metrics, verified data/model fingerprints and disjoint participants, validated all 9,081 batch payloads, and replayed the complete first batch locally: **1,298 HTTP 200**, with **five expected 422s** in a separate invalid-input run. The local suite passes **256 tests** after the audit safeguards.
 
-**Pending integration:** successful API predictions are not yet written to the shared JSONL contract. Niranjan's log writer/dashboard, the subsequent logging-to-drift demonstration, Rishi's monitoring CI step and reviewed merges remain pending. The [completion audit](docs/phase3-verification.md) distinguishes implementation, measured evidence and these dependencies. The [runbook](docs/phase3-p2.md) gives exact commands; the [report](docs/phase3-report.md) summarizes the work.
+**Monitoring integration:** Niranjan's live JSONL prediction logger, Prometheus metrics endpoint, Grafana dashboard, and Docker Compose stack have been implemented and merged ([PR #33](https://github.com/Rishi799/health-wellness-mlops/pull/33), [PR #41](https://github.com/Rishi799/health-wellness-mlops/pull/41), [PR #42](https://github.com/Rishi799/health-wellness-mlops/pull/42)). Successful predictions write to `logs/predictions.jsonl`, six Prometheus metrics are exposed at `/metrics`, and seven Grafana panels visualize traffic and score distributions locally via Docker Compose (Prometheus and Grafana are not deployed on Render). See the [monitoring runbook](docs/monitoring-runbook.md) for setup and operational instructions and the [Phase 3 report](docs/phase3-report.md) for verification details.
 
 ## Setup & Quickstart
 
@@ -174,13 +174,35 @@ python -m src.models.quality_gate   # model quality gate
 uvicorn src.api.main:app --reload      # http://localhost:8000/docs
 ```
 
-### 3. Run the API with Docker
+### 3. Run the API and monitoring stack with Docker
+The stack runs four services: `init` (log directory permissions), `api` (FastAPI on port 8000), `prometheus` (metrics scraping on port 9090), and `grafana` (visualisation dashboard on port 3000).
+
 ```bash
-dvc pull models/model.skops.dvc
-docker compose up --build              # http://localhost:8000/docs
-curl http://localhost:8000/health
+# 1. Pull DVC artifacts (models/model.skops and data/processed/test.csv)
+dvc pull
+
+# 2. Configure environment and set GRAFANA_ADMIN_PASSWORD
+cp .env.example .env
+# Edit .env and replace CHANGE_ME_BEFORE_RUNNING: GRAFANA_ADMIN_PASSWORD=your_password
+
+# 3. Start the full stack
+docker compose up --build -d
+
+# 4. Verify endpoints
+curl http://localhost:8000/health     # Service health
+curl http://localhost:8000/metrics    # Prometheus exposition
 ```
-See [`docs/docker.md`](docs/docker.md) and the [Render deployment and rollback runbook](docs/render-deployment.md).
+
+- **API & Swagger Docs**: [http://localhost:8000/docs](http://localhost:8000/docs)
+- **Prometheus UI**: [http://localhost:9090](http://localhost:9090)
+- **Grafana Dashboard**: [http://localhost:3000](http://localhost:3000) (Login: username `admin`, password `$GRAFANA_ADMIN_PASSWORD`)
+
+Generate demo traffic against the local stack:
+```bash
+python -m scripts.simulate_traffic --batch data/processed/test.csv --rate 5 --limit 20 --bad 5
+```
+
+See the [monitoring runbook](docs/monitoring-runbook.md) for architecture, metrics specification, dashboard details, and troubleshooting, as well as [`docs/docker.md`](docs/docker.md) and the [Render deployment and rollback runbook](docs/render-deployment.md).
 
 ### 4. Monitor a labelled production batch
 
@@ -202,15 +224,16 @@ artifacts/         separate challenger artifact and metadata (DVC)
 notebooks/         exploration notebooks
 src/data/          data scripts
 src/models/        comparison, registration, export & quality-gate scripts
-src/api/           FastAPI inference service & validation schemas
+src/api/           FastAPI inference service, prediction logger & Prometheus metrics
 src/monitoring/    production batches, drift, performance, triggers, fairness and explanations
-scripts/           smoke test and Render deploy helpers
-tests/             unit, model, API, contract and deployment tests
+monitoring/        Prometheus config and Grafana provisioning/dashboards
+scripts/           smoke test, traffic simulator, batch monitoring & Render deploy helpers
+tests/             unit, model, API, monitoring, contract and deployment tests
 reports/           figures, validation, drift, retraining, fairness, SHAP and audit evidence
-docs/              decision logs, data dictionaries, model card, API examples, Docker & Render runbooks
+docs/              decision logs, data dictionaries, model card, API examples, monitoring, Docker & Render runbooks
 dvc.yaml           pipeline stages · params.yaml  pipeline settings
 Dockerfile         slim production container image (python:3.11-slim, non-root)
-docker-compose.yml local container execution on port 8000
+docker-compose.yml 4-service API + Prometheus + Grafana stack (ports 8000, 9090, 3000)
 ```
 
 ## Key findings
