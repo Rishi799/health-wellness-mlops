@@ -8,3 +8,4 @@ pandas==2.3.3
 numpy==2.3.5
 scikit-learn==1.9.1
 skops==0.16.0
+prometheus_client==0.26.0
