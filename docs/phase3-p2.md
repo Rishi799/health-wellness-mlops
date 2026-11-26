@@ -158,11 +158,11 @@ The leading challenger SHAP inputs in the seeded later-holdout sample are age, p
 
 ## Delivery and remaining integration
 
-Review the stacked changes in order: production data (PR 28), traffic (PR 29), monitoring (PR 30), retraining (PR 31), then fairness/explanations and the completion audit (PR 32). All five PRs were still open at the 21 November remote check. Rishi can retarget dependent PRs as their parents merge. The production-data and combined assessment CI runs passed, including Docker startup. Final-head validation is recorded in the review PR.
+The 21 November audit reviewed the original PR stack. The data, simulator, drift and retraining work is now integrated on `main` through PRs #34–#37. The stack also includes the API JSONL writer, monitoring CI check, Prometheus metrics and Grafana dashboard.
 
 The completion audit passed **256 local tests**, independently reproduced the saved metrics, verified all batch payloads and candidate provenance, opened the Evidently HTML, and captured screenshots of both trigger outcomes. `pip check`, DVC pipeline status and DVC remote status passed; both DVC status commands returned `{}`. The prior combined implementation passed [all three CI jobs with 253 tests](https://github.com/Rishi799/health-wellness-mlops/actions/runs/44803814445); updated final-head CI is linked in PR 32. Dependency deprecation warnings remain without test failures. See [machine-readable audit evidence](../reports/phase3/numerical_verification.json).
 
-Rishabh's data, simulator, offline monitoring, degradation experiment, trigger and candidate implementation are delivered with real evidence. The simulator's strict live acceptance criterion remains open: Niranjan must first provide the prediction JSONL writer, then Rishabh must verify API → log → drift with actual local logs. Team Phase 3 also needs dashboards, Rishi's monitoring CI step and reviewed merges, and Rhea's model-release review. The [completion audit](phase3-verification.md) provides the requirement matrix, complete degradation/subgroup tables, screenshots and exact handoff steps. The public API was rechecked and continues to serve model 2.
+The 26 November Compose rehearsal completes Rishabh’s live acceptance check. The [verification](../reports/drift/live_loop/verification.json) records the full replay and the [summary](../reports/drift/live_loop/drift_summary.json) identifies the actual API-written JSONL used by Evidently. Use the [four-minute demo script](phase3-demo-rishabh.md) to rehearse or reproduce the run. The [completion audit](phase3-verification.md) contains the requirement matrix and the degradation and subgroup tables. Any champion release remains a team governance decision.
 
 ## Reference documentation
 

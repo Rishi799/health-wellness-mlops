@@ -118,7 +118,7 @@ Python 3.11 · pandas · scikit-learn · XGBoost · Pandera · pytest · FastAPI
 
 ## Phase 3: production monitoring and challenger review
 
-Rishabh's implementation includes the later-cycle DVC pipeline, six reproducible batches and one synthetic stress batch, local traffic replay, Evidently input/prediction drift, labelled degradation evaluation, the three-rule trigger, challenger training/comparison, Fairlearn and SHAP. Candidate version **3** has alias `challenger`; the served/registered champion remains **2**. PRs **28 → 32** are open for teammate review and merging.
+Rishabh's merged implementation includes the later-cycle DVC pipeline, six reproducible batches and one synthetic stress batch, local traffic replay, Evidently input and prediction drift, labelled degradation evaluation, the three-rule trigger, challenger training and comparison, Fairlearn and SHAP. Candidate version **3** has alias `challenger` and the served champion is version **2**. See the [Phase 3 report](docs/phase3-report.md) for the review history.
 
 ```mermaid
 flowchart LR
@@ -146,6 +146,8 @@ The numerical eligibility rules pass, but the candidate detects only **3/14** po
 The 21 November audit independently reproduced the saved metrics, verified data/model fingerprints and disjoint participants, validated all 9,081 batch payloads, and replayed the complete first batch locally: **1,298 HTTP 200**, with **five expected 422s** in a separate invalid-input run. The local suite passes **256 tests** after the audit safeguards.
 
 **Monitoring integration:** Niranjan's live JSONL prediction logger, Prometheus metrics endpoint, Grafana dashboard, and Docker Compose stack have been implemented and merged ([PR #33](https://github.com/Rishi799/health-wellness-mlops/pull/33), [PR #41](https://github.com/Rishi799/health-wellness-mlops/pull/41), [PR #42](https://github.com/Rishi799/health-wellness-mlops/pull/42)). Successful predictions write to `logs/predictions.jsonl`, six Prometheus metrics are exposed at `/metrics`, and seven Grafana panels visualize traffic and score distributions locally via Docker Compose (Prometheus and Grafana are not deployed on Render). See the [monitoring runbook](docs/monitoring-runbook.md) for setup and operational instructions and the [Phase 3 report](docs/phase3-report.md) for verification details.
+
+The 26 November live rehearsal replayed 1,298 successful predictions through Compose and generated the Evidently report from the API-written log. It found 10 of 21 features drifting and no prediction drift. See the [verification](reports/drift/live_loop/verification.json), [screenshot](reports/drift/live_loop/evidently-live-loop.jpg) and [four-minute demo](docs/phase3-demo-rishabh.md).
 
 ## Setup & Quickstart
 

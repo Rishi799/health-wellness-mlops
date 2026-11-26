@@ -1,6 +1,6 @@
 # Rishabh's Phase 3 completion audit
 
-Verified on **21 November 2026 (IST)** against the four P2 handbook tasks and the additionally authorized retraining/Fairlearn/SHAP work. Machine-readable evidence uses UTC timestamps. The implementation is ready for teammate review; the live prediction-logging handoff is still pending. This is a point-in-time audit, not a claim that the whole team's Phase 3 is finished.
+The 21 November 2026 audit checked the four P2 handbook tasks, retraining, Fairlearn and SHAP. The 26 November 2026 Compose rehearsal (IST) completes the prediction-log acceptance check. Machine-readable evidence uses UTC timestamps.
 
 ## Requirement-by-requirement status
 
@@ -11,7 +11,7 @@ Verified on **21 November 2026 (IST)** against the four P2 handbook tasks and th
 | Six batches and synthetic shift | Every production row appears exactly once in six ordinary batches; separate synthetic 1,298-row stress batch | Implemented and verified |
 | DVC reproducibility/upload | 15 data stages; `dvc status --json` and `dvc status --cloud --json` both `{}`; candidate/splits uploaded | Verified |
 | Payload conversion and complete local replay | All 9,081 ordinary/stress payloads validate; batch_01 replay gives 1,298/1,298 HTTP 200; separate invalid run gives 5/5 HTTP 422 | Implemented and verified |
-| Successful predictions appear in shared JSONL | Current API has no prediction-log writer or log volume | Pending Niranjan's API integration |
+| Successful predictions appear in shared JSONL | Compose mounted the API log on the host. The replay evidence verifies one record per success and none for HTTP 422 responses. | Verified in Compose |
 | Evidently CSV/log reader, feature/prediction drift | Nine internally consistent report sets; full production 8/21 drifting inputs; separate prediction drift; HTML opened in browser | Implemented and verified for available data |
 | Normal-batch no-drift expectation | All six ordinary later-cycle batches actually drift | Expected demonstration story not met; observed results preserved |
 | Labelled degradation experiment | Overall and subgroup tables below; metrics recomputed independently | Complete |
@@ -19,9 +19,9 @@ Verified on **21 November 2026 (IST)** against the four P2 handbook tasks and th
 | Challenger fit and comparison | 10,654 training rows; no overlap with either holdout; same preprocessing/LR builders and threshold | Implemented and verified |
 | Registry handoff | Successful run, version 3 `challenger`; version 2 remains `champion` | Verified remotely |
 | Fairlearn and SHAP | Four holdout assessments; model/data fingerprints; 21 grouped SHAP fields and additivity check | Implemented and verified |
-| Teammate review and merge | PRs 28→32 remain open; candidate release requires review | Pending team action |
+| Teammate review and merge | Implementation and monitoring stack integrated on `main`. Candidate release follows the governance process. | Implementation merged |
 
-The simulator's code and local HTTP behavior are complete. Its strict handbook “done when” also asks for generated prediction-log lines, so that integration criterion must stay open. Do not claim that live log-to-drift monitoring or dashboards have been demonstrated yet.
+The live rehearsal completes the simulator’s acceptance criterion by reading actual API-written `logs/predictions.jsonl` into Evidently. The saved summary identifies the JSONL by its SHA-256. See the [replay verification](../reports/drift/live_loop/verification.json), [drift summary](../reports/drift/live_loop/drift_summary.json) and [Evidently screenshot](../reports/drift/live_loop/evidently-live-loop.jpg).
 
 ## Evidence checked
 
@@ -31,7 +31,7 @@ The simulator's code and local HTTP behavior are complete. Its strict handbook �
 - [Batch drift results](../reports/drift/batch_results.json), [comparison](../reports/retraining/comparison.json), [promotion decision](../reports/retraining/promotion_decision.json), [Fairlearn reports](../reports/fairness/) and [SHAP summaries](../reports/explanations/).
 - [No-trigger screenshot](../reports/phase3/screenshots/no-retrain.jpg), [positive-trigger screenshot](../reports/phase3/screenshots/retrain-requested.jpg) and [Evidently screenshot](../reports/phase3/screenshots/production-drift.jpg). The two decision views are generated from the corresponding committed JSON; they are not substitute experiment runs. Open the full Evidently HTML locally for the interactive distributions.
 
-All **256 local tests pass** after the audit fixes. The prior implementation commit passed all three [combined CI jobs](https://github.com/Rishi799/health-wellness-mlops/actions/runs/44803814445), including 253 tests. The updated final-head CI is linked from [PR 32](https://github.com/Rishi799/health-wellness-mlops/pull/32). `pip check` reports no broken requirements. Upstream dependency deprecation warnings remain.
+The 21 November audit passed 256 local tests. The merged branch passed all **401 local tests** before the 26 November rehearsal. The historical implementation CI and audit evidence are in the [combined CI run](https://github.com/Rishi799/health-wellness-mlops/actions/runs/44803814445) and [PR 32](https://github.com/Rishi799/health-wellness-mlops/pull/32).
 
 ## Degradation experiment: the unchanged champion
 
@@ -84,13 +84,12 @@ The audit fixed stale component outputs: a failed standalone drift or performanc
 
 Valid API calls may omit 19 optional features. If any feature is entirely unobserved in a batch, its distribution cannot be estimated; drift evaluation raises an explicit insufficient-data error. It does not fabricate “no drift” or change the 21-feature denominator. The minimal age/sex JSONL case is tested. Use representative feature-complete survey traffic for the current demonstration. Supporting partial coverage in production needs an agreed unavailable/coverage reporting contract; missingness-only alerts would also need a team decision.
 
-## Finish the live handoff
+## Reproduce the live handoff
 
-1. **Niranjan:** merge the successful-prediction JSONL writer using the handbook contract, configurable `PREDICTION_LOG_PATH`, request ID, model version and latency; expose/persist logs in the local Compose stack. Never log `seqn`, target labels, credentials or identifiable data. Logging failure must not break prediction serving.
-2. **Rishabh, after that integration:** start the local API/Compose stack with logging enabled. In a second terminal, replay `batch_01.csv` at the default 5 requests/s; it takes about 4 minutes 20 seconds. Confirm successful-request log rows appear and invalid requests stay out of the prediction log. This is the remaining strict P2 simulator “done when” item.
-3. **Rishabh:** run `python -m src.monitoring.drift --current logs/predictions.jsonl --out reports/drift/live_logs`. Confirm the model version matches and all 21 feature distributions have sufficient observations. Save the demo screenshot. Use the labelled source CSV for the matched performance/trigger workflow; do not pair a JSONL fingerprint with an unrelated CSV performance report.
-4. **Rishi:** review/merge PRs 28→32 in dependency order, retargeting bases as needed. Add the handbook's monitoring CI step using the commands below. Any scheduled runs or alert routing need a separate team decision on cadence and ownership; they are not silently assumed to be implemented by the existing data CI.
-5. **Rhea/team:** review version 3, the fairness findings and old-population recall tradeoff. Complete model-governance release review. Updating `champion`, exporting the serving artifact and deploying belong to the reviewed release process.
+1. Start the Compose stack with a fresh local prediction log. Follow the [preflight and demo script](phase3-demo-rishabh.md).
+2. Replay `batch_01.csv` against `http://localhost:8000` and confirm that successful requests add one line each. Send the invalid cases and verify the log count stays the same.
+3. Run `python -m src.monitoring.drift --current logs/predictions.jsonl --out reports/drift/live_loop`. Verify the model version, current row count, and all 21 feature distributions in the summary. The interactive HTML and the raw prediction log are local runtime files.
+4. Use the matched labelled survey reports for the retraining decision. PR #40 wired this labelled monitoring path into CI. Review any challenger release through the [governance process](governance.md).
 
 Commands for the workflow owner:
 
