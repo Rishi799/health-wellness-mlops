@@ -2,6 +2,12 @@
 
 A running engineering log of progress, challenges encountered, root-cause analyses, and resolutions across project phases.
 
+## 26 November 2026 — Phase 3 live Compose rehearsal (Rishabh)
+
+Replayed all 1,298 rows of `batch_01.csv` through the Compose API at `localhost:8000`. Verified 1,298 HTTP 200 responses and 1,298 API-written prediction records with unique request IDs. A separate five-request invalid replay gave five HTTP 422 responses and left the JSONL byte-identical. The merged test suite passes 401 tests. I archived the test-generated log before starting the recorded replay so the report covers Docker traffic only.
+
+Evidently analyzed the host-mounted `logs/predictions.jsonl` and flagged 10 of 21 features (47.6%). Prediction drift stayed below its threshold. The 22 drift distances agreed with the earlier replay-source baseline within `1e-12`. Both labelled trigger examples reproduced their expected decisions. The [live-loop verification](reports/drift/live_loop/verification.json), [Evidently screenshot](reports/drift/live_loop/evidently-live-loop.jpg), [report section](docs/phase3-report.md#rishabh--production-data-monitoring-trigger-and-challenger-handoff) and [four-minute script](docs/phase3-demo-rishabh.md) complete the handoff.
+
 ## 21 November 2026 — Phase 3 audit and handoff verification (Rishabh)
 
 - Audited each P2 handbook requirement and the additionally requested retraining, Fairlearn and SHAP implementation. The [completion audit](docs/phase3-verification.md) records completed code/evidence and the pending live logging handoff separately.
