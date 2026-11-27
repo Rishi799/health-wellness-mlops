@@ -48,6 +48,25 @@ misses 11 of 14 young-adult positives, so the follow-up does not resolve issue
 #25 or authorize changing the model/threshold. The full suite passes 270 local
 tests after this addition; teammate review and CI remain required.
 
+On 27 November 2026, Rhea added a [report-only trigger sensitivity analysis](../reports/retraining/trigger_sensitivity.json)
+for all nine saved batch/control report sets, holding recall <0.777 and ROC-AUC
+<0.80 fixed while replaying drift-share cutoffs 0.30, 0.40 and 0.50. At 0.30,
+all ordinary batches and full production trigger on drift; at 0.50, only the
+synthetic shifted batch triggers on drift, while batches 03, 04 and 06 still
+trigger on recall. The negative control does not trigger at any setting. The
+[threshold review](governance.md#trigger-threshold-review) recommends considering
+0.50 with its missed/delayed-alert tradeoff, explicitly subject to team decision;
+no production trigger or quality-gate rule was changed.
+
+The [release decision](governance.md#release-decision--challenger-v3) records
+keeping v2 as champion and v3 as challenger, with approval-name/date placeholders
+for team sign-off. The saved comparison shows lower original recall for v3,
+equal later recall, only a modest later ROC-AUC gain and persistently poor
+young-adult detection. Numerical `promote: true` establishes eligibility rather
+than overriding the human release decision. The [Rhea demo script](phase3-demo-rhea.md)
+shows this distinction and the sensitivity evidence without retraining,
+changing an alias, or deploying a model.
+
 ## Rishabh — production data, monitoring, trigger and challenger handoff
 
 The later NHANES cycle produces 7,783 validated adult records with the original 31-column contract. Seed-42 partitioning gives six disjoint simulated production batches; a separate, explicitly synthetic older-adult batch adds clipped BMI/SBP offsets. A full DVC rebuild preserved all seven original-cycle CSV fingerprints. Data, splits and the candidate artifact are uploaded through DVC.
