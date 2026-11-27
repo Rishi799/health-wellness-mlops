@@ -95,6 +95,96 @@ Rhea recommends keeping the current serving artifact unchanged while the team
 reviews those tradeoffs. This recommendation does not change the eligibility
 formula, register a new model, or claim a team decision has already happened.
 
+## Release decision — challenger v3
+
+**Decision recorded:** 27 November 2026.
+
+**Team decision:** keep version 2 as `champion` and leave version 3 as
+`challenger`. This records the team's release choice; it does not execute a
+registry, serving-artifact or deployment change. It supersedes the earlier
+recommendation to wait for a release decision.
+
+`Approved by: <team members> on <date>`
+
+The team will fill in the approval names and date. The empty sign-off is not
+evidence that review or approval has already been completed.
+
+The [saved comparison](../reports/retraining/comparison.json) supports retaining
+v2 even though the [numerical decision](../reports/retraining/promotion_decision.json)
+reports `promote: true`:
+
+- Original-holdout recall decreases from **0.8270** for v2 to **0.8062** for v3.
+- Later-holdout recall is equal at **0.8191**; the priority metric does not improve.
+- Later-holdout ROC-AUC improves only from **0.8401** to **0.8457**. This modest
+  ranking gain does not by itself justify replacing the champion.
+- Young-adult detection remains poor: **2/17 versus 3/17** on the original
+  holdout, and **1/14 versus 3/14** on the later holdout. See the
+  [four-model/holdout fairness summary](../reports/retraining/fairness.json),
+  [source Fairlearn reports](../reports/fairness/) and
+  [issue #25](https://github.com/Rishi799/health-wellness-mlops/issues/25).
+
+Numerical eligibility is a minimum bar for human review, not an obligation to
+release. The existing gate permits this candidate, while the team considers
+old-population recall, equal later recall and unresolved subgroup risks in its
+release choice. The saved eligibility JSON is intentionally unchanged. Any
+future replacement needs new reviewed evidence and explicit release approval.
+
+## Trigger threshold review
+
+**Review date:** 27 November 2026. **Status:** recommendation for team decision;
+not an implemented change. Production remains drift share **>= 0.30**, recall
+**< 0.777**, or ROC-AUC **< 0.80**, combined with OR.
+
+The [sensitivity report](../reports/retraining/trigger_sensitivity.json) reads
+[batch_results.json](../reports/drift/batch_results.json) and each batch's
+`drift_summary.json` and `performance.json`. It checks their consistency and
+replays the same labelled evidence with drift-share cutoffs 0.30, 0.40 and 0.50;
+both performance cutoffs remain fixed. No new predictions, retraining, rule
+edits or threshold optimization are performed. Values below are rounded to
+four decimals; the JSON retains full precision and source-report hashes.
+
+Each scenario cell answers **whether any rule requests retraining**, followed
+by its causes: **D** = input drift, **R** = recall below 0.777, **A** = ROC-AUC
+below 0.80. A drift share equal to the scenario cutoff triggers; performance
+values equal to their floors do not.
+
+| Batch | Drifted features | Share | Recall | ROC-AUC | Drift cutoff 0.30 | Drift cutoff 0.40 | Drift cutoff 0.50 |
+| --- | ---: | ---: | ---: | ---: | --- | --- | --- |
+| batch_01 | 10/21 | 0.4762 | 0.7934 | 0.8280 | Yes: D | Yes: D | No |
+| batch_02 | 8/21 | 0.3810 | 0.8100 | 0.8476 | Yes: D | No | No |
+| batch_03 | 8/21 | 0.3810 | 0.7741 | 0.8156 | Yes: D+R | Yes: R | Yes: R |
+| batch_04 | 9/21 | 0.4286 | 0.7558 | 0.8083 | Yes: D+R | Yes: D+R | Yes: R |
+| batch_05 | 9/21 | 0.4286 | 0.8149 | 0.8259 | Yes: D | Yes: D | No |
+| batch_06 | 9/21 | 0.4286 | 0.7588 | 0.8242 | Yes: D+R | Yes: D+R | Yes: R |
+| batch_shifted | 13/21 | 0.6190 | 0.9293 | 0.7533 | Yes: D+A | Yes: D+A | Yes: D+A |
+| full_production | 8/21 | 0.3810 | 0.7846 | 0.8248 | Yes: D | No | No |
+| negative_control | 0/21 | 0.0000 | 0.8270 | 0.8502 | No | No | No |
+
+At 0.30, all six ordinary later-cycle batches and the full production cohort
+request retraining on drift; the synthetic shifted batch also triggers on
+drift and low ROC-AUC. At 0.50, only that synthetic batch crosses the drift
+cutoff, while batches 03, 04 and 06 still request retraining through recall.
+The negative control never triggers. These are saved correlated batches from
+one survey cohort, plus a full-cohort aggregation and controls, not independent
+production weeks proving an optimal threshold.
+
+**Recommendation:** consider a drift-share cutoff of **0.50** for team review,
+while keeping the recall and ROC-AUC conditions unchanged. On these reports it
+reduces drift-only retraining requests while preserving the measured
+performance alerts. The tradeoff is delayed or missed input-drift alerts when
+labelled performance is unavailable or degradation has not yet appeared;
+ordinary-cohort drift must not be re-labelled a false alarm solely because a
+higher cutoff suppresses it. A single synthetic stress batch does not establish
+sensitivity to all future shifts. Decide using monitoring costs, label delay,
+measurement changes and further representative evidence before proposing a
+separate reviewed code change. The live rule remains 0.30 until that decision.
+
+Reproduce this report-only analysis from the repository root:
+
+```powershell
+.\.venv\Scripts\python.exe -m src.monitoring.trigger_sensitivity
+```
+
 ## What is versioned where
 
 - **Git/GitHub:** source, tests, workflow definitions, contracts, model metadata,
