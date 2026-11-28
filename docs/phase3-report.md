@@ -1,5 +1,55 @@
 # Phase 3 implementation report
 
+**Project:** AI-Assisted Health and Wellness Awareness Platform (MediSentinel) ·
+**Phase 3:** Monitoring, Feedback & Governance · **Team:** Rishi Agarwal (P1),
+Rishabh (P2), Rhea Parthiban (P3), Niranjan (P4)
+
+## Introduction (Rishi)
+
+Phase 2 put the champion model (Logistic Regression, registry version 2) into
+production as a tested, containerised FastAPI service on Render. Phase 3 answers
+the next question: **once the model is live, how do we know it is still good,
+and what do we do when it is not?**
+
+Phase 3 therefore adds four capabilities around the unchanged champion:
+
+1. **Observe** — log every prediction and expose live service metrics.
+2. **Detect** — compare production inputs with the training data (drift) and
+   measure performance on newly labelled data (degradation).
+3. **Decide** — a fixed, rule-based retraining trigger, a challenger trained the
+   same way, and a written promotion rule.
+4. **Govern** — a human release decision, a model card, fairness and
+   explanation audits, and an audit trail across Git, DVC, MLflow and GHCR.
+
+NHANES 2021–23 (7,783 validated adults) is used as simulated production data,
+because it is a later, independent survey cycle with real outcome labels.
+
+## Architecture (Rishi)
+
+```
+ NHANES 2021–23 -> 6 production batches + 1 synthetic stress batch      (Rishabh)
+                          |
+                 traffic simulator -> FastAPI /predict (champion v2)
+                                            |
+                  +-------------------------+-----------------------+
+         JSONL prediction log + request IDs            /metrics -> Prometheus -> Grafana
+                  |                                                (Niranjan)
+     Evidently drift  +  labelled degradation check                 (Rishabh)
+                  |
+     retraining trigger: drift >= 30% | recall < 0.777 | ROC-AUC < 0.80
+                  |  (also runs automatically in CI - Rishi)
+     challenger v3 -> quality gate + champion comparison -> promotion rule
+                  |                                         (Rishabh, Rhea)
+     team release decision (PR) -> CI/CD redeploy -> monitoring continues
+                  |
+     model card, governance document, Fairlearn, SHAP               (Rhea)
+```
+
+The phase reuses Phase 1 and 2 components rather than replacing them: the same
+cleaning scripts and DVC pipeline process the later cycle, the same quality gate
+judges the challenger, and the same CI/CD path would deploy any approved model.
+
+
 ## Rhea (P3) - model review, governance and fairness
 
 The existing retraining and champion-comparison implementation was merged in
@@ -148,3 +198,78 @@ The implementation was delivered across three pull requests:
   - *Render ephemeral filesystem*: The public service on Render Free tier runs on an ephemeral disk that is cleared on restarts, deploys, and idle sleep; local JSONL logs inside Render do not persist, and Prometheus/Grafana are **not** deployed on Render.
   - *Cross-process log locking*: `PredictionLogger.file_lock` synchronizes threads within a single worker process (matching the default single-worker Uvicorn container command), not across multiple worker processes.
   - *Cloud persistence and alerting*: Future production enhancements include forwarding prediction logs to durable cloud object storage or log pipelines, hosting managed Prometheus/Grafana, and wiring Alertmanager rules for error-rate or drift notifications.
+
+## Automation in CI — the feedback loop (Rishi)
+
+Monitoring is part of the automated pipeline, not only a script run by hand.
+[PR #40](https://github.com/Rishi799/health-wellness-mlops/pull/40) added a step
+to the required **Data checks and tests** job in
+[`ci.yml`](../.github/workflows/ci.yml). After the data pipeline is rebuilt and
+the quality gate passes, CI runs `python -m scripts.monitor_batch` on production
+batch 1 (drift → labelled performance → retraining trigger) and uploads the
+drift report and JSON results as the `monitoring-report` artifact on every
+build. A "retrain needed" result is a decision, not a failure, so it does not
+block CI; only a broken monitoring script fails the job. Run locally before
+merging, batch 1 gave 10 of 21 drifted features, ROC-AUC 0.828, recall 0.793 and
+`retrain_needed: true` (data drift), matching the saved batch results.
+
+## Results summary
+
+| Area | Result | Evidence |
+| --- | --- | --- |
+| Champion on original test set (2017–18, 1,108) | ROC-AUC 0.850 · recall 0.827 · precision 0.549 · Brier 0.162 | `models/model_info.json`, `reports/model_quality.json` |
+| Champion on later cohort (2021–23, 7,783) | ROC-AUC 0.825 · recall 0.785 · precision 0.485 · Brier 0.176 | `reports/drift/full_production/performance.json` |
+| Input drift, full later cohort | 8 of 21 features (38%), dataset drift; no prediction drift | `reports/drift/full_production/drift_summary.json` |
+| Ordinary batches / stress batch / negative control | 8–10 / 13 / 0 of 21 features drift | `reports/drift/batch_results.json` |
+| Live loop through the API | 1,298 requests → 1,298 log lines → Evidently: 10 of 21 features drift | `reports/drift/live_loop/verification.json` |
+| Retraining trigger | fires on every ordinary batch (drift); never on the negative control | `reports/retraining/trigger_sensitivity.json` |
+| Challenger v3 vs champion v2, later holdout | ROC-AUC 0.846 vs 0.840 · recall 0.819 both | `reports/retraining/comparison.json` |
+| Challenger v3 vs champion v2, original holdout | recall 0.806 vs 0.827 | `reports/retraining/comparison.json` |
+| Ages 20–39, later holdout | 3 of 14 (v3) vs 1 of 14 (v2) positives detected | `reports/retraining/fairness.json` |
+| Release decision | keep v2 as champion; v3 stays `challenger` | [`governance.md`](governance.md#release-decision--challenger-v3) |
+| Automated tests | 417 passing on `main` before the documentation PRs | CI runs on `main` |
+
+## Limitations and future work
+
+- **Young adults:** recall for ages 20–39 remains very low (at best 3 of 14) and
+  uncertain; tracked in [issue #25](https://github.com/Rishi799/health-wellness-mlops/issues/25).
+- **Labels:** outcomes are self-reported diagnoses, so some at-risk adults are
+  labelled healthy.
+- **Trigger sensitivity:** with large batches the 30% drift rule fires on every
+  real batch; a 50% cutoff is recommended for team review, not yet implemented.
+- **Precision ≈ 0.55:** many false alarms, accepted for an awareness tool.
+- **Hosting:** Prometheus and Grafana run locally via Docker Compose; Render's
+  free tier loses the prediction log on restart; `/metrics` is publicly
+  reachable on the live service. No automated alerting is configured yet.
+- **Not clinically validated:** awareness and education only.
+
+Future work: a threshold and calibration study for young adults, persistent log
+storage and hosted dashboards with alert rules, a scheduled monitoring workflow
+that opens a review issue automatically, and clinical review before any
+real-world use.
+
+## Team contributions
+
+| Member | Phase 3 contribution | Pull requests |
+| --- | --- | --- |
+| Rishi Agarwal (P1) | Coordination and task handbooks, shared contracts, review and merge of all Phase 3 PRs, CI monitoring step, report introduction/architecture/results/limitations, combined demo script | #40 (+ reviews of all) |
+| Rishabh (P2) | 2021–23 production data and batches, traffic simulator, Evidently drift, degradation experiment, retraining trigger, challenger training and comparison, Fairlearn and SHAP, live monitoring loop | #28, #34–#37 (from #29–#32), #44 |
+| Rhea Parthiban (P3) | Governance document, release review and decision record, fairness follow-up for issue #25, trigger sensitivity analysis, model card updates | #38, #39, #45 |
+| Niranjan (P4) | Prediction logging and request IDs, Prometheus metrics, Grafana dashboard and Docker Compose stack, monitoring runbook, dashboard evidence | #33, #41, #42, #43, #46, #47 |
+
+## How to reproduce
+
+```bash
+git clone https://github.com/Rishi799/health-wellness-mlops.git
+cd health-wellness-mlops
+pip install -r requirements.txt
+dvc pull                                   # data, production batches, model
+pytest -q                                  # full test suite
+python -m scripts.monitor_batch --current data/production/batches/batch_01.csv --out reports/drift/check
+docker compose up --build -d               # API + Prometheus + Grafana (set GRAFANA_ADMIN_PASSWORD in .env)
+python -m scripts.simulate_traffic --api-url http://localhost:8000 --batch data/production/batches/batch_01.csv --limit 200
+```
+
+Then open Grafana at `http://localhost:3000` and the drift report in
+`reports/drift/check/`. Step-by-step details are in the
+[monitoring runbook](monitoring-runbook.md) and [Rishabh's runbook](phase3-p2.md).
