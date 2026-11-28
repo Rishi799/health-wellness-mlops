@@ -110,8 +110,8 @@ trigger on recall. The negative control does not trigger at any setting. The
 no production trigger or quality-gate rule was changed.
 
 The [release decision](governance.md#release-decision--challenger-v3) records
-keeping v2 as champion and v3 as challenger, with approval-name/date placeholders
-for team sign-off. The saved comparison shows lower original recall for v3,
+keeping v2 as champion and v3 as challenger, approved by all four team members
+on 28 November 2026. The saved comparison shows lower original recall for v3,
 equal later recall, only a modest later ROC-AUC gain and persistently poor
 young-adult detection. Numerical `promote: true` establishes eligibility rather
 than overriding the human release decision. The [Rhea demo script](phase3-demo-rhea.md)
