@@ -1,0 +1,33 @@
+{
+  "verified_at": "2026-11-26T16:36:43.522521+00:00",
+  "source_commit": "6da01568e0e1b99cd017e36d1af51da7540eadb5",
+  "api": "http://localhost:8000",
+  "model_version": "2",
+  "replayed_batch": "data/production/batches/batch_01.csv",
+  "configured_requests_per_second": 25,
+  "traffic": {
+    "sent": 1298,
+    "200": 1298,
+    "422": 0,
+    "other": 0,
+    "network_errors": 0,
+    "mean_latency_ms": 35.875
+  },
+  "invalid_traffic": {
+    "sent": 5,
+    "200": 0,
+    "422": 5,
+    "other": 0,
+    "network_errors": 0,
+    "mean_latency_ms": 440.6
+  },
+  "api_written_jsonl": "logs/predictions.jsonl",
+  "jsonl_rows_verified": 1298,
+  "request_ids_unique": true,
+  "validation_errors_logged_as_predictions": 0,
+  "max_probability_difference_including_api_rounding": 4.999966059060501e-05,
+  "jsonl_sha256": "a7e66d5d3cc3cca4088aee7ab3650f32de80e9d286f21237453c703e7bd8cac7",
+  "csv_baseline_max_distance_difference": 2.0816681711721685e-16,
+  "prometheus_api_target": "up",
+  "grafana_database": "ok"
+}

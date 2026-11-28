@@ -48,11 +48,30 @@ misses 11 of 14 young-adult positives, so the follow-up does not resolve issue
 #25 or authorize changing the model/threshold. The full suite passes 270 local
 tests after this addition; teammate review and CI remain required.
 
+On 27 November 2026, Rhea added a [report-only trigger sensitivity analysis](../reports/retraining/trigger_sensitivity.json)
+for all nine saved batch/control report sets, holding recall <0.777 and ROC-AUC
+<0.80 fixed while replaying drift-share cutoffs 0.30, 0.40 and 0.50. At 0.30,
+all ordinary batches and full production trigger on drift; at 0.50, only the
+synthetic shifted batch triggers on drift, while batches 03, 04 and 06 still
+trigger on recall. The negative control does not trigger at any setting. The
+[threshold review](governance.md#trigger-threshold-review) recommends considering
+0.50 with its missed/delayed-alert tradeoff, explicitly subject to team decision;
+no production trigger or quality-gate rule was changed.
+
+The [release decision](governance.md#release-decision--challenger-v3) records
+keeping v2 as champion and v3 as challenger, with approval-name/date placeholders
+for team sign-off. The saved comparison shows lower original recall for v3,
+equal later recall, only a modest later ROC-AUC gain and persistently poor
+young-adult detection. Numerical `promote: true` establishes eligibility rather
+than overriding the human release decision. The [Rhea demo script](phase3-demo-rhea.md)
+shows this distinction and the sensitivity evidence without retraining,
+changing an alias, or deploying a model.
+
 ## Rishabh — production data, monitoring, trigger and challenger handoff
 
 The later NHANES cycle produces 7,783 validated adult records with the original 31-column contract. Seed-42 partitioning gives six disjoint simulated production batches; a separate, explicitly synthetic older-adult batch adds clipped BMI/SBP offsets. A full DVC rebuild preserved all seven original-cycle CSV fingerprints. Data, splits and the candidate artifact are uploaded through DVC.
 
-The traffic simulator sends serving features only, respects a configurable rate and reports HTTP/transport outcomes. The 21 November audit validated all 9,081 batch/stress payloads and replayed all 1,298 rows of the first batch locally: 1,298 HTTP 200 responses, followed by five expected 422s for a separate deliberately invalid run. The API currently lacks the prediction JSONL writer, so the strict traffic → log → live drift acceptance check remains pending Niranjan's integration and a subsequent Rishabh replay.
+The traffic simulator sends serving features only, respects a configurable rate and reports HTTP and transport outcomes. The 21 November audit validated all 9,081 batch and stress payloads and replayed all 1,298 rows of the first batch locally. It recorded 1,298 HTTP 200 responses and five expected HTTP 422 responses in a separate invalid-input run. The Compose rehearsal below verifies the subsequent prediction-log integration.
 
 Evidently found input drift in 8/21 features across the full later cycle. Its ROC-AUC was 0.8248 and recall 0.7846. The three-rule trigger therefore requested retraining for data drift. The synthetic stress batch triggered drift and the ROC-AUC floor; an identical-data negative control requested no retraining. Reports preserve ordinary-batch drift rather than changing the rule to force an expected demonstration.
 
@@ -62,9 +81,11 @@ Fairlearn shows that retraining does not resolve young-adult performance: the ch
 
 The [successful DagsHub run](https://dagshub.com/Rishi799/health-wellness-mlops.mlflow/#/experiments/2/runs/893b1b05690d4870ba99b0628355395f) contains candidate parameters, both holdout metrics, model artifact and aggregate review evidence. Git tracks code, tests, DVC pointers and summary reports. MLflow tracks the run/registry; DVC tracks data/model bytes; GHCR and Render retain their Phase 2 release roles. The [runbook](phase3-p2.md) provides commands, exact results and source references.
 
-Delivery is stacked across PRs [28](https://github.com/Rishi799/health-wellness-mlops/pull/28), [29](https://github.com/Rishi799/health-wellness-mlops/pull/29), [30](https://github.com/Rishi799/health-wellness-mlops/pull/30), [31](https://github.com/Rishi799/health-wellness-mlops/pull/31), and [32](https://github.com/Rishi799/health-wellness-mlops/pull/32). Team review/merges, Niranjan's live JSONL and dashboard integration, Rishi's monitoring CI step and Rhea's model-release review remain separate integration steps. This report does not claim the whole team's Phase 3 is complete.
+The implementation is integrated on `main`. The merged data, simulator, monitoring and retraining changes are in PRs [#34](https://github.com/Rishi799/health-wellness-mlops/pull/34), [#35](https://github.com/Rishi799/health-wellness-mlops/pull/35), [#36](https://github.com/Rishi799/health-wellness-mlops/pull/36) and [#37](https://github.com/Rishi799/health-wellness-mlops/pull/37). The writer, monitoring CI check and Compose dashboard were integrated in PRs [#33](https://github.com/Rishi799/health-wellness-mlops/pull/33), [#40](https://github.com/Rishi799/health-wellness-mlops/pull/40) and [#42](https://github.com/Rishi799/health-wellness-mlops/pull/42). The team owns the separate decision about any challenger release.
 
 The [completion audit](phase3-verification.md) maps every handbook requirement to evidence and pending owners. Independent recalculation reproduced the reported metrics exactly and verified data/model hashes, split reproduction, participant separation and Fairlearn/SHAP provenance. The audit also fixed stale report outputs after failed monitoring reruns. All **256 local tests** pass; DVC local/remote status and dependency consistency checks pass. Both trigger outcomes and the Evidently report were captured in [screenshots](../reports/phase3/screenshots/), and the full champion degradation table includes precision, Brier and subgroup recall. The ordinary-batch drift differs from the handbook's initial hoped-for story; it is retained as an observed finding for review.
+
+On 26 November 2026, Rishabh verified the complete local monitoring loop on the merged Docker Compose stack. The full first production batch returned **1,298 HTTP 200 responses** at `localhost:8000`. The API wrote **1,298 matching JSONL records** with unique request IDs under model version 2. Five deliberately invalid requests returned HTTP 422 and left the log byte-for-byte identical. Evidently consumed that API-written `logs/predictions.jsonl` against the 4,428-row training reference and flagged **10 of 21 input features (47.6%)**, above the 30% dataset threshold. The prediction-probability distribution stayed below its drift threshold. Prometheus reported the API target up and Grafana’s health check passed. The interactive report was saved locally under `reports/drift/live_loop/`, and the repository records the [drift summary](../reports/drift/live_loop/drift_summary.json), [verification](../reports/drift/live_loop/verification.json), [screenshot](../reports/drift/live_loop/evidently-live-loop.jpg) and [demo script](phase3-demo-rishabh.md).
 
 ## Niranjan (P4) — prediction logging, Prometheus metrics, Grafana observability, and verification
 

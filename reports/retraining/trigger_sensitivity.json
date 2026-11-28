@@ -1,0 +1,524 @@
+{
+  "date": "2026-11-27T07:57:30.313069+00:00",
+  "analysis_only": true,
+  "note": "Counterfactual replay of saved reports; production rules are unchanged. No new data/model evaluation or retraining was performed.",
+  "production_rules": {
+    "share_drifted_features": 0.3,
+    "recall": 0.777,
+    "roc_auc": 0.8
+  },
+  "drift_thresholds": [
+    0.3,
+    0.4,
+    0.5
+  ],
+  "source_report_sha256": {
+    "batch_results.json": "a5a870d83869e055c4f47d6a436a050aa4fc378f1ed2dbd858def673d70c470e",
+    "batch_01/drift_summary.json": "9aa27111355296b83f8a4e9d304ecf30dbedf231c9aaa33eddbeaa9f214b5645",
+    "batch_01/performance.json": "dcdc7a747c41fe1942a89b5f21897af0c1d7eb73de8c35bd3f1373370b554037",
+    "batch_02/drift_summary.json": "8587e5e1e46fa8c96bde7660ee6ce6813acd7dcf901f5200eb19b8b652463970",
+    "batch_02/performance.json": "6298f60cf9c87aedd3d93684bcd4211c9c6e17deb3ca472b315950c670463962",
+    "batch_03/drift_summary.json": "c02923f34d1b2465e155b101d887ccc20c00316224689814c591e7db2a08ef7f",
+    "batch_03/performance.json": "5d4021fd314d81cecac01033fad07d483d7dcdd430d944486ecfa9a09e98e678",
+    "batch_04/drift_summary.json": "87db58428a88220c1c154664916420a9f115c5248a929c425d26e5e0b433240f",
+    "batch_04/performance.json": "0e45bbd9beafd5387a180013eabaa4fa47f606922c1bdda644cb684fdb332bba",
+    "batch_05/drift_summary.json": "d937d28d47e4aa6b6f1c92abc5611574023fd473b18eedc4c175e23c77a6d494",
+    "batch_05/performance.json": "9c9f1d4b478cf66d4cb0fecdc99439aeb9a01e520de185db75e702c69f04da51",
+    "batch_06/drift_summary.json": "cd909c1b91625dd136ea7172f88f8a1f58ec021b3e55f462d7d0d9bbf3f51fca",
+    "batch_06/performance.json": "b9ccfc91af4ef63edf248c5101ed9e0a5f5a37d5c1da126a1328c8939d6366dd",
+    "batch_shifted/drift_summary.json": "08535acbbf31fa1c70e2015f9da775fc84e7fd2620e9002f86bc504170bbc95e",
+    "batch_shifted/performance.json": "3abe6b3820916b052ac3c8ee6c8b51c859fa75987f67cede32f530eea6553fbf",
+    "full_production/drift_summary.json": "3a05c4845a662e033909c3cdff53b16f7df33ec985100d9f0f071608880eb322",
+    "full_production/performance.json": "33b24e3c475f119168ea3bfdf166391d35607836e7a7e4a215a7541dbacd06e9",
+    "negative_control/drift_summary.json": "5ca9ba17ef68ace4746e4e930e9d359e5ec6a5bfc5604f3e06430fd53dcca7cb",
+    "negative_control/performance.json": "8f2c4e83c1ffcd317d71d3045941e3268cc2e574789769d1ce7c19b29c7d3004"
+  },
+  "batches": [
+    {
+      "batch": "batch_01",
+      "feature_count": 21,
+      "drifted_feature_count": 10,
+      "drifted_features": [
+        "age",
+        "education",
+        "income_ratio",
+        "height_cm",
+        "sbp",
+        "dbp",
+        "alcohol_drinks_week",
+        "exercise_min_week",
+        "sedentary_min_day",
+        "phq9_score"
+      ],
+      "share_drifted_features": 0.47619047619047616,
+      "recall": 0.7934426229508197,
+      "roc_auc": 0.8279530483878955,
+      "model_version": "2",
+      "data_sha256": "3f90ce4c7878513312619cb17dcd1c9c9986c14bd24648220249180be48a862c",
+      "scenarios": {
+        "0.30": {
+          "retrain_needed": true,
+          "reasons": [
+            "data drift"
+          ],
+          "rules": {
+            "share_drifted_features": 0.3,
+            "recall": 0.777,
+            "roc_auc": 0.8
+          }
+        },
+        "0.40": {
+          "retrain_needed": true,
+          "reasons": [
+            "data drift"
+          ],
+          "rules": {
+            "share_drifted_features": 0.4,
+            "recall": 0.777,
+            "roc_auc": 0.8
+          }
+        },
+        "0.50": {
+          "retrain_needed": false,
+          "reasons": [],
+          "rules": {
+            "share_drifted_features": 0.5,
+            "recall": 0.777,
+            "roc_auc": 0.8
+          }
+        }
+      }
+    },
+    {
+      "batch": "batch_02",
+      "feature_count": 21,
+      "drifted_feature_count": 8,
+      "drifted_features": [
+        "income_ratio",
+        "height_cm",
+        "sbp",
+        "dbp",
+        "alcohol_drinks_week",
+        "exercise_min_week",
+        "sedentary_min_day",
+        "phq9_score"
+      ],
+      "share_drifted_features": 0.38095238095238093,
+      "recall": 0.8099688473520249,
+      "roc_auc": 0.8476488688013891,
+      "model_version": "2",
+      "data_sha256": "d0b3fbd697d83cc544d7ebe20bf3e4325e115fa204b6e9b63bdcc5d42b21f737",
+      "scenarios": {
+        "0.30": {
+          "retrain_needed": true,
+          "reasons": [
+            "data drift"
+          ],
+          "rules": {
+            "share_drifted_features": 0.3,
+            "recall": 0.777,
+            "roc_auc": 0.8
+          }
+        },
+        "0.40": {
+          "retrain_needed": false,
+          "reasons": [],
+          "rules": {
+            "share_drifted_features": 0.4,
+            "recall": 0.777,
+            "roc_auc": 0.8
+          }
+        },
+        "0.50": {
+          "retrain_needed": false,
+          "reasons": [],
+          "rules": {
+            "share_drifted_features": 0.5,
+            "recall": 0.777,
+            "roc_auc": 0.8
+          }
+        }
+      }
+    },
+    {
+      "batch": "batch_03",
+      "feature_count": 21,
+      "drifted_feature_count": 8,
+      "drifted_features": [
+        "age",
+        "income_ratio",
+        "sbp",
+        "dbp",
+        "alcohol_drinks_week",
+        "exercise_min_week",
+        "sedentary_min_day",
+        "phq9_score"
+      ],
+      "share_drifted_features": 0.38095238095238093,
+      "recall": 0.7740963855421686,
+      "roc_auc": 0.8155783756788814,
+      "model_version": "2",
+      "data_sha256": "e5270668bbec89d96e7d027e193d19eafce55f63513235914e4b4f2b5cb6c792",
+      "scenarios": {
+        "0.30": {
+          "retrain_needed": true,
+          "reasons": [
+            "data drift",
+            "recall degradation"
+          ],
+          "rules": {
+            "share_drifted_features": 0.3,
+            "recall": 0.777,
+            "roc_auc": 0.8
+          }
+        },
+        "0.40": {
+          "retrain_needed": true,
+          "reasons": [
+            "recall degradation"
+          ],
+          "rules": {
+            "share_drifted_features": 0.4,
+            "recall": 0.777,
+            "roc_auc": 0.8
+          }
+        },
+        "0.50": {
+          "retrain_needed": true,
+          "reasons": [
+            "recall degradation"
+          ],
+          "rules": {
+            "share_drifted_features": 0.5,
+            "recall": 0.777,
+            "roc_auc": 0.8
+          }
+        }
+      }
+    },
+    {
+      "batch": "batch_04",
+      "feature_count": 21,
+      "drifted_feature_count": 9,
+      "drifted_features": [
+        "age",
+        "income_ratio",
+        "sbp",
+        "dbp",
+        "alcohol_drinks_week",
+        "exercise_min_week",
+        "sedentary_min_day",
+        "sleep_hours",
+        "phq9_score"
+      ],
+      "share_drifted_features": 0.42857142857142855,
+      "recall": 0.7557755775577558,
+      "roc_auc": 0.8082521531831252,
+      "model_version": "2",
+      "data_sha256": "8566ca21c75d7312c20e497d6025cd7c7d030cf430440aa5089c24a50cbf0af4",
+      "scenarios": {
+        "0.30": {
+          "retrain_needed": true,
+          "reasons": [
+            "data drift",
+            "recall degradation"
+          ],
+          "rules": {
+            "share_drifted_features": 0.3,
+            "recall": 0.777,
+            "roc_auc": 0.8
+          }
+        },
+        "0.40": {
+          "retrain_needed": true,
+          "reasons": [
+            "data drift",
+            "recall degradation"
+          ],
+          "rules": {
+            "share_drifted_features": 0.4,
+            "recall": 0.777,
+            "roc_auc": 0.8
+          }
+        },
+        "0.50": {
+          "retrain_needed": true,
+          "reasons": [
+            "recall degradation"
+          ],
+          "rules": {
+            "share_drifted_features": 0.5,
+            "recall": 0.777,
+            "roc_auc": 0.8
+          }
+        }
+      }
+    },
+    {
+      "batch": "batch_05",
+      "feature_count": 21,
+      "drifted_feature_count": 9,
+      "drifted_features": [
+        "age",
+        "income_ratio",
+        "sbp",
+        "dbp",
+        "hdl",
+        "alcohol_drinks_week",
+        "exercise_min_week",
+        "sedentary_min_day",
+        "phq9_score"
+      ],
+      "share_drifted_features": 0.42857142857142855,
+      "recall": 0.8149253731343283,
+      "roc_auc": 0.8258758184131317,
+      "model_version": "2",
+      "data_sha256": "77c37e5f136192b5de7f50e33c88ccfc085f3df88bbbc8f56e705957d1fd5353",
+      "scenarios": {
+        "0.30": {
+          "retrain_needed": true,
+          "reasons": [
+            "data drift"
+          ],
+          "rules": {
+            "share_drifted_features": 0.3,
+            "recall": 0.777,
+            "roc_auc": 0.8
+          }
+        },
+        "0.40": {
+          "retrain_needed": true,
+          "reasons": [
+            "data drift"
+          ],
+          "rules": {
+            "share_drifted_features": 0.4,
+            "recall": 0.777,
+            "roc_auc": 0.8
+          }
+        },
+        "0.50": {
+          "retrain_needed": false,
+          "reasons": [],
+          "rules": {
+            "share_drifted_features": 0.5,
+            "recall": 0.777,
+            "roc_auc": 0.8
+          }
+        }
+      }
+    },
+    {
+      "batch": "batch_06",
+      "feature_count": 21,
+      "drifted_feature_count": 9,
+      "drifted_features": [
+        "age",
+        "income_ratio",
+        "sbp",
+        "dbp",
+        "hdl",
+        "alcohol_drinks_week",
+        "exercise_min_week",
+        "sedentary_min_day",
+        "phq9_score"
+      ],
+      "share_drifted_features": 0.42857142857142855,
+      "recall": 0.7588235294117647,
+      "roc_auc": 0.8241655910012908,
+      "model_version": "2",
+      "data_sha256": "06f37e4458c0e13e6dcb2bbf1bf2985a734b06fe02fd0aee27cdf67023a82c5b",
+      "scenarios": {
+        "0.30": {
+          "retrain_needed": true,
+          "reasons": [
+            "data drift",
+            "recall degradation"
+          ],
+          "rules": {
+            "share_drifted_features": 0.3,
+            "recall": 0.777,
+            "roc_auc": 0.8
+          }
+        },
+        "0.40": {
+          "retrain_needed": true,
+          "reasons": [
+            "data drift",
+            "recall degradation"
+          ],
+          "rules": {
+            "share_drifted_features": 0.4,
+            "recall": 0.777,
+            "roc_auc": 0.8
+          }
+        },
+        "0.50": {
+          "retrain_needed": true,
+          "reasons": [
+            "recall degradation"
+          ],
+          "rules": {
+            "share_drifted_features": 0.5,
+            "recall": 0.777,
+            "roc_auc": 0.8
+          }
+        }
+      }
+    },
+    {
+      "batch": "batch_shifted",
+      "feature_count": 21,
+      "drifted_feature_count": 13,
+      "drifted_features": [
+        "age",
+        "income_ratio",
+        "bmi",
+        "waist_cm",
+        "sbp",
+        "pulse",
+        "told_high_bp",
+        "total_chol",
+        "hdl",
+        "alcohol_drinks_week",
+        "exercise_min_week",
+        "sedentary_min_day",
+        "sleep_hours"
+      ],
+      "share_drifted_features": 0.6190476190476191,
+      "recall": 0.9292929292929293,
+      "roc_auc": 0.7533038982603117,
+      "model_version": "2",
+      "data_sha256": "17ef30ffec16e499db2c1a8680f11cc47c7d515ff0d2d1a122769eb4986b2c88",
+      "scenarios": {
+        "0.30": {
+          "retrain_needed": true,
+          "reasons": [
+            "data drift",
+            "ROC-AUC below quality-gate floor"
+          ],
+          "rules": {
+            "share_drifted_features": 0.3,
+            "recall": 0.777,
+            "roc_auc": 0.8
+          }
+        },
+        "0.40": {
+          "retrain_needed": true,
+          "reasons": [
+            "data drift",
+            "ROC-AUC below quality-gate floor"
+          ],
+          "rules": {
+            "share_drifted_features": 0.4,
+            "recall": 0.777,
+            "roc_auc": 0.8
+          }
+        },
+        "0.50": {
+          "retrain_needed": true,
+          "reasons": [
+            "data drift",
+            "ROC-AUC below quality-gate floor"
+          ],
+          "rules": {
+            "share_drifted_features": 0.5,
+            "recall": 0.777,
+            "roc_auc": 0.8
+          }
+        }
+      }
+    },
+    {
+      "batch": "full_production",
+      "feature_count": 21,
+      "drifted_feature_count": 8,
+      "drifted_features": [
+        "age",
+        "income_ratio",
+        "sbp",
+        "dbp",
+        "alcohol_drinks_week",
+        "exercise_min_week",
+        "sedentary_min_day",
+        "phq9_score"
+      ],
+      "share_drifted_features": 0.38095238095238093,
+      "recall": 0.7846074380165289,
+      "roc_auc": 0.8247808793659813,
+      "model_version": "2",
+      "data_sha256": "9087e9d6123ce88237726bdca9464209a48335cf1910064f54e2f5e049f88b0b",
+      "scenarios": {
+        "0.30": {
+          "retrain_needed": true,
+          "reasons": [
+            "data drift"
+          ],
+          "rules": {
+            "share_drifted_features": 0.3,
+            "recall": 0.777,
+            "roc_auc": 0.8
+          }
+        },
+        "0.40": {
+          "retrain_needed": false,
+          "reasons": [],
+          "rules": {
+            "share_drifted_features": 0.4,
+            "recall": 0.777,
+            "roc_auc": 0.8
+          }
+        },
+        "0.50": {
+          "retrain_needed": false,
+          "reasons": [],
+          "rules": {
+            "share_drifted_features": 0.5,
+            "recall": 0.777,
+            "roc_auc": 0.8
+          }
+        }
+      }
+    },
+    {
+      "batch": "negative_control",
+      "feature_count": 21,
+      "drifted_feature_count": 0,
+      "drifted_features": [],
+      "share_drifted_features": 0.0,
+      "recall": 0.8269896193771626,
+      "roc_auc": 0.8501632930698674,
+      "model_version": "2",
+      "data_sha256": "fdde9e138a8a1f846cef5d3561fcf3cd15c864f8de50a8150a6a8c0b4545a5c2",
+      "scenarios": {
+        "0.30": {
+          "retrain_needed": false,
+          "reasons": [],
+          "rules": {
+            "share_drifted_features": 0.3,
+            "recall": 0.777,
+            "roc_auc": 0.8
+          }
+        },
+        "0.40": {
+          "retrain_needed": false,
+          "reasons": [],
+          "rules": {
+            "share_drifted_features": 0.4,
+            "recall": 0.777,
+            "roc_auc": 0.8
+          }
+        },
+        "0.50": {
+          "retrain_needed": false,
+          "reasons": [],
+          "rules": {
+            "share_drifted_features": 0.5,
+            "recall": 0.777,
+            "roc_auc": 0.8
+          }
+        }
+      }
+    }
+  ]
+}
