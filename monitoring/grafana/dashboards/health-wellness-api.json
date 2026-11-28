@@ -13,6 +13,7 @@
     ]
   },
   "editable": true,
+  "refresh": "5s",
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
   "id": null,
