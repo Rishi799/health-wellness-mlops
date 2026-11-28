@@ -81,8 +81,9 @@ The new [governance document](governance.md) assigns owners and separates
 automated eligibility from team release approval. It covers Git/DVC/MLflow/GHCR
 versioning, audit evidence, data privacy, pending retention/access decisions,
 threshold change control and the existing verified rollback procedure. Live
-prediction logging, metrics, dashboards and scheduled alerting must not be
-claimed from offline reports; their integration remains with the named owners.
+prediction logging, Prometheus metrics and the Grafana dashboard have since been
+integrated (PRs #33, #41, #42) and verified end to end (PR #44); scheduled
+alerting is not configured and remains future work.
 Teammate review of the card/policy and a team decision on any model replacement
 remain required.
 

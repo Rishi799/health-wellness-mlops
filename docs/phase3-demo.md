@@ -11,9 +11,9 @@ page fixes the order, the hand-offs, the preparation and the fallback plan.
 | 4 | 3.5–4 min | Rhea | Challenger vs champion, release decision, trigger sensitivity, governance | [phase3-demo-rhea.md](phase3-demo-rhea.md) |
 | 5 | 2 min | Rishi | CI feedback loop, overall results, limitations, close | below |
 
-**Hand-off lines to adjust:** Niranjan opens with "Thanks Rishi" (not "Thanks
-Rishabh") and ends with "Over to you, Rishabh". Rishabh's and Rhea's scripts
-already hand over in this order.
+**Hand-offs:** all three segment scripts already follow this order — Niranjan
+opens with "Thanks Rishi" and ends with "Over to you, Rishabh"; Rishabh hands
+over to Rhea; Rhea hands back to Rishi.
 
 ## Before the demo (30 minutes earlier)
 
