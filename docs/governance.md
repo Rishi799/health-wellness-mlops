@@ -104,10 +104,14 @@ formula, register a new model, or claim a team decision has already happened.
 registry, serving-artifact or deployment change. It supersedes the earlier
 recommendation to wait for a release decision.
 
-`Approved by: <team members> on <date>`
+**Approved by:** Rishi Agarwal (P1), Rishabh (P2), Rhea Parthiban (P3) and
+Niranjan (P4) on 28 November 2026.
 
-The team will fill in the approval names and date. The empty sign-off is not
-evidence that review or approval has already been completed.
+All four team members confirmed both points: (1) keep version 2 as `champion`
+and leave version 3 as `challenger`; (2) treat a 0.50 drift-share cutoff as the
+recommendation from the [trigger threshold review](#trigger-threshold-review),
+while the implemented trigger rule stays at 0.30 until a separate reviewed
+change.
 
 The [saved comparison](../reports/retraining/comparison.json) supports retaining
 v2 even though the [numerical decision](../reports/retraining/promotion_decision.json)
